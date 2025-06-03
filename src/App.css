@@ -1,0 +1,760 @@
+/* src/App.css */
+
+/* === 루트 변수 === */
+:root {
+    --bg-color-dark: #121212;
+    --header-bg: #1a1a1a;
+    --sidebar-bg: #1f1f1f;
+    --comment-bg: #1f1f1f;
+    --comment-item-bg: #2a2a2a;
+    --input-bg: #2a2a2a;
+    --border-color: #333;
+    --text-color-light: rgba(255, 255, 255, 0.87);
+    --text-color-medium: rgba(255, 255, 255, 0.7);
+    --text-color-dark: rgba(255, 255, 255, 0.9);
+    --link-color: #4caf50;
+}
+
+
+/* === 글로벌 스타일 === */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg-color-dark);
+    color: var(--text-color-light);
+    font-family: 'Roboto', 'Arial', sans-serif;
+}
+
+.App {
+    width: 100%;
+    height: 100%;
+}
+
+/* === 헤더 === */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background-color: var(--header-bg);
+    position: relative;
+    z-index: 100;
+}
+
+.header-left,
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header_icon {
+    width: 2rem;
+    height: 2rem;
+    object-fit: contain;
+    margin-left: 0.5rem;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+#gamecut_logo {
+    height: 4rem;
+    width: auto;
+    cursor: pointer;
+}
+
+/* === 메인 컨테이너 === */
+.main_container {
+    display: flex;
+    height: calc(100vh - 4.5rem);
+}
+
+/* === 사이드바 공통 === */
+.sidebar {
+    padding: 2.5rem 0;
+    background-color: var(--sidebar-bg);
+    flex-shrink: 0;
+    transition: transform 0.3s ease, width 0.3s ease;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE, Edge */
+}
+
+.sidebar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+}
+
+.sidebar_icons {
+    width: 3rem;
+    height: 3rem;
+    object-fit: contain;
+    transition: opacity 0.2s ease;
+}
+
+.sidebar_icons:hover {
+    opacity: 0.7;
+}
+
+.sidebar_label {
+    display: none;
+    margin-left: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--text-color-light);
+    white-space: nowrap;
+    transition: color 0.2s ease;
+}
+
+.sidebar a:hover .sidebar_label {
+    color: var(--link-color);
+}
+
+/* === 사이드바 열린/닫힌 상태 === */
+/* 데스크톱 (1025px 이상) */
+@media (min-width: 1025px) {
+    /* App.css */
+    .video_container {
+        /* 기존 */
+        /* display: flex;
+           flex-direction: row;
+           justify-content: center;
+           align-items: center; */
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: center !important;
+        scroll-snap-align: start !important;
+        height: calc(100vh - 3rem) !important; /* 높이를 줄여서 패딩 공간을 확보 */
+
+        /* 나머지 속성은 그대로 */
+    }
+
+    .video_wrapper {
+        margin-top: -5rem !important;
+    }
+
+    .sidebar {
+        width: 5rem; /* 아이콘 공간만 할당 */
+        transform: none;
+    }
+
+    #sidebarToggle {
+        display: none;
+    }
+}
+
+/* 태블릿 (769px ~ 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .sidebar {
+        width: 4rem;
+    }
+
+    .sidebar.open {
+        width: 12rem;
+    }
+
+    .sidebar_label {
+        display: none;
+    }
+
+    .sidebar.open .sidebar_label {
+        display: inline-block;
+        margin-left: 0.75rem;
+    }
+
+    .sidebar_icons {
+        margin: 0.5rem 1rem;
+    }
+}
+
+/* 모바일 (768px 이하) */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 3.5rem;
+        height: calc(100vh - 3.5rem);
+        width: 5rem;
+        transform: translateX(-100%);
+        background-color: var(--sidebar-bg);
+        z-index: 200;
+        transition: transform 0.3s ease, width 0.3s ease;
+        overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .sidebar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+        width: 12rem;
+    }
+
+    .sidebar_label {
+        display: none;
+    }
+
+    .sidebar.open .sidebar_label {
+        display: inline-block;
+        margin-left: 0.75rem;
+    }
+
+    .sidebar_icons {
+        margin: 0.75rem 1.5rem;
+        width: 2rem;
+        height: 2rem;
+    }
+}
+
+/* === 메인 콘텐츠 === */
+.main_content {
+    flex: 1;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.main_content::-webkit-scrollbar {
+    display: none;
+}
+
+/* === 비디오 래퍼/컨테이너 === */
+.video_wrap {
+    display: flex;
+    flex-direction: column;
+}
+
+.video_container {
+    height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+    position: relative;
+    transition: all 0.3s ease;
+
+}
+
+.video_wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-right: 1.5rem;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.video_player {
+    height: 60vh;
+    width: auto;
+    max-width: 100%;
+    object-fit: cover;
+    border-radius: 0.625rem;
+    border: 0.125rem rgba(255, 255, 255, 0.7) solid;
+    transition: opacity 0.3s ease;
+    opacity: 0.5; /* 기본 비디오 반투명 */
+}
+
+.heightVideo {
+    width: auto !important;
+    height: 60vh !important;
+    max-height: 85vh;
+}
+
+.widthVideo {
+    width: 100% !important;
+    max-width: 80vw;
+    height: auto !important;
+}
+
+.video_texts {
+    padding: 0.5rem 0;
+    color: var(--text-color-medium);
+    max-width: 100%;
+}
+
+.video_title {
+    font-size: 1.125rem;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+    color: var(--text-color-dark);
+    word-wrap: break-word;
+}
+
+.video_content {
+    font-size: 0.9375rem;
+    word-wrap: break-word;
+}
+
+/* === 사이드 버튼 === */
+.video_side_buttons_wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-left: 1rem;
+}
+
+.video_side_buttons {
+    cursor: pointer;
+    width: 2rem;
+    height: 2rem;
+    background: none;
+    border: none;
+    padding: 0;
+    opacity: 0.8;
+    transition: opacity 0.2s ease, transform 0.1s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.video_side_buttons img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.video_side_buttons:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.video_side_buttons:active {
+    transform: scale(0.95);
+}
+
+/* === 댓글 래퍼 === */
+.main_comment_wrapper {
+    display: none;
+    position: absolute;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20rem;
+    background-color: var(--comment-bg);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.video_container.comment-open .main_comment_wrapper {
+    display: block;
+}
+
+.comment-title {
+    font-size: 1.125rem;
+    font-weight: bold;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.comment-close-button {
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text-color-medium);
+    transition: color 0.2s ease;
+    user-select: none;
+}
+
+.comment-close-button:hover {
+    color: var(--text-color-dark);
+}
+
+.comment-list {
+    min-height: 35vh;
+    max-height: 35vh;
+    overflow-y: auto;
+    margin-bottom: 0.75rem;
+}
+
+.comment {
+    margin-bottom: 0.625rem;
+    padding: 0.625rem;
+    background-color: var(--comment-item-bg);
+    border-radius: 0.25rem;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.nickname {
+    font-weight: bold;
+    color: var(--link-color);
+    margin-right: 0.25rem;
+}
+
+.comment_write_date {
+    font-size: 0.75rem;
+    color: #999;
+    margin-left: 0.5rem;
+}
+
+.comment-input {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.comment-input input {
+    flex: 1;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0.25rem;
+    background-color: var(--input-bg);
+    color: var(--text-color-light);
+    font-size: 0.9rem;
+}
+
+.comment-input input:focus {
+    outline: 2px solid var(--link-color);
+}
+
+.comment-input button {
+    width: 2rem;
+    height: 2rem;
+    background-color: var(--link-color);
+    border: none;
+    border-radius: 0.25rem;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.comment-input button:hover {
+    background-color: #45a049;
+}
+
+/* === 데스크톱 (1025px 이상) 댓글 위치/크기 조정 === */
+@media (min-width: 1025px) {
+
+    .video_container.comment-open .video_wrapper {
+        flex-shrink: 1;
+    }
+
+    .main_comment_wrapper {
+        position: relative;
+        transform: none;
+        max-height: 80vh;
+        overflow-y: auto;
+        flex-shrink: 0;
+        margin-left: 2rem;
+        top: -10%;
+        left: 1%;
+    }
+
+    .comment-list {
+        min-height: 35vh;
+        max-height: 35vh;
+        overflow-y: auto;
+        margin-bottom: 0.75rem;
+    }
+
+    .widthVideo {
+        width: 50rem !important;
+        height: auto !important;
+        max-height: 60vh;
+    }
+}
+
+/* === 태블릿 (769px ~ 1024px) === */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .video_player {
+        height: 50vh;
+    }
+
+    .heightVideo {
+        width: auto !important;
+        height: 50vh !important;
+        max-height: 75vh;
+    }
+
+    .widthVideo {
+        width: 100% !important;
+        max-width: 70vw;
+        height: auto !important;
+        max-height: 60vh;
+    }
+
+    .main_comment_wrapper {
+        width: 18rem;
+        right: 1rem;
+    }
+
+    .comment-list {
+        min-height: 30vh;
+        max-height: 30vh;
+        overflow-y: auto;
+        margin-bottom: 0.75rem;
+    }
+}
+
+/* === 모바일 (768px 이하) === */
+@media (max-width: 768px) {
+    header {
+        padding: 0.75rem 1rem;
+    }
+
+    .header_icon {
+        width: 1.75rem;
+        height: 1.75rem;
+    }
+
+    #gamecut_logo {
+        height: 2.5rem;
+    }
+
+    .main_container {
+        height: calc(100vh - 3.5rem);
+    }
+
+    .video_container {
+        flex-direction: column;
+        padding: 1rem;
+        height: calc(100vh - 3.5rem);
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .video_wrapper {
+        margin-right: 0;
+        margin-bottom: 1rem;
+        width: 100%;
+        max-width: 100%;
+        align-items: center;
+    }
+
+    .video_player {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        min-height: 200px;
+        max-height: 60vh;
+    }
+
+    .heightVideo {
+        width: auto !important;
+        height: auto !important;
+        max-height: 60vh;
+    }
+
+    .widthVideo {
+        width: 100% !important;
+        height: auto !important;
+        max-height: 60vh;
+    }
+
+    .video_texts {
+        text-align: center;
+        width: 100%;
+        padding: 1rem 0.5rem;
+    }
+
+    .video_title {
+        font-size: 1rem;
+    }
+
+    .video_content {
+        font-size: 0.875rem;
+    }
+
+    .video_side_buttons_wrapper {
+        flex-direction: row;
+        gap: 2rem;
+        margin-left: 0;
+        justify-content: center;
+        margin-top: -1.5rem;
+    }
+
+    .video_side_buttons {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .main_comment_wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: var(--bg-color-dark);
+        z-index: 1000;
+        border-radius: 0;
+        padding: 1rem;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(100%);
+        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    }
+
+    .video_container.comment-open .main_comment_wrapper {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .main_comment_wrapper .comment-title {
+        flex-shrink: 0;
+        margin-bottom: 1rem;
+        font-size: 1.25rem;
+    }
+
+    .main_comment_wrapper .comment-list {
+        flex-grow: 1;
+        overflow-y: auto;
+        margin-bottom: 1rem;
+        min-height: 62.5%;
+        padding-right: 5px;
+    }
+
+    .main_comment_wrapper .comment-list::-webkit-scrollbar {
+        width: 0;
+        background: transparent;
+    }
+
+    .main_comment_wrapper .comment-list {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .main_comment_wrapper .comment-input {
+        flex-shrink: 0;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
+        margin-top: 0;
+    }
+
+    .main_comment_wrapper .comment-input input {
+        padding: 0.75rem;
+        font-size: 1rem;
+    }
+
+    .main_comment_wrapper .comment-input button {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.1rem;
+    }
+
+    .video_container.comment-open .video_player {
+        opacity: 0.2;
+        filter: blur(2px);
+    }
+
+    footer {
+        font-size: 0.75rem;
+        padding: 0.75rem 0;
+    }
+
+    footer span {
+        display: block;
+        margin: 0.1rem 0;
+    }
+
+    /* 매우 작은 화면 (320px 이하) */
+    @media (max-width: 320px) {
+        .video_texts {
+            padding: 0.75rem 0.25rem;
+        }
+
+        .video_title {
+            font-size: 0.9rem;
+        }
+
+        .video_content {
+            font-size: 0.8rem;
+        }
+
+        .video_side_buttons_wrapper {
+            gap: 1.5rem;
+        }
+
+        .video_side_buttons {
+            width: 2rem;
+            height: 2rem;
+        }
+    }
+}
+
+/* === 터치 디바이스용 스타일 === */
+@media (hover: none) and (pointer: coarse) {
+    .video_side_buttons:hover {
+        transform: none;
+        opacity: 0.8;
+    }
+
+    .video_side_buttons:active {
+        transform: scale(0.9);
+        opacity: 1;
+    }
+
+    .sidebar_icons:hover {
+        opacity: 1;
+    }
+}
+
+/* === 다크모드 지원 === */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color-dark: #0a0a0a;
+        --header-bg: #141414;
+        --sidebar-bg: #1a1a1a;
+    }
+}
+
+/* === 고대비 모드 지원 === */
+@media (prefers-contrast: high) {
+    :root {
+        --border-color: #666;
+        --text-color-light: #ffffff;
+        --text-color-medium: #cccccc;
+    }
+}
+
+/* === 애니메이션 감소 옵션 === */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

@@ -1,0 +1,81 @@
+-프로젝트 생성
+npm create vite@latest
+프로젝트명 입력
+cd 프로젝트명
+npm install
+
+app.jsx -> main.jsx -> index.html 순으로 보내줌
+
+public폴더 : 이미지나 데이터파일 보관용
+app.jsx   에서 코드 짜기
+package.json : 설치한 라이브러리 관리
+node_modules : 라이브러리가 설치된 폴더
+
+         {/*데이터 바인딩*/}
+                <h4>{post}</h4>
+    /*자료를 잠깐 저장할 떈 변수 사용*/
+        let post = "강남 우동 맛집";
+            /*자료를 잠깐 저장할 떈 state 사용*/
+        let [a, b] = useState("남자 코트 추천1");
+        // 자바 스크립트 Destrucutring 문법
+
+        let num = [1, 2];
+        let a = num[0];
+        let b = num[1];
+        let [a, b] = [1, 2];
+Q.state는 왜씀? 일반 변수 써도 되는거아님?
+-> state는 갑자기 변경되면 자동으로 html에 자동으로 재 렌더링이되고, 일반변수는 자동으로 재렌더링이 안됨
+
+
+   /*이벤트 버블링 형상막기 이벤트가 상위 요소로 퍼짐*/
+                                                e.stopPropagation();
+
+
+
+부트스트랩 설치
+npm install react-bootstrap bootstrap
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+  integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7"
+  crossorigin="anonymous"
+/>
+
+react router dom 설치
+npm install react-router-dom@6
+
+styled components 설치
+npm install styled-components
+
+axios설치
+npm install axios
+
+redux 설치
+npm install @reduxjs/toolkit react-redux
+
+redux 쓰는 이유 : 컴포넌트간 state 공유가 편해짐
+
+react-query설치
+npm install @tanstack/react-query
+쓰는 이유
+ajax 성공시 / 실패시 html 보여주려면? / 몇초마다 자동으로 ajax 요청 / 실패시 몇초 후 요청 재시도 / prefetch
+->실시간 데이터를 계속 가져와야하는 사이트에서 쓰면 좋아요
+
+pwa (모바일웹을 앱처럼 보이게)
+npm install vite-plugin-pwa
+//처음부터 만들기
+npm create @vite-pwa/pwa@latest
+
+npm run build
+dist folder open -> npx server .
+-> 실제처럼 띄워보기
+
+//앱설치 유도 팝업
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e
+});
