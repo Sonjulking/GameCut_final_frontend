@@ -23,7 +23,7 @@ const VideoList = () => {
         },
         {
             id: 3,
-            url: import.meta.env.BASE_URL + "videos/songi.mp4",
+            url: import.meta.env.BASE_URL + "videos/short_sample baseball.mp4",
             title: "세로 하이라이트",
             content: "모바일 전용 영상 테스트sadasdas",
             author: "모바일유저",
