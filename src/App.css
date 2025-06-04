@@ -111,6 +111,26 @@ header {
     opacity: 0.7;
 }
 
+
+.sidebar_item .icon-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.sidebar_item .caption_image {
+    position: absolute;
+    top: -1rem;
+    left: 120%;
+    transform: translateX(-50%) ;
+    display: none;
+    width: 2.5em;
+    z-index: 9999;
+}
+
+.sidebar_item .icon-wrapper:hover .caption_image {
+    display: block;
+}
+
 .sidebar_label {
     display: none;
     margin-left: 0.75rem;

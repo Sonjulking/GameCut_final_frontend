@@ -1,14 +1,28 @@
 // src/components/Sidebar.jsx
 import React, {useEffect, useState} from "react";
 
-// 아이콘 파일을 import 합니다.
 import homeIcon from "../assets/img/main/icons/home_icon.png";
+import homeCaption from "../assets/img/main/captions/home_caption.png";
+
 import boardViewIcon from "../assets/img/main/icons/board_view_icon.png";
+import boardCaption from "../assets/img/main/captions/board_view_caption.png";
+
 import profileIcon from "../assets/img/main/icons/profile_icon.png";
+import profileCaption from "../assets/img/main/captions/profile_caption.png";
+
 import friendManagementIcon from "../assets/img/main/icons/friend_management_icon.png";
+import friendManagementCaption from "../assets/img/main/captions/friend_management_caption.png";
+
 import webGameIcon from "../assets/img/main/icons/web_game_icon.png";
+import webGameCaption from "../assets/img/main/captions/web_game_caption.png";
+
 import seasonRankingIcon from "../assets/img/main/icons/season_ranking_icon.png";
+import seasonRankingCaption from "../assets/img/main/captions/season_ranking_caption.png";
+
 import settingIcon from "../assets/img/main/icons/setting_icon.png";
+import settingCaption from "../assets/img/main/captions/setting_caption.png";
+
+
 import {Link} from "react-router-dom";
 
 const Sidebar = () => {
@@ -54,57 +68,90 @@ const Sidebar = () => {
 
     return (
             <div className={`sidebar ${isOpen ? "open" : ""}`}>
-                {/*TODO Link로 바꾸기*/}
-                <Link to={"/"}>
-                    <img src={homeIcon} className="sidebar_icons" alt="홈"/>
+                <Link to={"/"} className="sidebar_item">
+                    <div className="icon-wrapper">
+                        <img src={homeIcon} className="sidebar_icons" alt="홈"/>
+                        <img src={homeCaption} className="caption_image" alt="홈 캡션"/>
+                    </div>
                     <span className="sidebar_label">홈</span>
                 </Link>
-                <Link to={"/test"}>
-                    <img
-                            src={boardViewIcon}
-                            className="sidebar_icons"
-                            alt="게시판"
-                    />
+                <Link to={"/test"} className="sidebar_item">
+                    <div className="icon-wrapper">
+                        <img
+                                src={boardViewIcon}
+                                className="sidebar_icons"
+                                alt="게시판"
+                        />
+                        <img src={boardCaption} className="caption_image" alt="게시판 캡션"/>
+                    </div>
                     <span className="sidebar_label">게시판</span>
+
                 </Link>
-                <Link to={"/profile"}>
-                    <img
-                            src={profileIcon}
-                            className="sidebar_icons"
-                            alt="마이페이지"
-                    />
+                <Link to={"/profile"} className="sidebar_item">
+                    <div className="icon-wrapper">
+                        <img
+                                src={profileIcon}
+                                className="sidebar_icons"
+                                alt="마이페이지"
+                        />
+                        <img src={profileCaption} className="caption_image" alt="프로필 캡션"/>
+                    </div>
                     <span className="sidebar_label">마이페이지</span>
                 </Link>
-                <Link to={"/friendManagement"}>
-                    <img
-                            src={friendManagementIcon}
-                            className="sidebar_icons"
-                            alt="친구 관리"
-                    />
-                    <span className="sidebar_label">친구 관리</span>
+                <Link to={"/friendManagement"} className="sidebar_item">
+                    <div className="icon-wrapper">
+                        <img
+                                src={friendManagementIcon}
+                                className="sidebar_icons"
+                                alt="친구 관리"
+                        />
+                        <img
+                                src={friendManagementCaption} className="caption_image"
+                                alt="친구 관리 캡션"
+                        />
+                    </div>
+                    <span className="sidebar_label">마이페이지</span>
                 </Link>
-                <Link to={"/webGame"}>
-                    <img
-                            src={webGameIcon}
-                            className="sidebar_icons"
-                            alt="웹 게임"
-                    />
+                <Link to={"/webGame"} className="sidebar_item">
+                    <div className="icon-wrapper">
+                        <img
+                                src={webGameIcon}
+                                className="sidebar_icons"
+                                alt="웹 게임"
+                        />
+                        <img
+                                src={webGameCaption} className="caption_image"
+                                alt="웹 게임 캡션"
+                        />
+                    </div>
                     <span className="sidebar_label">웹 게임</span>
                 </Link>
-                <Link to={"/rankings"}>
-                    <img
-                            src={seasonRankingIcon}
-                            className="sidebar_icons"
-                            alt="시즌 랭킹"
-                    />
+                <Link to={"/rankings"} className="sidebar_item">
+                    <div className="icon-wrapper">
+                        <img
+                                src={seasonRankingIcon}
+                                className="sidebar_icons"
+                                alt="시즌 랭킹"
+                        />
+                        <img
+                                src={seasonRankingCaption} className="caption_image"
+                                alt="시즌 랭킹 캡션"
+                        />
+                    </div>
                     <span className="sidebar_label">시즌 랭킹</span>
                 </Link>
-                <Link to={"/settings"}>
-                    <img
-                            src={settingIcon}
-                            className="sidebar_icons"
-                            alt="설정"
-                    />
+                <Link to={"/settings"} className="sidebar_item">
+                    <div className="icon-wrapper">
+                        <img
+                                src={settingIcon}
+                                className="sidebar_icons"
+                                alt="설정"
+                        />
+                        <img
+                                src={settingCaption} className="caption_image"
+                                alt="설정 캡션"
+                        />
+                    </div>
                     <span className="sidebar_label">설정</span>
                 </Link>
             </div>
