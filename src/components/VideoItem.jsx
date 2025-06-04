@@ -15,6 +15,16 @@ const VideoItem = ({videoData}) => {
     const [isCommentOpen, setIsCommentOpen] = useState(false);
     const [comments, setComments] = useState([...videoData.comments]);
 
+    useEffect(() => {
+        const handleResize = () => {
+            setIsCommentOpen(false); // 화면 크기 바뀌면 댓글창 닫기
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+
     // IntersectionObserver 생성 후 비디오 요소 관찰
     useEffect(() => {
         //현재 비디오 요소

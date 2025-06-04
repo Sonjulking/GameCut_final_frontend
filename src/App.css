@@ -168,7 +168,7 @@ header {
     }
 
     .sidebar {
-        width: 7rem; /* 아이콘 공간만 할당 */
+        width: 7.5rem; /* 아이콘 공간만 할당 */
         padding-left: 1rem;
         transform: none;
     }
