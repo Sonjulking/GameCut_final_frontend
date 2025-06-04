@@ -148,7 +148,8 @@ header {
     }
 
     .sidebar {
-        width: 5rem; /* 아이콘 공간만 할당 */
+        width: 7rem; /* 아이콘 공간만 할당 */
+        padding-left: 1rem;
         transform: none;
     }
 
@@ -423,6 +424,7 @@ header {
 .comment_write_date {
     font-size: 0.75rem;
     color: #999;
+    ㄴ
     margin-left: 0.5rem;
 }
 

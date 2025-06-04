@@ -55,11 +55,11 @@ const Sidebar = () => {
     return (
             <div className={`sidebar ${isOpen ? "open" : ""}`}>
                 {/*TODO Link로 바꾸기*/}
-                <Link to={"/test"}>
+                <Link to={"/"}>
                     <img src={homeIcon} className="sidebar_icons" alt="홈"/>
                     <span className="sidebar_label">홈</span>
                 </Link>
-                <Link to={"/board"}>
+                <Link to={"/test"}>
                     <img
                             src={boardViewIcon}
                             className="sidebar_icons"

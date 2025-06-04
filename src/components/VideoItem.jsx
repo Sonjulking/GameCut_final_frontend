@@ -7,6 +7,7 @@ import likeIcon from "../assets/img/main/icons/like_icon.png";
 import commentIcon from "../assets/img/main/icons/comment_icon.png";
 import shareIcon from "../assets/img/main/icons/share_icon.png";
 import saveIcon from "../assets/img/main/icons/save_icon.png";
+import reportIcon from "../assets/img/main/icons/report_icon.png";
 
 const VideoItem = ({videoData}) => {
     //video 태그를 직접 조작하기위해  useRef() 사용
@@ -128,6 +129,9 @@ const VideoItem = ({videoData}) => {
                     </button>
                     <button className="video_side_buttons" aria-label="저장">
                         <img src={saveIcon} alt="저장"/>
+                    </button>
+                    <button className="video_side_buttons" aria-label="신고">
+                        <img src={reportIcon} alt="신고"/>
                     </button>
                 </div>
 
