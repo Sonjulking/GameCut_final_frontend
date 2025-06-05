@@ -5,6 +5,7 @@ import HomePage from "../pages/HomePage.jsx";
 import Test from "../pages/Test.jsx";
 
 const AppRoutes = () => {
+    //test
     return (
             <>
                 <Routes>
