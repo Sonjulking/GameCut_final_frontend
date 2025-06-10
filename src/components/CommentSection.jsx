@@ -46,8 +46,8 @@ const CommentSection = ({isOpen, comments, videoId, onClose, onAddComment}) => {
                 <div className="comment-list" ref={commentListRef}>
                     {comments.map((c, idx) => (
                             <div className="comment" key={idx}>
-                                <span className="nickname">익명</span>: {c}
-                                <span className="comment_write_date">{new Date().toISOString().slice(0, 10)}</span>
+                                <span className="nickname">{c.user.userNickname}</span>: {c.commentContent}
+                                <span className="comment_write_date">  {new Date(c.commentCreateDate).toISOString().slice(0, 10)}</span>
                             </div>
                     ))}
                 </div>

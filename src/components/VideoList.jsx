@@ -1,8 +1,23 @@
 // src/components/VideoList.jsx
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import VideoItem from "./VideoItem";
+import axios from "axios";
 
 const VideoList = () => {
+
+    const [boardList, setBoardList] = useState([]);
+    useEffect(() => {
+        axios.get(import.meta.env.VITE_API_URL + "/board/list").then((res) => {
+            setBoardList(res.data);
+        });
+    }, []);
+    // useEffect(() => {
+    //     axios.get(`${apiUrl}/board2`)
+    //             .then((res) => {
+    //                 console.log(res.data);
+    //             });
+    // }, []);
+
     // 컴포넌트 내부에서 dummyVideos 상태 선언
     const [dummyVideos] = useState([
         {
@@ -59,11 +74,17 @@ const VideoList = () => {
         },
     ]);
 
+
     return (
             <div className="video_wrap">
-                {dummyVideos.map((videoData) => (
+                {/*      {dummyVideos.map((videoData) => (
                         <VideoItem key={videoData.id} videoData={videoData}/>
-                ))}
+                ))}*/}
+                {
+                    boardList.map(board => (
+                            <VideoItem key={board.id} board={board}/>
+                    ))
+                }
             </div>
     );
 };

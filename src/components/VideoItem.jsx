@@ -9,11 +9,18 @@ import shareIcon from "../assets/img/main/icons/share_icon.png";
 import saveIcon from "../assets/img/main/icons/save_icon.png";
 import reportIcon from "../assets/img/main/icons/report_icon.png";
 
-const VideoItem = ({videoData}) => {
+const VideoItem = ({board}) => {
+    const {
+        boardTitle,
+        boardContent,
+        user,
+        video,
+        comments: initialComments,
+    } = board;
     //video 태그를 직접 조작하기위해  useRef() 사용
     const videoRef = useRef(null);
     const [isCommentOpen, setIsCommentOpen] = useState(false);
-    const [comments, setComments] = useState([...videoData.comments]);
+    const [comments, setComments] = useState(initialComments || []);
 
     useEffect(() => {
         const handleResize = () => {
@@ -111,13 +118,16 @@ const VideoItem = ({videoData}) => {
                                 e.target.alt = "비디오를 로드할 수 없습니다.";
                             }}
                     >
-                        <source src={videoData.url} type="video/mp4"/>
+                        <source
+                                src={import.meta.env.VITE_API_URL + video.attachFile.fileUrl}
+                                type="video/mp4"
+                        />
                         브라우저가 비디오 태그를 지원하지 않습니다.
                     </video>
                     <div className="video_texts">
-                        <div className="video_title">{videoData.author}</div>
-                        <div className="video_title">제목 : {videoData.title}</div>
-                        <div className="video_content">내용 : {videoData.content}</div>
+                        <div className="video_title">{user.userName}</div>
+                        <div className="video_title">제목 : {boardTitle}</div>
+                        <div className="video_content">내용 : {boardContent}</div>
                     </div>
                 </div>
 
@@ -129,7 +139,7 @@ const VideoItem = ({videoData}) => {
                             className="video_side_buttons comment_toggle_button"
                             aria-label="댓글"
                             aria-expanded={isCommentOpen}
-                            aria-controls={`comments-for-video-${videoData.id}`}
+                            aria-controls={`comments-for-video-${board.no}`}
                             onClick={toggleComment}
                     >
                         <img src={commentIcon} alt="댓글"/>
@@ -148,7 +158,7 @@ const VideoItem = ({videoData}) => {
                 <CommentSection
                         isOpen={isCommentOpen}
                         comments={comments}
-                        videoId={videoData.id}
+                        videoId={video.videoNo}
                         onClose={toggleComment}
                         onAddComment={addComment}
                 />
