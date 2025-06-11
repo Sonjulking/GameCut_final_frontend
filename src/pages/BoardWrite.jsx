@@ -37,8 +37,8 @@ const BoardWrite = () => {
         formData.append("boardTypeNo", form.boardTypeNo);
         formData.append("userNo", form.userNo);
 
-        if (videoFile) formData.append("video", videoFile);
-        photoFiles.forEach((file) => formData.append("photos", file));
+        if (videoFile) formData.append("file", videoFile);
+        //photoFiles.forEach((file) => formData.append("file", file));
 
         try {
             await axios.post(`${import.meta.env.VITE_API_URL}/board`, formData, {
@@ -77,19 +77,19 @@ const BoardWrite = () => {
                                 onChange={handleChange}
                                 fullWidth
                                 required
-                                InputLabelProps={{ style: { color: '#ccc' } }}
+                                InputLabelProps={{style: {color: "#ccc"}}}
                                 sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        '& fieldset': {
-                                            borderColor: '#bbb', // 기본 테두리
+                                    "& .MuiOutlinedInput-root": {
+                                        "& fieldset": {
+                                            borderColor: "#bbb", // 기본 테두리
                                         },
-                                        '&:hover fieldset': {
-                                            borderColor: '#ddd', // 호버 시 밝게
+                                        "&:hover fieldset": {
+                                            borderColor: "#ddd", // 호버 시 밝게
                                         },
-                                        '&.Mui-focused fieldset': {
-                                            borderColor: '#fff', // 포커스 시 더 밝게
+                                        "&.Mui-focused fieldset": {
+                                            borderColor: "#fff", // 포커스 시 더 밝게
                                         },
-                                        color: '#fff', // 텍스트 색상
+                                        color: "#fff", // 텍스트 색상
                                     }
                                 }}
                         />
@@ -103,19 +103,19 @@ const BoardWrite = () => {
                                 onChange={handleChange}
                                 fullWidth
                                 required
-                                InputLabelProps={{ style: { color: '#ccc' } }}
+                                InputLabelProps={{style: {color: "#ccc"}}}
                                 sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        '& fieldset': {
-                                            borderColor: '#bbb',
+                                    "& .MuiOutlinedInput-root": {
+                                        "& fieldset": {
+                                            borderColor: "#bbb",
                                         },
-                                        '&:hover fieldset': {
-                                            borderColor: '#ddd',
+                                        "&:hover fieldset": {
+                                            borderColor: "#ddd",
                                         },
-                                        '&.Mui-focused fieldset': {
-                                            borderColor: '#fff',
+                                        "&.Mui-focused fieldset": {
+                                            borderColor: "#fff",
                                         },
-                                        color: '#fff',
+                                        color: "#fff",
                                     }
                                 }}
                         />
@@ -142,8 +142,8 @@ const BoardWrite = () => {
                                     }}
                             >
                                 <MenuItem value={1}>자유게시판</MenuItem>
-                                <MenuItem value={2}>유저영상</MenuItem>
-                                <MenuItem value={3}>공지사항</MenuItem>
+                                <MenuItem value={2}>공지사항</MenuItem>
+                                <MenuItem value={3}>유저영상</MenuItem>
                             </Select>
                         </FormControl>
                         <Button

@@ -7,7 +7,6 @@ import {ApiContext} from "./context/ApiContext.js";
 function App() {
 
     return (
-
             <AppRoutes/>
     );
 }
