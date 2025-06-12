@@ -1,6 +1,6 @@
 // src/components/VideoList.jsx
 import React, {useEffect, useState} from "react";
-import VideoItem from "./VideoItem";
+import VideoItem from "./VideoItem.jsx";
 import axios from "axios";
 
 const VideoList = () => {

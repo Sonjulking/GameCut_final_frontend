@@ -1,4 +1,4 @@
-import VideoList from "../components/VideoList.jsx";
+import VideoList from "../components/Main/VideoList.jsx";
 
 const HomePage = () => {
     return (

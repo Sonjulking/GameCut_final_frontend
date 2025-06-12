@@ -3,11 +3,11 @@ import React, {useEffect, useRef, useState} from "react";
 import CommentSection from "./CommentSection.jsx";
 
 // 아이콘 파일들을 import 합니다.
-import likeIcon from "../assets/img/main/icons/like_icon.png";
-import commentIcon from "../assets/img/main/icons/comment_icon.png";
-import shareIcon from "../assets/img/main/icons/share_icon.png";
-import saveIcon from "../assets/img/main/icons/save_icon.png";
-import reportIcon from "../assets/img/main/icons/report_icon.png";
+import likeIcon from "../../assets/img/main/icons/like_icon.png";
+import commentIcon from "../../assets/img/main/icons/comment_icon.png";
+import shareIcon from "../../assets/img/main/icons/share_icon.png";
+import saveIcon from "../../assets/img/main/icons/save_icon.png";
+import reportIcon from "../../assets/img/main/icons/report_icon.png";
 
 const VideoItem = ({board}) => {
     const {
