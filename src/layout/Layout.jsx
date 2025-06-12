@@ -1,7 +1,8 @@
-import React from "react";
+import React, {Suspense} from "react";
 import Header from "./Header.jsx";
 import Sidebar from "./Sidebar.jsx";
 import {Outlet} from "react-router-dom";
+import LoadingScreen from "../components/Loading/LoadingScreen.jsx";
 
 const Layout = () => {
     return (
@@ -10,7 +11,9 @@ const Layout = () => {
                 <div className="main_container">
                     <Sidebar/>
                     <div className="main_content">
-                        <Outlet/>
+                        <Suspense fallback={<LoadingScreen/>}>
+                            <Outlet/>
+                        </Suspense>
                     </div>
                 </div>
             </div>

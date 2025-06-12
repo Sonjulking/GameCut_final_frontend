@@ -1,22 +1,40 @@
 import {Route, Routes} from "react-router-dom";
 import Layout from "../layout/Layout.jsx";
-import React from "react";
+import React, {lazy, Suspense} from "react";
 import HomePage from "../pages/HomePage.jsx";
-import Test from "../pages/Test.jsx";
 import BoardWrite from "../pages/BoardWrite.jsx";
+import LoadingScreen from "../components/Loading/LoadingScreen.jsx";
+
+// ⏱️ 5초 delay wrapper
+const delayImport = (importFunc, delay = 5000) => {
+    return new Promise((resolve) => {
+        setTimeout(() => resolve(importFunc()), delay);
+    });
+};
+
+const TestPage = lazy(() => delayImport(() => import("../pages/Test.jsx")));
 
 const AppRoutes = () => {
-    //test
     return (
-            <>
-                <Routes>
-                    <Route path="/" element={<Layout/>}>
-                        <Route index element={<HomePage/>}/>
-                        <Route path="/test" element={<Test/>}/>
-                        <Route path="/boardWrite" element={<BoardWrite/>}/>
-                    </Route>
-                </Routes>
-            </>
+            <Routes>
+                <Route
+                        path="/"
+                        element={<Layout/>}
+                >
+                    <Route
+                            index
+                            element={<HomePage/>}
+                    />
+                    <Route
+                            path="/test"
+                            element={<TestPage/>}
+                    /> {/* ✅ 요기만 바뀐 부분 */}
+                    <Route
+                            path="/boardWrite"
+                            element={<BoardWrite/>}
+                    />
+                </Route>
+            </Routes>
     );
 };
 
