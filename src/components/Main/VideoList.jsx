@@ -2,6 +2,7 @@
 import React, {useEffect, useState, useRef, useCallback} from "react";
 import VideoItem from "./VideoItem.jsx";
 import axios from "axios";
+import LoadingScreen from "../Loading/LoadingScreen.jsx";
 
 const VideoList = () => {
     const [boardList, setBoardList] = useState([]);
@@ -9,10 +10,14 @@ const VideoList = () => {
     const [isEnd, setIsEnd] = useState(false);
     const observer = useRef(null);
 
+    // useCallback은 React의 Hook 중 하나로, 함수의 불필요한 재생성을 방지해서 성능 최적화를 도와주는 도구
     const fetchNextBoard = useCallback(async () => {
         if (isLoading || isEnd) return;
         setIsLoading(true);
         try {
+            // 1.5초(1500ms) 지연 시간
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
             const res = await axios.get(import.meta.env.VITE_API_URL + "/board/one");
             const data = res.data;
 
@@ -31,6 +36,7 @@ const VideoList = () => {
             setIsLoading(false);
         }
     }, [isLoading, isEnd]);
+
 
     useEffect(() => {
         fetchNextBoard();
@@ -52,16 +58,35 @@ const VideoList = () => {
 
     return (
             <div className="video_wrap">
+                {/* 로딩창은 위에 오버레이로 덮음 */}
+                {isLoading && (
+                        <div
+                                style={{
+                                    position: "absolute",
+                                    top: 0,
+                                    left: 0,
+                                    width: "100%",
+                                    height: "100%",
+                                    backgroundColor: "rgba(0, 0, 0, 0.4)",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    zIndex: 9999,
+                                }}
+                        >
+                            <LoadingScreen/>
+                        </div>
+                )}
                 {boardList.map((board, idx) => (
                         <div
                                 key={board.boardNo}
                                 ref={idx === boardList.length - 1 ? lastItemRef : null}
                         >
-                            <VideoItem board={board}/>
+                            <VideoItem board={board} isLoading={isLoading}/>
                         </div>
                 ))}
 
-                {isLoading && <p style={{textAlign: "center", color: "#aaa"}}>불러오는 중...</p>}
+
                 {isEnd && <p style={{textAlign: "center", color: "#888"}}>마지막 게시글입니다.</p>}
             </div>
     );

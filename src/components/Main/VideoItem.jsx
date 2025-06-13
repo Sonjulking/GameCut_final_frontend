@@ -9,7 +9,7 @@ import shareIcon from "../../assets/img/main/icons/share_icon.png";
 import saveIcon from "../../assets/img/main/icons/save_icon.png";
 import reportIcon from "../../assets/img/main/icons/report_icon.png";
 
-const VideoItem = ({board}) => {
+const VideoItem = ({board, isLoading}) => {
     const {
         boardTitle,
         boardContent,
@@ -47,8 +47,14 @@ const VideoItem = ({board}) => {
                     entries.forEach((entry) => {
                         //반복문으로 하나씩 상태를 꺼내서 검사함.
                         if (entry.isIntersecting) { //entry.isIntersecting은 해당 요소가 화면에 지정된 비율만큼 보이면 true가 됨.
-                            entry.target.play(); //entry.target : 관찰중인 요소 , play() 재생
-                            entry.target.style.opacity = "1"; // 투명도 100%
+                            if (!isLoading) {
+                                entry.target.play(); //entry.target : 관찰중인 요소 , play() 재생
+                                entry.target.style.opacity = "1"; // 투명도 100%
+                            } else {
+                                entry.target.pause(); //
+                                entry.target.style.opacity = "0.5";
+                            }
+
                         } else {
                             entry.target.pause(); //일시정지
                             entry.target.style.opacity = "0.5"; //투명도 50%
@@ -62,7 +68,7 @@ const VideoItem = ({board}) => {
         observer.observe(videoEl);
         //메모리를 위해 클린업
         return () => observer.unobserve(videoEl);
-    }, []);
+    }, [isLoading]);
 
     // 메타데이터 로드 완료 시 세로/가로 영상 분류하여 클래스 추가
     useEffect(() => {

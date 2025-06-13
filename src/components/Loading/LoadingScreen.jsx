@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import {Box, CircularProgress, Typography} from "@mui/material";
 
 const LoadingScreen = () => {
     return (
@@ -16,12 +16,11 @@ const LoadingScreen = () => {
                         alignItems="center"
                         justifyContent="center"
                         p={4}
-                        bgcolor="#121212"
                         color="#ffffff"
                 >
-                    <CircularProgress size={50} thickness={4} sx={{ color: "#90caf9" }} />
+                    <CircularProgress size={100} thickness={4} sx={{color: "#90caf9"}}/>
                     <Typography variant="h6" mt={2}>
-                      Loading...
+                        Loading...
                     </Typography>
                 </Box>
             </Box>
