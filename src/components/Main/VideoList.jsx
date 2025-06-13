@@ -59,6 +59,8 @@ const VideoList = () => {
     return (
             <div className="video_wrap">
                 {/* 로딩창은 위에 오버레이로 덮음 */}
+                {/*로딩 넣으면 자꾸 오류나서 일단 제거했습니다.*/}
+                {/*
                 {isLoading && (
                         <div
                                 style={{
@@ -75,7 +77,7 @@ const VideoList = () => {
                         >
                             <LoadingScreen/>
                         </div>
-                )}
+                )}*/}
                 {boardList.map((board, idx) => (
                         <div
                                 key={board.boardNo}
