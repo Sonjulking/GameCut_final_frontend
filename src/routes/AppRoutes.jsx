@@ -28,7 +28,7 @@ const AppRoutes = () => {
                     <Route
                             path="/test"
                             element={<TestPage/>}
-                    /> {/* ✅ 요기만 바뀐 부분 */}
+                    />
                     <Route
                             path="/boardWrite"
                             element={<BoardWrite/>}

@@ -9,6 +9,8 @@ import shareIcon from "../../assets/img/main/icons/share_icon.png";
 import saveIcon from "../../assets/img/main/icons/save_icon.png";
 import reportIcon from "../../assets/img/main/icons/report_icon.png";
 
+import videoLoadingImage from "../../assets/img/main/logo/gamecut_logo(black).png";
+
 const VideoItem = ({board, isLoading}) => {
     const {
         boardTitle,
@@ -21,7 +23,7 @@ const VideoItem = ({board, isLoading}) => {
     const videoRef = useRef(null);
     const [isCommentOpen, setIsCommentOpen] = useState(false);
     const [comments, setComments] = useState(initialComments || []);
-
+    const [isVideoReady, setIsVideoReady] = useState(false);
     useEffect(() => {
         const handleResize = () => {
             setIsCommentOpen(false); // 화면 크기 바뀌면 댓글창 닫기
@@ -114,7 +116,8 @@ const VideoItem = ({board, isLoading}) => {
                     <video
                             ref={videoRef}
                             className="video_player"
-                            controls
+                            controls={isVideoReady}
+                            poster={videoLoadingImage}
                             muted
                             loop
                             playsInline
@@ -123,6 +126,8 @@ const VideoItem = ({board, isLoading}) => {
                                 e.target.src = "/fallback-video.mp4";
                                 e.target.alt = "비디오를 로드할 수 없습니다.";
                             }}
+                            onCanPlay={() => setIsVideoReady(true)} // 비디오 재생 가능해질 때 controls 보이기
+                            style={isLoading ? {pointerEvents: "none"} : {}}
                     >
                         <source
                                 src={import.meta.env.VITE_API_URL + video.attachFile.fileUrl}
@@ -137,7 +142,10 @@ const VideoItem = ({board, isLoading}) => {
                     </div>
                 </div>
 
-                <div className="video_side_buttons_wrapper">
+                <div
+                        className="video_side_buttons_wrapper"
+                        style={isLoading ? {pointerEvents: "none", opacity: 0.4} : {}}
+                >
                     <button className="video_side_buttons" aria-label="좋아요">
                         <img src={likeIcon} alt="좋아요"/>
                     </button>

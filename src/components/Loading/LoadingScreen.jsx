@@ -9,6 +9,7 @@ const LoadingScreen = () => {
                     justifyContent="center"
                     minHeight="100%" // 부모 높이에 맞춰서 중앙 정렬
                     width="100%"
+             
             >
                 <Box
                         display="flex"

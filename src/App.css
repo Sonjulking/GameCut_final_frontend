@@ -121,7 +121,7 @@ header {
     position: absolute;
     top: -1rem;
     left: 120%;
-    transform: translateX(-50%) ;
+    transform: translateX(-50%);
     display: none;
     width: 2.5em;
     z-index: 9999;
