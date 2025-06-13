@@ -68,7 +68,12 @@ const BoardWrite = () => {
             >
                 <Paper
                         elevation={6}
-                        sx={{bgcolor: "#1a1a1a", p: 4, borderRadius: 3}}
+                        sx={{
+                            bgcolor: "#1a1a1a",
+                            p: 4,
+                            borderRadius: 3,
+                            border: "1px solid #555"
+                        }}
                 >
                     <Typography
                             variant="h4"
@@ -113,8 +118,8 @@ const BoardWrite = () => {
                                     fullWidth
                                     sx={{
                                         fontWeight: "bold",
-                                        bgcolor: "#1976d2",
-                                        ":hover": {bgcolor: "#1565c0"}
+                                        bgcolor: "#1565c0",
+                                        ":hover": {bgcolor: "#90caf9"}
                                     }}
                             >
                                 등록하기

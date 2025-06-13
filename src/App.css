@@ -5,7 +5,7 @@
     --bg-color-dark: #121212;
     --header-bg: #1a1a1a;
     --sidebar-bg: #1f1f1f;
-    --comment-bg: #1f1f1f;
+    --comment-bg: #1a1a1a;
     --comment-item-bg: #2a2a2a;
     --input-bg: #2a2a2a;
     --border-color: #333;
@@ -143,6 +143,186 @@ header {
 .sidebar a:hover .sidebar_label {
     color: var(--link-color);
 }
+
+
+/* === 댓글 확장 스타일 === */
+.comment-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.comment-profile-img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #444;
+    margin-right: 0.75rem;
+}
+
+.comment-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.nickname {
+    font-weight: bold;
+    color: #f1f1f1;
+    margin-right: 0.25rem;
+}
+
+.comment_write_date {
+    font-size: 0.75rem;
+    color: #999;
+    margin-top: 2px;
+}
+
+.comment-content {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    color: var(--text-color-light);
+}
+
+.comment {
+    margin-bottom: 0.625rem;
+    padding: 0.625rem;
+    background-color: var(--comment-item-bg);
+    border-radius: 0.25rem;
+    border: 1px solid var(--border-color);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* === 댓글 확장 스타일 === */
+.comment-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.comment-profile-img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #444;
+    margin-right: 0.75rem;
+}
+
+.comment-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.nickname {
+    font-weight: bold;
+    color: #f1f1f1;
+    margin-right: 0.25rem;
+}
+
+.comment_write_date {
+    font-size: 0.75rem;
+    color: #999;
+    margin-top: 2px;
+}
+
+.comment-content {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    color: var(--text-color-light);
+}
+
+.comment {
+    margin-bottom: 0.625rem;
+    padding: 0.625rem;
+    background-color: var(--comment-item-bg);
+    border-radius: 0.25rem;
+    border: 1px solid var(--border-color);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.comment-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.comment-actions button {
+    background-color: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.3); /* 투명한 따봉 느낌 */
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.1s ease;
+}
+
+.comment-actions button:hover {
+    color: #90caf9;
+    transform: scale(1.1);
+}
+
+.comment-actions button:active {
+    transform: scale(0.95);
+}
+
+.comment-input {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.comment-input input {
+    flex: 1;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0.25rem;
+    background-color: var(--input-bg);
+    color: var(--text-color-light);
+    font-size: 0.9rem;
+}
+
+.comment-input input:focus {
+    outline: 1px solid #90caf9;
+}
+
+.comment-input button {
+    width: 2rem;
+    height: 2rem;
+    background-color: #42a5f5;
+    border: none;
+    border-radius: 0.25rem;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.comment-input button:hover {
+    background-color: #90caf9;
+}
+
 
 /* === 사이드바 열린/닫힌 상태 === */
 /* 데스크톱 (1025px 이상) */
@@ -421,6 +601,7 @@ header {
     padding: 0.625rem;
     background-color: var(--comment-item-bg);
     border-radius: 0.25rem;
+    border: 1px solid var(--border-color);
     animation: fadeIn 0.3s ease;
 }
 
@@ -437,7 +618,7 @@ header {
 
 .nickname {
     font-weight: bold;
-    color: var(--link-color);
+    color: #f1f1f1;
     margin-right: 0.25rem;
 }
 
@@ -464,13 +645,13 @@ header {
 }
 
 .comment-input input:focus {
-    outline: 2px solid var(--link-color);
+    outline: 1px solid #90caf9;
 }
 
 .comment-input button {
     width: 2rem;
     height: 2rem;
-    background-color: var(--link-color);
+    background-color: #42a5f5;
     border: none;
     border-radius: 0.25rem;
     color: white;
@@ -479,8 +660,9 @@ header {
     transition: background-color 0.2s ease;
 }
 
+
 .comment-input button:hover {
-    background-color: #45a049;
+    background-color: #90caf9;
 }
 
 /* === 데스크톱 (1025px 이상) 댓글 위치/크기 조정 === */

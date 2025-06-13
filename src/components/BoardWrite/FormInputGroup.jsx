@@ -18,9 +18,9 @@ const FormInputGroup = ({form, handleChange}) => (
                             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {borderColor: "#1976d2"}
                         }}
                 >
-                    <MenuItem value={1}>자유게시판</MenuItem>
-                    <MenuItem value={2}>공지사항</MenuItem>
-                    <MenuItem value={3}>유저영상</MenuItem>
+                    <MenuItem value={1}>자유 게시판</MenuItem>
+                    <MenuItem value={2}>공략 게시판</MenuItem>
+                    <MenuItem value={3}>영상 게시판</MenuItem>
                 </Select>
             </FormControl>
 

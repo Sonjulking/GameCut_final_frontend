@@ -5,7 +5,6 @@ const CommentSection = ({isOpen, comments, videoId, onClose, onAddComment}) => {
     const [inputText, setInputText] = useState("");
     const commentListRef = useRef(null);
 
-    // 댓글이 추가될 때마다 스크롤을 맨 아래로
     useEffect(() => {
         const listEl = commentListRef.current;
         if (listEl) {
@@ -21,7 +20,7 @@ const CommentSection = ({isOpen, comments, videoId, onClose, onAddComment}) => {
         }
     };
 
-    const handleKeyPress = e => {
+    const handleKeyPress = (e) => {
         if (e.key === "Enter") {
             handleAddComment();
         }
@@ -30,8 +29,7 @@ const CommentSection = ({isOpen, comments, videoId, onClose, onAddComment}) => {
     return (
             <div
                     id={`comments-for-video-${videoId}`}
-                    className="main_comment_wrapper"
-                    style={{display: isOpen ? "block" : "none"}}
+                    className={`main_comment_wrapper ${isOpen ? "comment-open" : ""}`}
             >
                 <div className="comment-title">
                     댓글
@@ -46,8 +44,25 @@ const CommentSection = ({isOpen, comments, videoId, onClose, onAddComment}) => {
                 <div className="comment-list" ref={commentListRef}>
                     {comments.map((c, idx) => (
                             <div className="comment" key={idx}>
-                                <span className="nickname">{c.user.userNickname}</span>: {c.commentContent}
-                                <span className="comment_write_date">  {new Date(c.commentCreateDate).toISOString().slice(0, 10)}</span>
+                                <div className="comment-header">
+                                    <img
+                                            //서버에서 불러오기
+                                            src="/src/assets/img/main/icons/admin.jpg"
+                                            alt="profile"
+                                            className="comment-profile-img"
+                                    />
+                                    <div className="comment-info">
+                                        <span className="nickname">{c.user.userNickname}</span>
+                                        <span className="comment_write_date">
+                  {new Date(c.commentCreateDate).toISOString().slice(0, 16)}
+                </span>
+                                    </div>
+                                </div>
+                                <p className="comment-content">{c.commentContent}</p>
+                                <div className="comment-actions">
+                                    <button className="like-button">👍</button>
+                                    <button className="dislike-button">👎</button>
+                                </div>
                             </div>
                     ))}
                 </div>
@@ -57,12 +72,10 @@ const CommentSection = ({isOpen, comments, videoId, onClose, onAddComment}) => {
                             placeholder="댓글쓰기"
                             className="comment-input-field"
                             value={inputText}
-                            onChange={e => setInputText(e.target.value)}
+                            onChange={(e) => setInputText(e.target.value)}
                             onKeyPress={handleKeyPress}
                     />
-                    <button className="comment-submit-button" onClick={handleAddComment}>
-                        ↑
-                    </button>
+                    <button className="comment-submit-button">⮝</button>
                 </div>
             </div>
     );
