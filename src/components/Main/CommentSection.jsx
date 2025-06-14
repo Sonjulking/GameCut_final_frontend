@@ -4,6 +4,8 @@ import {Button} from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
+import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
 import axios from "axios";
 
 const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComment}) => {
@@ -11,7 +13,6 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
         boardNo: boardNo,
         commentContent: "",
     });
-    const [inputText, setInputText] = useState("");
     const commentListRef = useRef(null);
 
     useEffect(() => {
@@ -78,8 +79,26 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
                                 </div>
                                 <p className="comment-content">{c.commentContent}</p>
                                 <div className="comment-actions">
-                                    <button className="like-button">👍</button>
-                                    <button className="dislike-button">👎</button>
+                                    <Button
+                                            variant="text"
+                                            sx={{
+                                                color: "white", // 흰색 따봉
+                                                minWidth: 0,
+                                                padding: "4px",
+                                            }}
+                                    >
+                                        <ThumbUpAltOutlinedIcon />
+                                    </Button>
+                                    <Button
+                                            variant="text"
+                                            sx={{
+                                                color: "white",
+                                                minWidth: 0,
+                                                padding: "4px",
+                                            }}
+                                    >
+                                        <ThumbDownAltOutlinedIcon />
+                                    </Button>
                                 </div>
                             </div>
                     ))}
