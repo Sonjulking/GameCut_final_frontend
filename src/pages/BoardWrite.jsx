@@ -13,11 +13,17 @@ const BoardWrite = () => {
         boardTypeNo: 1,
         userNo: 1
     });
+    //비디오 파일
     const [videoFile, setVideoFile] = useState(null);
+    //자동 섬네일
     const [autoThumbnailFile, setAutoThumbnailFile] = useState(null);
+    //사용자 지정 섬네일
     const [customThumbnailFile, setCustomThumbnailFile] = useState(null);
+    //섬네일  모드
     const [thumbnailMode, setThumbnailMode] = useState("auto");
+    //사진 파일
     const [photoFiles, setPhotoFiles] = useState([]);
+    //로딩
     const [uploadProgress, setUploadProgress] = useState(0);
 
     const handleChange = (e) => {
@@ -33,14 +39,19 @@ const BoardWrite = () => {
         formData.append("boardTypeNo", form.boardTypeNo);
         formData.append("userNo", form.userNo);
 
+        //영상 게시판일때
         if (form.boardTypeNo === 3) {
-            if (videoFile) formData.append("file", videoFile);
+            if (videoFile) {
+                formData.append("file", videoFile);
+            }
+
+            //썸네일 처리
             if (thumbnailMode === "auto" && autoThumbnailFile) {
                 formData.append("thumbnail", autoThumbnailFile);
             } else if (thumbnailMode === "custom" && customThumbnailFile) {
                 formData.append("thumbnail", customThumbnailFile);
             }
-        } else {
+        } else { //사진 처리
             photoFiles.forEach((file) => formData.append("file", file));
         }
 

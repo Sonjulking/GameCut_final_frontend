@@ -1,0 +1,46 @@
+/* toast-editor-dark.css - Toast UI Editor 다크 테마 완전 보정 */
+
+.toastui-editor-contents {
+    color: #fff;
+    background-color: #2b2b2b;
+}
+
+/* 전체 UI 배경 */
+.toastui-editor-defaultUI {
+    background-color: #2b2b2b;
+    color: #fff;
+}
+
+/* 프리뷰 영역 */
+.toastui-editor-md-preview,
+.toastui-editor-md-split {
+    background-color: #1f1f1f;
+    color: #eee;
+}
+
+/* 툴바 */
+.toastui-editor-toolbar {
+    background-color: #2b2b2b;
+    border-color: #444;
+    color: #ccc;
+}
+
+/* WYSIWYG 입력 영역 */
+.toastui-editor-ww-container {
+    background-color: #2b2b2b;
+    color: #fff;
+}
+
+/* 실제 입력되는 영역 내부 텍스트 */
+.toastui-editor-ww-container .ProseMirror {
+    color: #fff;
+}
+
+/* 제목, 본문 등 요소들의 기본색 보정 */
+.toastui-editor-ww-container h1,
+.toastui-editor-ww-container h2,
+.toastui-editor-ww-container h3,
+.toastui-editor-ww-container p,
+.toastui-editor-ww-container li {
+    color: #fff;
+}
