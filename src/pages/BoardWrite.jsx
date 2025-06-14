@@ -1,17 +1,9 @@
+// /components/BoardWrite/BoardWrite.jsx
 import React, {useState} from "react";
-import {
-    Box,
-    Button,
-    Container,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    TextField,
-    Typography,
-    Stack
-} from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import {Container, Paper, Typography, Button, Stack, Box} from "@mui/material";
+import FormInputGroup from "../components/BoardWrite/FormInputGroup.jsx";
+import VideoUploader from "../components/BoardWrite/VideoUploader";
+import PhotoUploader from "../components/BoardWrite/PhotoUploader";
 import axios from "axios";
 
 const BoardWrite = () => {
@@ -19,10 +11,20 @@ const BoardWrite = () => {
         boardTitle: "",
         boardContent: "",
         boardTypeNo: 1,
-        userNo: 1 // 로그인 상태에서 받아야 함
+        userNo: 1
     });
+    //비디오 파일
     const [videoFile, setVideoFile] = useState(null);
+    //자동 섬네일
+    const [autoThumbnailFile, setAutoThumbnailFile] = useState(null);
+    //사용자 지정 섬네일
+    const [customThumbnailFile, setCustomThumbnailFile] = useState(null);
+    //섬네일  모드
+    const [thumbnailMode, setThumbnailMode] = useState("auto");
+    //사진 파일
     const [photoFiles, setPhotoFiles] = useState([]);
+    //로딩
+    const [uploadProgress, setUploadProgress] = useState(0);
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -37,155 +39,108 @@ const BoardWrite = () => {
         formData.append("boardTypeNo", form.boardTypeNo);
         formData.append("userNo", form.userNo);
 
-        if (videoFile) formData.append("video", videoFile);
-        photoFiles.forEach((file) => formData.append("photos", file));
+        //영상 게시판일때
+        if (form.boardTypeNo === 3) {
+            if (videoFile) {
+                formData.append("file", videoFile);
+            }
+
+            //썸네일 처리
+            if (thumbnailMode === "auto" && autoThumbnailFile) {
+                formData.append("thumbnail", autoThumbnailFile);
+            } else if (thumbnailMode === "custom" && customThumbnailFile) {
+                formData.append("thumbnail", customThumbnailFile);
+            }
+        } else { //사진 처리
+            photoFiles.forEach((file) => formData.append("file", file));
+        }
 
         try {
             await axios.post(`${import.meta.env.VITE_API_URL}/board`, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data"
+                headers: {"Content-Type": "multipart/form-data"},
+                //업로드 진행률을 추적하는 콜백함수
+                onUploadProgress: (e) => {
+                    //퍼센트로 변환
+                    const percent = Math.round((e.loaded * 100) / e.total);
+                    //계산된 퍼센트를 state에 저장
+                    setUploadProgress(percent);
                 }
             });
-            alert("게시글이 등록되었습니다!");
+            alert("게시글이 등록되었습니다.");
         } catch (err) {
             console.error(err);
-            alert("등록 실패");
+            alert("게시글이 등록실패했습니다.");
+        } finally {
+            setUploadProgress(0);
         }
     };
 
     return (
             <Container
                     maxWidth="sm"
-                    sx={{
-                        mt: 5,
-                        backgroundColor: "#121212", // 다크 배경
-                        padding: 4,
-                        borderRadius: 2,
-                        color: "#fff",
-                        boxShadow: 3
-                    }}
+                    sx={{mt: 5, pb: 10}}
             >
-                <Typography variant="h4" gutterBottom color="white">
-                    게시글 작성
-                </Typography>
-                <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 2}}>
-                    <Stack spacing={2}>
-                        <TextField
-                                name="boardTitle"
-                                label="제목"
-                                value={form.boardTitle}
-                                onChange={handleChange}
-                                fullWidth
-                                required
-                                InputLabelProps={{ style: { color: '#ccc' } }}
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        '& fieldset': {
-                                            borderColor: '#bbb', // 기본 테두리
-                                        },
-                                        '&:hover fieldset': {
-                                            borderColor: '#ddd', // 호버 시 밝게
-                                        },
-                                        '&.Mui-focused fieldset': {
-                                            borderColor: '#fff', // 포커스 시 더 밝게
-                                        },
-                                        color: '#fff', // 텍스트 색상
-                                    }
-                                }}
-                        />
+                <Paper
+                        elevation={6}
+                        sx={{
+                            bgcolor: "#1a1a1a",
+                            p: 4,
+                            borderRadius: 3,
+                            border: "1px solid #555"
+                        }}
+                >
+                    <Typography
+                            variant="h4"
+                            gutterBottom
+                            color="white"
+                            fontWeight="bold"
+                    >
+                        게시글 작성
+                    </Typography>
 
-                        <TextField
-                                name="boardContent"
-                                label="내용"
-                                multiline
-                                rows={5}
-                                value={form.boardContent}
-                                onChange={handleChange}
-                                fullWidth
-                                required
-                                InputLabelProps={{ style: { color: '#ccc' } }}
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        '& fieldset': {
-                                            borderColor: '#bbb',
-                                        },
-                                        '&:hover fieldset': {
-                                            borderColor: '#ddd',
-                                        },
-                                        '&.Mui-focused fieldset': {
-                                            borderColor: '#fff',
-                                        },
-                                        color: '#fff',
-                                    }
-                                }}
-                        />
-
-                        <FormControl fullWidth>
-                            <InputLabel sx={{color: "#ccc"}}>게시판 타입</InputLabel>
-                            <Select
-                                    name="boardTypeNo"
-                                    value={form.boardTypeNo}
-                                    onChange={handleChange}
-                                    label="게시판 타입"
+                    <Box
+                            component="form"
+                            onSubmit={handleSubmit}
+                            noValidate
+                    >
+                        <Stack spacing={3}>
+                            <FormInputGroup
+                                    form={form}
+                                    handleChange={handleChange}
+                            />
+                            {form.boardTypeNo === 3 ? (
+                                    <VideoUploader
+                                            videoFile={videoFile}
+                                            setVideoFile={setVideoFile}
+                                            autoThumbnailFile={autoThumbnailFile}
+                                            setAutoThumbnailFile={setAutoThumbnailFile}
+                                            customThumbnailFile={customThumbnailFile}
+                                            setCustomThumbnailFile={setCustomThumbnailFile}
+                                            thumbnailMode={thumbnailMode}
+                                            setThumbnailMode={setThumbnailMode}
+                                            uploadProgress={uploadProgress}
+                                    />
+                            ) : (
+                                    <PhotoUploader
+                                            photoFiles={photoFiles}
+                                            setPhotoFiles={setPhotoFiles}
+                                    />
+                            )}
+                            <Button
+                                    type="submit"
+                                    variant="contained"
+                                    fullWidth
                                     sx={{
-                                        color: "#fff",
-                                        ".MuiOutlinedInput-notchedOutline": {
-                                            borderColor: "#555"
-                                        },
-                                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                            borderColor: "#888"
-                                        },
-                                        "&:hover .MuiOutlinedInput-notchedOutline": {
-                                            borderColor: "#aaa"
-                                        },
-                                        backgroundColor: "#1e1e1e"
+                                        fontWeight: "bold",
+                                        bgcolor: "#1565c0",
+                                        ":hover": {bgcolor: "#90caf9"}
                                     }}
                             >
-                                <MenuItem value={1}>자유게시판</MenuItem>
-                                <MenuItem value={2}>유저영상</MenuItem>
-                                <MenuItem value={3}>공지사항</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <Button
-                                variant="outlined"
-                                component="label"
-                                startIcon={<CloudUploadIcon/>}
-                                sx={{
-                                    color: "#ccc",
-                                    borderColor: "#555",
-                                    ":hover": {borderColor: "#888"}
-                                }}
-                        >
-                            비디오 업로드
-                            <input
-                                    type="file" hidden accept="video/*"
-                                    onChange={(e) => setVideoFile(e.target.files[0])}
-                            />
-                        </Button>
-                        <Button
-                                variant="outlined"
-                                component="label"
-                                startIcon={<CloudUploadIcon/>}
-                                sx={{
-                                    color: "#ccc",
-                                    borderColor: "#555",
-                                    ":hover": {borderColor: "#888"}
-                                }}
-                        >
-                            이미지 업로드 (다중 선택)
-                            <input
-                                    type="file" hidden multiple accept="image/*"
-                                    onChange={(e) => setPhotoFiles([...e.target.files])}
-                            />
-                        </Button>
-                        <Button
-                                variant="contained" type="submit" fullWidth
-                                sx={{backgroundColor: "#1976d2"}}
-                        >
-                            등록하기
-                        </Button>
-                    </Stack>
-                </Box>
+                                등록하기
+                            </Button>
+                        </Stack>
+                    </Box>
+                </Paper>
             </Container>
     );
 };

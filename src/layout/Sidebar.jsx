@@ -92,11 +92,11 @@ const Sidebar = () => {
                         <img
                                 src={profileIcon}
                                 className="sidebar_icons"
-                                alt="마이페이지"
+                                alt="프로필"
                         />
                         <img src={profileCaption} className="caption_image" alt="프로필 캡션"/>
                     </div>
-                    <span className="sidebar_label">마이페이지</span>
+                    <span className="sidebar_label">프로필</span>
                 </Link>
                 <Link to={"/friendManagement"} className="sidebar_item">
                     <div className="icon-wrapper">
@@ -110,7 +110,7 @@ const Sidebar = () => {
                                 alt="친구 관리 캡션"
                         />
                     </div>
-                    <span className="sidebar_label">마이페이지</span>
+                    <span className="sidebar_label">친구관리</span>
                 </Link>
                 <Link to={"/webGame"} className="sidebar_item">
                     <div className="icon-wrapper">
