@@ -7,6 +7,8 @@ import "../../styles/toast-editor-dark.css";
 
 const FormInputGroup = ({form, handleChange}) => {
     const editorRef = useRef();
+
+    
     return (
             <>
                 <FormControl

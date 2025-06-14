@@ -1,5 +1,9 @@
 // src/components/CommentSection.jsx
 import React, {useEffect, useRef, useState} from "react";
+import {Button} from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 const CommentSection = ({isOpen, comments, videoId, onClose, onAddComment}) => {
     const [inputText, setInputText] = useState("");
@@ -75,7 +79,20 @@ const CommentSection = ({isOpen, comments, videoId, onClose, onAddComment}) => {
                             onChange={(e) => setInputText(e.target.value)}
                             onKeyPress={handleKeyPress}
                     />
-                    <button className="comment-submit-button">⮝</button>
+                    {/*<button className="comment-submit-button">⮝</button>*/}
+                    <Button
+                            variant="outlined"
+                            onClick={handleAddComment}
+                            sx={{
+                                minWidth: "40px",
+                                height: "40px",
+                                padding: 0,
+                                color: "#90caf9",
+                                borderColor: "#90caf9",
+                            }}
+                    >
+                        <ArrowUpwardIcon fontSize="medium" />
+                    </Button>
                 </div>
             </div>
     );

@@ -58,15 +58,18 @@ const BoardWrite = () => {
         try {
             await axios.post(`${import.meta.env.VITE_API_URL}/board`, formData, {
                 headers: {"Content-Type": "multipart/form-data"},
+                //업로드 진행률을 추적하는 콜백함수
                 onUploadProgress: (e) => {
+                    //퍼센트로 변환
                     const percent = Math.round((e.loaded * 100) / e.total);
+                    //계산된 퍼센트를 state에 저장
                     setUploadProgress(percent);
                 }
             });
-            alert("게시글이 등록되었습니다!");
+            alert("게시글이 등록되었습니다.");
         } catch (err) {
             console.error(err);
-            alert("등록 실패");
+            alert("게시글이 등록실패했습니다.");
         } finally {
             setUploadProgress(0);
         }
