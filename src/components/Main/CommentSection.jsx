@@ -85,7 +85,7 @@ const CommentSection = ({isOpen, comments, videoId, onClose, onAddComment}) => {
                             onClick={handleAddComment}
                             sx={{
                                 minWidth: "40px",
-                                height: "40px",
+                                height: "20px",
                                 padding: 0,
                                 color: "#90caf9",
                                 borderColor: "#90caf9",
