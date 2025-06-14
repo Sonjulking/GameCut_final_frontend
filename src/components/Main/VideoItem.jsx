@@ -135,9 +135,27 @@ const VideoItem = ({board, isLoading}) => {
                         />
                         브라우저가 비디오 태그를 지원하지 않습니다.
                     </video>
-                    <div className="video_texts">
-                        <div className="video_title">{user.userName}</div>
+                    <div className="video_texts" style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                        {/* 유저 정보 (이미지 + 이름 한 줄) */}
+                        <div className="video_user_profile" style={{ display: "flex", alignItems: "center" }}>
+                            <img
+                                    src="/src/assets/img/main/icons/admin.jpg"
+                                    alt="프로필"
+                                    style={{
+                                        width: "36px",
+                                        height: "36px",
+                                        borderRadius: "50%",
+                                        objectFit: "cover",
+                                        marginRight: "8px",
+                                    }}
+                            />
+                            <span className="video_title">{user.userName}</span>
+                        </div>
+
+                        {/* 제목 한 줄 */}
                         <div className="video_title">제목 : {boardTitle}</div>
+
+                        {/* 내용 한 줄 */}
                         <div className="video_content">내용 : {boardContent}</div>
                     </div>
                 </div>
@@ -170,6 +188,7 @@ const VideoItem = ({board, isLoading}) => {
                 </div>
 
                 <CommentSection
+                        boardNo={board.boardNo}
                         isOpen={isCommentOpen}
                         comments={comments}
                         videoId={video.videoNo}

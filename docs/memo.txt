@@ -1,0 +1,5 @@
+UI 작성시 mui 사용 !
+무조건 반응형 처리 같이하기!
+
+npm install 버전 충돌시
+npm install —legacy-peer-deps
