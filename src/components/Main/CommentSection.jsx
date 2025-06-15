@@ -1,12 +1,13 @@
 // src/components/CommentSection.jsx
 import React, {useEffect, useRef, useState} from "react";
-import {Button} from "@mui/material";
+import {Button, IconButton} from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
 import axios from "axios";
+import CloseIcon from "@mui/icons-material/Close";
 
 const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComment}) => {
     const [inputComment, setInputComment] = useState({
@@ -46,13 +47,9 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
             >
                 <div className="comment-title">
                     댓글
-                    <span
-                            style={{float: "right", cursor: "pointer", padding: "0.5rem"}}
-                            className="comment-close-button"
-                            onClick={onClose}
-                    >
-          X
-        </span>
+                    <IconButton onClick={onClose} size="small" sx={{ color: "white" }}>
+                        <CloseIcon />
+                    </IconButton>
                 </div>
                 <div
                         className="comment-list"

@@ -14,6 +14,10 @@ const VideoList = () => {
     // IntersectionObserver를 저장할 ref (재사용을 위해 메모리에 보관)
     const observer = useRef(null);
 
+
+    //봤던 영상 제외하려는 state
+    const [excludeBoardNos, setExcludeBoardNos] = useState([]);
+
     //게시글을 서버에서 가져오는 함수
     //useCallback을 사용해서 fetchNextBoard 함수가 매번 새로 생성되지 않도록 함
     //useCallback은 의존성 값이 바뀔 때만 함수를 새로 생성하여, 동일 함수 참조를 유지하게 해주는 Hook
@@ -26,8 +30,8 @@ const VideoList = () => {
             // 1.5초 지연 시간
             await new Promise(resolve => setTimeout(resolve, 1500));
 
-            //서버에다가 get요청
-            const res = await axios.get(import.meta.env.VITE_API_URL + "/board/one");
+            //서버에다가 post요청
+            const res = await axios.post(import.meta.env.VITE_API_URL + "/board/one", excludeBoardNos);
             const data = res.data;
 
             //받아온 데이터가 없으면 마지막 게시글이라고 표시
@@ -49,7 +53,7 @@ const VideoList = () => {
                     return updated;
                 }
             });
-
+            setExcludeBoardNos(prev => [...prev, ...data.map(item => item.boardNo)]);
         } catch (err) {
             console.error("게시글 로딩 실패:", err);
         } finally {
