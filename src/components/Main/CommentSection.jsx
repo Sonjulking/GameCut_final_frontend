@@ -4,8 +4,8 @@ import {Button} from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
-import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
+import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
 import axios from "axios";
 
 const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComment}) => {
@@ -25,8 +25,8 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
     const handleAddComment = () => {
         axios.post(`${import.meta.env.VITE_API_URL}/comment`, inputComment)
                 .then(res => {
-                    onAddComment(res.data); // ✅ 댓글 추가!
-                    setInputComment({ boardNo, commentContent: "" }); // 입력창 초기화
+                    onAddComment(res.data); // 댓글 추가!
+                    setInputComment({boardNo, commentContent: ""}); // 입력창 초기화
                 })
                 .catch(err => {
                     console.error("댓글 등록 실패", err);
@@ -87,7 +87,7 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
                                                 padding: "4px",
                                             }}
                                     >
-                                        <ThumbUpAltOutlinedIcon />
+                                        <ThumbUpAltOutlinedIcon/>
                                     </Button>
                                     <Button
                                             variant="text"
@@ -97,7 +97,7 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
                                                 padding: "4px",
                                             }}
                                     >
-                                        <ThumbDownAltOutlinedIcon />
+                                        <ThumbDownAltOutlinedIcon/>
                                     </Button>
                                 </div>
                             </div>
