@@ -7,6 +7,8 @@ import LoadingScreen from "../components/Loading/LoadingScreen.jsx";
 import ErrorPage from "../pages/Error.jsx";
 import BoardList from "../pages/BoardList.jsx";
 import BoardDetail from "../pages/BoardDetail.jsx";
+import MyPage from "../pages/MyPage.jsx";
+import MyBoard from "../pages/MyBoard.jsx";
 const delayImport = (importFunc, delay = 5000) => {
   return new Promise((resolve) => {
     setTimeout(() => resolve(importFunc()), delay);
@@ -28,6 +30,8 @@ const router = createBrowserRouter([
       { path: "boardList", element: <BoardList /> },
       { path: "board/detail/:boardNo", element: <BoardDetail /> },
       { path: "test", element: <Test /> },
+      { path: "myPage", element: <MyPage /> },
+      { path: "myBoard", element: <MyBoard /> },
       //404에러
       { path: "*", element: <ErrorPage /> },
     ],

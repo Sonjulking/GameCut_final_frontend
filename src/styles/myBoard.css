@@ -1,0 +1,817 @@
+/* MyBoard.css - BoardList.css 기반 + 마이페이지 전용 스타일 */
+
+/* =========================== */
+/* 마이페이지 컨테이너 (기존 유지) */
+/* =========================== */
+.mypage-container {
+  min-height: 100vh;
+  background-color: #0d1117;
+  color: #e6edf3;
+  padding: 20px;
+}
+
+.mypage-content {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.content-wrapper {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.mypage-user-section {
+  flex: 1;
+  background-color: #161b22;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #30363d;
+}
+
+/* 마이페이지 안에서 board-container 스타일 재정의 */
+.mypage-user-section .board-container {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  min-height: auto;
+}
+
+/* =========================== */
+/* BoardList.css 완전 복사 */
+/* =========================== */
+
+/* 전체 컨테이너 */
+.board-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #0d1117;
+  color: #e6edf3;
+  min-height: 100vh;
+}
+
+/* 헤더 영역 */
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #30363d;
+}
+
+/* 필터와 글쓰기 버튼 컨테이너 */
+.filter-and-write-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: #161b22;
+  border-radius: 12px;
+  border: 1px solid #30363d;
+  gap: 20px;
+}
+
+/* 타입 필터 컨테이너 */
+.type-filter-container {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.type-filter-btn {
+  padding: 10px 20px;
+  border: 2px solid #30363d;
+  border-radius: 25px;
+  background-color: transparent;
+  color: #8b949e;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.type-filter-btn:hover {
+  background-color: #21262d;
+  color: #e6edf3;
+  border-color: #58a6ff;
+  transform: translateY(-2px);
+}
+
+.type-filter-btn.active {
+  background: linear-gradient(135deg, #238636, #2ea043);
+  color: white;
+  border-color: #238636;
+  box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4);
+}
+
+.active-count {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* 글쓰기 버튼 */
+.write-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #1f6feb, #388bfd);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(31, 111, 235, 0.4);
+  white-space: nowrap;
+}
+
+.write-btn:hover {
+  background: linear-gradient(135deg, #0969da, #1f6feb);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(31, 111, 235, 0.6);
+}
+
+.write-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(31, 111, 235, 0.4);
+}
+
+.write-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.write-btn:hover svg {
+  transform: rotate(15deg);
+}
+
+.board-title-header {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #f0f6fc;
+}
+
+/* 토글 버튼 영역 */
+.view-toggle {
+  display: flex;
+  gap: 8px;
+  background-color: #21262d;
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid #30363d;
+}
+
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 6px;
+  background-color: transparent;
+  color: #7d8590;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.toggle-btn:hover {
+  background-color: #30363d;
+  color: #e6edf3;
+}
+
+.toggle-btn.active {
+  background-color: #238636;
+  color: white;
+  box-shadow: 0 2px 8px rgba(35, 134, 54, 0.4);
+}
+
+.toggle-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.toggle-btn:hover svg {
+  transform: scale(1.1);
+}
+
+/* 컨텐츠 영역 */
+.board-content {
+  min-height: 400px;
+}
+
+/* =========================== */
+/* 리스트 뷰 스타일 */
+/* =========================== */
+.mypage_board_table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #161b22;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  border: 1px solid #30363d;
+}
+
+.mypage_board_table thead {
+  background-color: #21262d;
+}
+
+.mypage_board_table th {
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #f0f6fc;
+  border-bottom: 2px solid #30363d;
+  font-size: 14px;
+}
+
+.mypage_board_table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid #30363d;
+  color: #e6edf3;
+  font-size: 14px;
+}
+
+.mypage_board_table tbody tr:hover {
+  background-color: #21262d;
+  transition: all 0.2s ease;
+}
+
+.mypage_board_table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.title_cell {
+  max-width: 300px;
+}
+
+.board_title_link {
+  cursor: pointer;
+  color: #58a6ff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.board_title_link:hover {
+  color: #79c0ff;
+  text-decoration: underline;
+}
+
+.mypage_empty_row td {
+  text-align: center;
+  padding: 60px 20px;
+  color: #7d8590;
+  font-size: 16px;
+}
+
+/* 타입 배지 스타일 - boardTypeNo 기반 */
+.board-type-badge {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  min-width: 40px;
+  max-width: 50px;
+  display: inline-block;
+}
+
+.board-type-badge.type-1 {
+  background-color: #1f6feb;
+  color: white;
+}
+
+.board-type-badge.type-2 {
+  background-color: #238636;
+  color: white;
+}
+
+.board-type-badge.type-3 {
+  background-color: #da3633;
+  color: white;
+}
+
+/* =========================== */
+/* 카드 뷰 스타일 */
+/* =========================== */
+.board-card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.board-card {
+  background: #161b22;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #30363d;
+  position: relative;
+}
+
+.board-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  border-color: #58a6ff;
+}
+
+.thumbnail-container {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  background-color: #21262d;
+  position: relative;
+}
+
+.board-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  filter: brightness(0.9);
+}
+
+.board-card:hover .board-thumbnail {
+  transform: scale(1.05);
+  filter: brightness(1);
+}
+
+/* 카드 타입 배지 - boardTypeNo 기반 */
+.card-type-badge {
+  position: absolute;
+  top: 12px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: auto;
+  max-width: 60px;
+  text-align: center;
+}
+
+.card-type-badge.type-1 {
+  background-color: rgba(31, 111, 235, 0.9);
+  color: white;
+}
+
+.card-type-badge.type-2 {
+  background-color: rgba(35, 134, 54, 0.9);
+  color: white;
+}
+
+.card-type-badge.type-3 {
+  background-color: rgba(218, 54, 51, 0.9);
+  color: white;
+}
+
+.board-info {
+  padding: 16px;
+}
+
+.board-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f0f6fc;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.board-title:hover {
+  color: #58a6ff;
+}
+
+.board-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.board-author {
+  font-size: 14px;
+  color: #8b949e;
+  margin: 0;
+  font-weight: 500;
+}
+
+.board-stats {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #7d8590;
+}
+
+.board-views,
+.board-likes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.board-views::before {
+  content: "👁";
+  font-size: 12px;
+}
+
+.board-likes::before {
+  content: "💚";
+  font-size: 12px;
+}
+
+.board-date {
+  font-size: 12px;
+  color: #656d76;
+  margin: 0;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: #7d8590;
+  font-size: 16px;
+  background: #161b22;
+  border-radius: 12px;
+  border: 1px dashed #30363d;
+}
+
+.write-first-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #238636, #2ea043);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4);
+  margin-top: 16px;
+}
+
+.write-first-btn:hover {
+  background: linear-gradient(135deg, #2ea043, #238636);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(35, 134, 54, 0.6);
+}
+
+/* =========================== */
+/* 내 게시글 전용 추가 스타일 */
+/* =========================== */
+
+/* 테이블의 액션 버튼들 */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.edit-btn,
+.delete-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  min-width: 50px;
+}
+
+.edit-btn {
+  background-color: transparent;
+  border-color: #238636;
+  color: #238636;
+}
+
+.edit-btn:hover {
+  background-color: #238636;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(35, 134, 54, 0.3);
+}
+
+.delete-btn {
+  background-color: transparent;
+  border-color: #da3633;
+  color: #da3633;
+}
+
+.delete-btn:hover {
+  background-color: #da3633;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(218, 54, 51, 0.3);
+}
+
+/* 카드 위에 표시되는 수정/삭제 버튼 */
+.card-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+}
+
+.board-card:hover .card-actions {
+  opacity: 1;
+}
+
+.card-edit-btn,
+.card-delete-btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.card-edit-btn {
+  background-color: rgba(35, 134, 54, 0.9);
+  color: white;
+}
+
+.card-edit-btn:hover {
+  background-color: rgba(35, 134, 54, 1);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4);
+}
+
+.card-delete-btn {
+  background-color: rgba(218, 54, 51, 0.9);
+  color: white;
+}
+
+.card-delete-btn:hover {
+  background-color: rgba(218, 54, 51, 1);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(218, 54, 51, 0.4);
+}
+
+/* 로딩 스피너 */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #7d8590;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #30363d;
+  border-top: 4px solid #58a6ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================== */
+/* 글로우 효과 및 추가 시각적 효과 */
+/* =========================== */
+
+/* 카드 호버 시 글로우 효과 */
+.board-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    rgba(88, 166, 255, 0.03) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  border-radius: 12px;
+}
+
+.board-card:hover::before {
+  opacity: 1;
+}
+
+/* 토글 버튼 글로우 효과 */
+.toggle-btn.active {
+  box-shadow: 0 2px 8px rgba(35, 134, 54, 0.4), 0 0 0 1px rgba(35, 134, 54, 0.3);
+}
+
+/* 테이블 행 호버 효과 개선 */
+.mypage_board_table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.mypage_board_table tbody tr:hover {
+  background-color: #21262d;
+  transform: scale(1.002);
+}
+
+/* =========================== */
+/* 반응형 디자인 */
+/* =========================== */
+@media (max-width: 768px) {
+  .content-wrapper {
+    flex-direction: column;
+  }
+
+  .board-container {
+    padding: 16px;
+  }
+
+  .board-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .board-title-header {
+    font-size: 24px;
+    text-align: center;
+  }
+
+  .view-toggle {
+    align-self: center;
+  }
+
+  /* 필터와 글쓰기 반응형 */
+  .filter-and-write-container {
+    flex-direction: column;
+    gap: 16px;
+    padding: 12px;
+  }
+
+  .type-filter-container {
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .type-filter-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .write-btn {
+    align-self: center;
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+
+  /* 카드 뷰 반응형 */
+  .board-card-container {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .thumbnail-container {
+    height: 160px;
+  }
+
+  .board-info {
+    padding: 12px;
+  }
+
+  .board-title {
+    font-size: 15px;
+  }
+
+  /* 테이블 반응형 */
+  .mypage_board_table {
+    font-size: 12px;
+  }
+
+  .mypage_board_table th,
+  .mypage_board_table td {
+    padding: 12px 8px;
+  }
+
+  .board-type-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+    min-width: 40px;
+  }
+
+  /* 액션 버튼 반응형 */
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    font-size: 11px;
+    padding: 4px 8px;
+    min-width: 40px;
+  }
+
+  /* 카드 액션 버튼 반응형 */
+  .card-actions {
+    position: relative;
+    top: auto;
+    right: auto;
+    opacity: 1;
+    justify-content: center;
+    margin-top: 8px;
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .board-card-container {
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+
+  .thumbnail-container {
+    height: 200px;
+  }
+
+  /* 테이블을 모바일에서 스크롤 가능하게 */
+  .board-content {
+    overflow-x: auto;
+  }
+
+  .mypage_board_table {
+    min-width: 600px;
+  }
+
+  /* 테이블에서 일부 컬럼 숨기기 */
+  .mypage_board_table th:nth-child(1),
+  .mypage_board_table td:nth-child(1),
+  .mypage_board_table th:nth-child(4),
+  .mypage_board_table td:nth-child(4),
+  .mypage_board_table th:nth-child(5),
+  .mypage_board_table td:nth-child(5) {
+    display: none;
+  }
+}
+
+/* =========================== */
+/* 스크롤바 다크모드 스타일 */
+/* =========================== */
+.board-content::-webkit-scrollbar {
+  height: 8px;
+}
+
+.board-content::-webkit-scrollbar-track {
+  background: #21262d;
+  border-radius: 4px;
+}
+
+.board-content::-webkit-scrollbar-thumb {
+  background: #656d76;
+  border-radius: 4px;
+}
+
+.board-content::-webkit-scrollbar-thumb:hover {
+  background: #8b949e;
+}
