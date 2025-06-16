@@ -25,6 +25,7 @@ const router = createBrowserRouter([
       { path: "boardWrite", element: <BoardWrite /> },
       { path: "boardList", element: <BoardList /> },
       { path: "test", element: <Test /> },
+      { path: "boardList", element: <BoardList /> },
       //404에러
       { path: "*", element: <ErrorPage /> },
     ],
