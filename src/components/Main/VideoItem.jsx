@@ -17,6 +17,7 @@ const VideoItem = ({board, isLoading}) => {
         boardContent,
         user,
         video,
+        photos,
         comments: initialComments,
     } = board;
     //video 태그를 직접 조작하기위해  useRef() 사용
@@ -131,7 +132,11 @@ const VideoItem = ({board, isLoading}) => {
                             ref={videoRef}
                             className="video_player"
                             controls={isVideoReady}
-                            poster={videoLoadingImage}
+                            poster={
+                                photos[0]?.attachFile?.fileUrl
+                                        ? import.meta.env.VITE_API_URL + photos[0].attachFile.fileUrl
+                                        : videoLoadingImage
+                            }
                             muted
                             loop
                             playsInline
@@ -177,6 +182,7 @@ const VideoItem = ({board, isLoading}) => {
 
                         {/* 내용 한 줄 */}
                         <div className="video_content">내용 : {boardContent}</div>
+                        <div className="video_content">포토: {photos[0]?.attachFile.fileUrl}</div>
                     </div>
                 </div>
 
