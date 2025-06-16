@@ -121,11 +121,14 @@ const BoardWrite = () => {
                                             uploadProgress={uploadProgress}
                                     />
                             ) : (
-                                    <PhotoUploader
-                                            photoFiles={photoFiles}
-                                            setPhotoFiles={setPhotoFiles}
-                                    />
+                              <>
+                              </>
                             )}
+                     {/*       <PhotoUploader
+                                    photoFiles={photoFiles}
+                                    setPhotoFiles={setPhotoFiles}
+                            />
+                        */}
                             <Button
                                     type="submit"
                                     variant="contained"

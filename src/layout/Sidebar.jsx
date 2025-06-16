@@ -22,7 +22,6 @@ import seasonRankingCaption from "../assets/img/main/captions/season_ranking_cap
 import settingIcon from "../assets/img/main/icons/setting_icon.png";
 import settingCaption from "../assets/img/main/captions/setting_caption.png";
 
-
 import {Link} from "react-router-dom";
 
 const Sidebar = () => {
@@ -36,7 +35,8 @@ const Sidebar = () => {
             setIsOpen((prev) => !prev);
         };
 
-        if (toggleBtn) { //토글버튼이 존재한다면
+        if (toggleBtn) {
+            //토글버튼이 존재한다면
             //버튼에 click 이벤트 등록
             toggleBtn.addEventListener("click", handleToggle);
         }
@@ -48,7 +48,10 @@ const Sidebar = () => {
             //toggleBtn이 존재할때
             //!toggleBtn.contains(e.target) : 사용자가 클릭한 요소가 toggleBtn 내부에 포함되지 않는다면
             if (
-                    sidebarEl && !sidebarEl.contains(e.target) && toggleBtn && !toggleBtn.contains(e.target)
+                    sidebarEl &&
+                    !sidebarEl.contains(e.target) &&
+                    toggleBtn &&
+                    !toggleBtn.contains(e.target)
             ) {
                 setIsOpen(false);
             }
@@ -75,26 +78,21 @@ const Sidebar = () => {
                     </div>
                     <span className="sidebar_label">홈</span>
                 </Link>
-                <Link to={"/test"} className="sidebar_item">
+                <Link to={"/boardList"} className="sidebar_item">
                     <div className="icon-wrapper">
-                        <img
-                                src={boardViewIcon}
-                                className="sidebar_icons"
-                                alt="게시판"
-                        />
+                        <img src={boardViewIcon} className="sidebar_icons" alt="게시판"/>
                         <img src={boardCaption} className="caption_image" alt="게시판 캡션"/>
                     </div>
                     <span className="sidebar_label">게시판</span>
-
                 </Link>
                 <Link to={"/profile"} className="sidebar_item">
                     <div className="icon-wrapper">
+                        <img src={profileIcon} className="sidebar_icons" alt="프로필"/>
                         <img
-                                src={profileIcon}
-                                className="sidebar_icons"
-                                alt="프로필"
+                                src={profileCaption}
+                                className="caption_image"
+                                alt="프로필 캡션"
                         />
-                        <img src={profileCaption} className="caption_image" alt="프로필 캡션"/>
                     </div>
                     <span className="sidebar_label">프로필</span>
                 </Link>
@@ -106,7 +104,8 @@ const Sidebar = () => {
                                 alt="친구 관리"
                         />
                         <img
-                                src={friendManagementCaption} className="caption_image"
+                                src={friendManagementCaption}
+                                className="caption_image"
                                 alt="친구 관리 캡션"
                         />
                     </div>
@@ -114,13 +113,10 @@ const Sidebar = () => {
                 </Link>
                 <Link to={"/webGame"} className="sidebar_item">
                     <div className="icon-wrapper">
+                        <img src={webGameIcon} className="sidebar_icons" alt="웹 게임"/>
                         <img
-                                src={webGameIcon}
-                                className="sidebar_icons"
-                                alt="웹 게임"
-                        />
-                        <img
-                                src={webGameCaption} className="caption_image"
+                                src={webGameCaption}
+                                className="caption_image"
                                 alt="웹 게임 캡션"
                         />
                     </div>
@@ -134,7 +130,8 @@ const Sidebar = () => {
                                 alt="시즌 랭킹"
                         />
                         <img
-                                src={seasonRankingCaption} className="caption_image"
+                                src={seasonRankingCaption}
+                                className="caption_image"
                                 alt="시즌 랭킹 캡션"
                         />
                     </div>
@@ -142,15 +139,8 @@ const Sidebar = () => {
                 </Link>
                 <Link to={"/settings"} className="sidebar_item">
                     <div className="icon-wrapper">
-                        <img
-                                src={settingIcon}
-                                className="sidebar_icons"
-                                alt="설정"
-                        />
-                        <img
-                                src={settingCaption} className="caption_image"
-                                alt="설정 캡션"
-                        />
+                        <img src={settingIcon} className="sidebar_icons" alt="설정"/>
+                        <img src={settingCaption} className="caption_image" alt="설정 캡션"/>
                     </div>
                     <span className="sidebar_label">설정</span>
                 </Link>

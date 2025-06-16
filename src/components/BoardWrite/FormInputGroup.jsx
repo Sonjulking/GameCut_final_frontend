@@ -1,20 +1,27 @@
-// /components/BoardWrite/FormInputGroup.jsx
-import React, {useRef} from "react";
-import {FormControl, InputLabel, MenuItem, Select, TextField} from "@mui/material";
+import React, {useEffect, useRef} from "react";
+import {
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
+} from "@mui/material";
 import {Editor} from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import "../../styles/toast-editor-dark.css";
+import axios from "axios"; // 이미지 업로드에 필요
 
 const FormInputGroup = ({form, handleChange}) => {
     const editorRef = useRef(null);
-
+    useEffect(() => {
+        if (editorRef.current && !form.boardContent) {
+            editorRef.current.getInstance().setHTML("");
+        }
+    }, []);
 
     return (
             <>
-                <FormControl
-                        fullWidth
-                        sx={{mb: 3}}
-                >
+                <FormControl fullWidth sx={{mb: 3}}>
                     <InputLabel sx={{color: "#ccc"}}>게시판 타입</InputLabel>
                     <Select
                             name="boardTypeNo"
@@ -26,7 +33,9 @@ const FormInputGroup = ({form, handleChange}) => {
                                 backgroundColor: "#2b2b2b",
                                 "& .MuiOutlinedInput-notchedOutline": {borderColor: "#555"},
                                 "&:hover .MuiOutlinedInput-notchedOutline": {borderColor: "#999"},
-                                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {borderColor: "#1976d2"}
+                                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: "#1976d2",
+                                },
                             }}
                     >
                         <MenuItem value={1}>자유 게시판</MenuItem>
@@ -47,17 +56,18 @@ const FormInputGroup = ({form, handleChange}) => {
                             "& .MuiOutlinedInput-root": {
                                 "& fieldset": {borderColor: "#555"},
                                 "&:hover fieldset": {borderColor: "#999"},
-                                "&.Mui-focused fieldset": {borderColor: "#1976d2"}
-                            }
+                                "&.Mui-focused fieldset": {borderColor: "#1976d2"},
+                            },
                         }}
                 />
 
-                {form.boardTypeNo === 3 ? <TextField
+                {form.boardTypeNo === 3 ? (
+                        <TextField
                                 name="boardContent"
                                 label="내용"
                                 multiline
                                 rows={4}
-                                value={form.boardContent}
+                                value={form.boardContent?.trim() === "<p><br></p>" ? "" : form.boardContent}
                                 onChange={handleChange}
                                 required
                                 InputLabelProps={{style: {color: "#ccc"}}}
@@ -66,25 +76,25 @@ const FormInputGroup = ({form, handleChange}) => {
                                     "& .MuiOutlinedInput-root": {
                                         "& fieldset": {borderColor: "#555"},
                                         "&:hover fieldset": {borderColor: "#999"},
-                                        "&.Mui-focused fieldset": {borderColor: "#1976d2"}
-                                    }
+                                        "&.Mui-focused fieldset": {borderColor: "#1976d2"},
+                                    },
                                 }}
-                        /> :
+                        />
+                ) : (
                         <div style={{marginTop: "24px"}}>
                             <Editor
                                     ref={editorRef}
-                                    initialValue={
-                                        form.boardContent?.includes("<") ? form.boardContent : ""
-                                    }
+                                    initialValue=""
                                     previewStyle="vertical"
-                                    hideModeSwitch={true} // ✅ 요거 추가해줘야 마크다운 탭이 사라짐!
+                                    hideModeSwitch={true}
+
                                     initialEditType="wysiwyg"
                                     useCommandShortcut={true}
                                     onChange={() => {
                                         const data = editorRef.current.getInstance().getHTML();
                                         handleChange({target: {name: "boardContent", value: data}});
                                     }}
-                                    theme="dark" // 유지하되, 실제 CSS는 아래 스타일로 수동 설정
+                                    theme="dark"
                                     style={{
                                         backgroundColor: "#2b2b2b",
                                         color: "#fff",
@@ -96,14 +106,38 @@ const FormInputGroup = ({form, handleChange}) => {
                                         ["heading", "bold", "italic", "strike"],
                                         ["hr", "quote"],
                                         ["ul", "ol", "task"],
-                                        ["table", "link"],
+                                        ["table", "link", "image"], // 이미지 버튼 활성화
                                         ["code", "codeblock"],
                                     ]}
+                                    hooks={{
+                                        addImageBlobHook: async (blob, callback) => {
+
+                                            console.log("🔥 이미지 업로드 훅 실행됨", blob);
+                                            const formData = new FormData();
+                                            formData.append("image", blob);
+
+                                            try {
+                                                const res = await axios.post(
+                                                        `${import.meta.env.VITE_API_URL}/board/img`,
+                                                        formData,
+                                                );
+
+                                                console.log("url : " + res.data.imageUrl);
+
+                                                const imageUrl = `${import.meta.env.VITE_API_URL}` + res.data.imageUrl; // 서버에서 받은 이미지 URL
+                                                //에디터에서 자동으로 url 받아서 img 설정
+                                                callback(imageUrl);
+                                            } catch (err) {
+                                                console.error("이미지 업로드 실패", err);
+                                                alert("이미지 업로드에 실패했습니다.");
+                                            }
+                                        },
+                                    }}
                             />
                         </div>
-                }
-
+                )}
             </>
     );
 };
+
 export default FormInputGroup;
