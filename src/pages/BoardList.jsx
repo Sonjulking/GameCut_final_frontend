@@ -133,29 +133,41 @@ const BoardList = () => {
   const renderCardView = () => (
     <div className="board-card-container">
       {filteredList && filteredList.length > 0 ? (
-        filteredList.map((board) => (
-          <div
-            key={board.boardNo}
-            className="board-card"
-            onClick={() => handleTitleClick(board.boardNo)}
-          >
-            <div className="thumbnail-container">
-              <img
-                src={`${import.meta.env.VITE_API_URL}` +  board.photos[0]?.attachFile.fileUrl|| "/default-thumbnail.jpg"}
-                alt={board.boardTitle}
-                className="board-thumbnail"
-              />
-              <div className={`card-type-badge ${board.boardType}`}>
-                {board.boardType}
+        filteredList.map((board) => {
+          const typeName = getBoardTypeName(board.boardTypeNo);
+          return (
+            <div
+              key={board.boardNo}
+              className="board-card"
+              onClick={() => handleTitleClick(board.boardNo)}
+            >
+              <div className="thumbnail-container">
+                <img
+                  src={
+                    `${import.meta.env.VITE_API_URL}` +
+                      board.photos[0]?.attachFile.fileUrl ||
+                    "/default-thumbnail.jpg"
+                  }
+                  alt={board.boardTitle}
+                  className="board-thumbnail"
+                />
+                <div className={`card-type-badge type-${board.boardTypeNo}`}>
+                  {typeName}
+                </div>
               </div>
-            </div>
-            <div className="board-info">
-              <h3 className="board-title">{board.boardTitle}</h3>
-              <div className="board-meta">
-                <p className="board-author">작성자: {board.userNo}</p>
-                <div className="board-stats">
-                  <span className="board-views">조회수 {board.boardCount}</span>
-                  <span className="board-likes">좋아요 {board.boardLike}</span>
+              <div className="board-info">
+                <h3 className="board-title">{board.boardTitle}</h3>
+                <div className="board-meta">
+                  <p className="board-author">작성자: {board.userNo}</p>
+                  <div className="board-stats">
+                    <span className="board-views">
+                      조회수 {board.boardCount}
+                    </span>
+                    <span className="board-likes">
+                      좋아요 {board.boardLike}
+                    </span>
+                  </div>
+                  <p className="board-date">{board.boardCreateDate}</p>
                 </div>
               </div>
             </div>
