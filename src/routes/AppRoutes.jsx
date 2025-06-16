@@ -23,6 +23,7 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       //게시글 작성페이지
       { path: "boardWrite", element: <BoardWrite /> },
+      { path: "boardList", element: <BoardList /> },
       { path: "test", element: <Test /> },
       { path: "boardList", element: <BoardList /> },
       //404에러

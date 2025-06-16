@@ -92,7 +92,7 @@ const VideoUploader = ({
             //썸네일 텍스트가 있을 때만 그리기
             if (debouncedText.trim() !== "") {
                 // 배경 어둡게 덧씌우기 (반투명 블랙 오버레이)
-                ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+                ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
                 ctx.font = "bold 48px 'Malgun Gothic', 'Segoe UI', sans-serif";
