@@ -43,6 +43,12 @@ const BoardDetail = () => {
         `http://localhost:8081/board/detail/${boardNo}`
       );
       setBoard(response.data);
+
+      // board에 comments가 포함되어 있다면 바로 설정
+      if (response.data.comments) {
+        console.log("📋 board에서 가져온 comments:", response.data.comments);
+        setComments(response.data.comments);
+      }
     } catch (error) {
       console.error("게시글 로드 실패:", error);
       alert("게시글을 불러올 수 없습니다.");
@@ -52,17 +58,29 @@ const BoardDetail = () => {
     }
   };
 
-  // 댓글 로드
-  const loadComments = async () => {
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/comment/${boardNo}`
-      );
-      setComments(response.data);
-    } catch (error) {
-      console.error("댓글 로드 실패:", error);
-    }
-  };
+  // 댓글 로드 함수는 이제 필요없으므로 제거하거나 비활성화
+  // const loadComments = async () => {
+  //   console.log("🔵 댓글 로드 시작");
+  //   console.log("📌 API URL:", import.meta.env.VITE_API_URL);
+  //   console.log("📌 boardNo:", boardNo);
+  //   console.log("📌 Full URL:", `${import.meta.env.VITE_API_URL}/comment/${boardNo}`);
+
+  //   try {
+  //     const response = await axios.get(
+  //       `${import.meta.env.VITE_API_URL}/comment/${boardNo}`
+  //     );
+  //     console.log("✅ 댓글 로드 성공:", response.data);
+  //     setComments(response.data);
+  //   } catch (error) {
+  //     console.error("❌ 댓글 로드 실패 상세:", {
+  //       message: error.message,
+  //       status: error.response?.status,
+  //       statusText: error.response?.statusText,
+  //       data: error.response?.data,
+  //       url: error.config?.url
+  //     });
+  //   }
+  // };
 
   // 댓글 추가
   const handleAddComment = async () => {
@@ -107,18 +125,18 @@ const BoardDetail = () => {
   };
 
   // 게시글 삭제
-  //   const handleDelete = async () => {
-  //     if (window.confirm("정말로 이 게시글을 삭제하시겠습니까?")) {
-  //       try {
-  //         await axios.delete(`http://localhost:8081/board/delete/${boardNo}`);
-  //         alert("게시글이 삭제되었습니다.");
-  //         navigate("/board/list");
-  //       } catch (error) {
-  //         console.error("삭제 실패:", error);
-  //         alert("삭제 중 오류가 발생했습니다.");
-  //       }
-  //     }
-  //   };
+  const handleDelete = async () => {
+    if (window.confirm("정말로 이 게시글을 삭제하시겠습니까?")) {
+      try {
+        await axios.delete(`http://localhost:8081/board/delete/${boardNo}`);
+        alert("게시글이 삭제되었습니다.");
+        navigate("/board/list");
+      } catch (error) {
+        console.error("삭제 실패:", error);
+        alert("삭제 중 오류가 발생했습니다.");
+      }
+    }
+  };
 
   // 게시글 수정
   const handleEdit = () => {
@@ -132,8 +150,7 @@ const BoardDetail = () => {
 
   useEffect(() => {
     if (boardNo) {
-      loadBoardDetail();
-      loadComments();
+      loadBoardDetail(); // 게시글만 로드하면 comments도 함께 옴
     }
   }, [boardNo]);
 
@@ -248,18 +265,18 @@ const BoardDetail = () => {
       </div>
 
       {/* 댓글 섹션 */}
-      <div className="comment-section">
-        <div className="comment-header">
+      <div className="board-comment-section">
+        <div className="board-comment-header">
           <h3>댓글 {comments.length}개</h3>
         </div>
 
         {/* 댓글 입력창 */}
-        <div className="comment-input-section">
-          <div className="comment-input-wrapper">
+        <div className="board-comment-input-area">
+          <div className="board-comment-input-wrapper">
             <input
               type="text"
               placeholder="댓글을 입력하세요..."
-              className="comment-input-field"
+              className="board-comment-input-field"
               value={inputComment.commentContent}
               onChange={(e) =>
                 setInputComment({
@@ -286,30 +303,32 @@ const BoardDetail = () => {
         </div>
 
         {/* 댓글 목록 */}
-        <div className="comment-list">
+        <div className="board-comment-list">
           {comments.length > 0 ? (
             comments.map((comment, index) => (
-              <div key={index} className="comment-item">
-                <div className="comment-header-info">
+              <div key={index} className="board-comment-item">
+                <div className="board-comment-user-info">
                   <img
                     src="/src/assets/img/main/icons/admin.jpg"
                     alt="profile"
-                    className="comment-profile-img"
+                    className="board-comment-profile-img"
                   />
-                  <div className="comment-info">
-                    <span className="comment-nickname">
+                  <div className="board-comment-info">
+                    <span className="board-comment-nickname">
                       {comment.user?.userNickname || "익명"}
                     </span>
-                    <span className="comment-date">
+                    <span className="board-comment-date">
                       {new Date(comment.commentCreateDate).toLocaleString()}
                     </span>
                   </div>
                 </div>
-                <p className="comment-content">{comment.commentContent}</p>
+                <p className="board-comment-content">
+                  {comment.commentContent}
+                </p>
               </div>
             ))
           ) : (
-            <div className="no-comments">
+            <div className="board-no-comments">
               <p>첫 번째 댓글을 작성해보세요!</p>
             </div>
           )}

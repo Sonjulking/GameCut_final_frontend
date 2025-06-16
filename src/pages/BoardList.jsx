@@ -41,10 +41,12 @@ const BoardList = () => {
   };
 
   const loadData = async () => {
-    await axios.get("http://localhost:8081/board/listAll").then((res) => {
-      setList(res.data);
-      setFilteredList(res.data); // 초기에는 전체 목록 표시
-    });
+    await axios
+      .get(`${import.meta.env.VITE_API_URL}/board/listAll`)
+      .then((res) => {
+        setList(res.data);
+        setFilteredList(res.data); // 초기에는 전체 목록 표시
+      });
   };
 
   // 타입별 필터링 함수
