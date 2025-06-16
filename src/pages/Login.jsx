@@ -35,6 +35,14 @@ const Login = () => {
     setLoading(false);
   };
 
+  const handleFindPassword = () => {
+    navigate("/FindPassword");
+  };
+
+  const handleJoin = () => {
+    navigate("/Join");
+  };
+
   return (
     <div style={styles.container}>
       <div style={styles.card}>
@@ -59,6 +67,16 @@ const Login = () => {
           <button type="submit" style={styles.button} disabled={loading}>
             {loading ? "로그인 중..." : "로그인"}
           </button>
+          <button
+            type="button"
+            style={styles.findButton}
+            onClick={handleFindPassword}
+          >
+            비밀번호 찾기
+          </button>
+          <button type="button" style={styles.joinButton} onClick={handleJoin}>
+            회원가입
+          </button>
           {error && <p style={styles.error}>{error}</p>}
         </form>
       </div>
@@ -69,13 +87,13 @@ const Login = () => {
 const styles = {
   container: {
     height: "100vh",
-    background: "#141414", // 다크 배경 유지
+    background: "#141414",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
   },
   card: {
-    background: "#1e1e1e", // 카드 다크 그레이
+    background: "#1e1e1e",
     padding: "40px",
     borderRadius: "10px",
     boxShadow: "0 4px 8px rgba(0,0,0,0.6)",
@@ -85,7 +103,7 @@ const styles = {
   title: {
     marginBottom: "20px",
     fontSize: "24px",
-    color: "#ffffff", // 흰색 텍스트
+    color: "#ffffff",
   },
   form: {
     display: "flex",
@@ -94,14 +112,34 @@ const styles = {
   input: {
     padding: "12px",
     marginBottom: "15px",
-    border: "1px solid #333", // 어두운 테두리
+    border: "1px solid #333",
     borderRadius: "5px",
-    backgroundColor: "#2c2c2c", // 입력창 배경 어두움
-    color: "#ffffff", // 입력 텍스트 흰색
+    backgroundColor: "#2c2c2c",
+    color: "#ffffff",
   },
   button: {
     padding: "12px",
-    backgroundColor: "#4CAF50", // 기존 초록색 유지 but 어두운 배경과 잘 어울림
+    backgroundColor: "#4CAF50",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    marginBottom: "10px",
+  },
+  findButton: {
+    padding: "10px",
+    backgroundColor: "#007bff",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    marginBottom: "10px",
+  },
+  joinButton: {
+    padding: "10px",
+    backgroundColor: "#ff9800",
     color: "white",
     border: "none",
     borderRadius: "5px",
@@ -109,7 +147,7 @@ const styles = {
     fontWeight: "bold",
   },
   error: {
-    color: "#ff4d4f", // 좀 더 눈에 띄는 경고 색상
+    color: "#ff4d4f",
     marginTop: "10px",
   },
 };

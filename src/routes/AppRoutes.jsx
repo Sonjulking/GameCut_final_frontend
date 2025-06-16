@@ -4,8 +4,6 @@ import React, { lazy, Suspense } from "react";
 import HomePage from "../pages/HomePage.jsx";
 import BoardWrite from "../pages/BoardWrite.jsx";
 import LoadingScreen from "../components/Loading/LoadingScreen.jsx";
-import BoardDetail from "../pages/BoardDetail.jsx";
-import BoardUpdate from "../pages/BoardUpdate.jsx";
 import FindPassword from "../pages/FindPassword.jsx";
 import Join from "../pages/Join.jsx";
 import Login from "../pages/Login.jsx";
