@@ -14,10 +14,13 @@ import axios from "axios"; // 이미지 업로드에 필요
 const FormInputGroup = ({form, handleChange}) => {
     const editorRef = useRef(null);
     useEffect(() => {
-        if (editorRef.current && !form.boardContent) {
-            editorRef.current.getInstance().setHTML("");
+        if (editorRef.current && form.boardTypeNo !== 3) {
+            const instance = editorRef.current.getInstance();
+            instance.setHTML(form.boardContent || ""); // 이걸 명확하게 설정
+            instance.changeMode("wysiwyg", true); // 선택사항이지만 추천
         }
-    }, []);
+    }, [form.boardContent, form.boardTypeNo]);
+
 
     return (
             <>
