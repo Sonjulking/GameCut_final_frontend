@@ -5,6 +5,7 @@ import HomePage from "../pages/HomePage.jsx";
 import BoardWrite from "../pages/BoardWrite.jsx";
 import LoadingScreen from "../components/Loading/LoadingScreen.jsx";
 import ErrorPage from "../pages/Error.jsx";
+import BoardList from "../pages/BoardList.jsx";
 const delayImport = (importFunc, delay = 5000) => {
   return new Promise((resolve) => {
     setTimeout(() => resolve(importFunc()), delay);
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
       //게시글 작성페이지
       { path: "boardWrite", element: <BoardWrite /> },
       { path: "test", element: <Test /> },
+      { path: "boardList", element: <BoardList /> },
       //404에러
       { path: "*", element: <ErrorPage /> },
     ],

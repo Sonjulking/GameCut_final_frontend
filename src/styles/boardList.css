@@ -18,16 +18,25 @@
   border-bottom: 2px solid #30363d;
 }
 
-/* 타입 필터 컨테이너 */
-.type-filter-container {
+/* 필터와 글쓰기 버튼 컨테이너 */
+.filter-and-write-container {
   display: flex;
-  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 24px;
   padding: 16px;
   background-color: #161b22;
   border-radius: 12px;
   border: 1px solid #30363d;
+  gap: 20px;
+}
+
+/* 타입 필터 컨테이너 수정 */
+.type-filter-container {
+  display: flex;
+  gap: 12px;
   flex-wrap: wrap;
+  flex: 1;
 }
 
 .type-filter-btn {
@@ -66,6 +75,43 @@
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
+}
+
+/* 글쓰기 버튼 */
+.write-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #1f6feb, #388bfd);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(31, 111, 235, 0.4);
+  white-space: nowrap;
+}
+
+.write-btn:hover {
+  background: linear-gradient(135deg, #0969da, #1f6feb);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(31, 111, 235, 0.6);
+}
+
+.write-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(31, 111, 235, 0.4);
+}
+
+.write-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.write-btn:hover svg {
+  transform: rotate(15deg);
 }
 
 .board-title-header {
@@ -192,7 +238,7 @@
   font-size: 16px;
 }
 
-/* 타입 배지 스타일 */
+/* 타입 배지 스타일 - boardTypeNo 기반 */
 .board-type-badge {
   padding: 4px 12px;
   border-radius: 16px;
@@ -203,17 +249,17 @@
   display: inline-block;
 }
 
-.board-type-badge.자유 {
+.board-type-badge.type-1 {
   background-color: #1f6feb;
   color: white;
 }
 
-.board-type-badge.공략 {
+.board-type-badge.type-2 {
   background-color: #238636;
   color: white;
 }
 
-.board-type-badge.영상 {
+.board-type-badge.type-3 {
   background-color: #da3633;
   color: white;
 }
@@ -264,7 +310,7 @@
   filter: brightness(1);
 }
 
-/* 카드 타입 배지 */
+/* 카드 타입 배지 - boardTypeNo 기반 */
 .card-type-badge {
   position: absolute;
   top: 12px;
@@ -277,17 +323,17 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.card-type-badge.자유 {
+.card-type-badge.type-1 {
   background-color: rgba(31, 111, 235, 0.9);
   color: white;
 }
 
-.card-type-badge.공략 {
+.card-type-badge.type-2 {
   background-color: rgba(35, 134, 54, 0.9);
   color: white;
 }
 
-.card-type-badge.영상 {
+.card-type-badge.type-3 {
   background-color: rgba(218, 54, 51, 0.9);
   color: white;
 }
@@ -386,15 +432,26 @@
     align-self: center;
   }
 
-  /* 타입 필터 반응형 */
-  .type-filter-container {
+  /* 필터와 글쓰기 반응형 */
+  .filter-and-write-container {
+    flex-direction: column;
+    gap: 16px;
     padding: 12px;
-    gap: 8px;
+  }
+
+  .type-filter-container {
     justify-content: center;
+    gap: 8px;
   }
 
   .type-filter-btn {
     padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .write-btn {
+    align-self: center;
+    padding: 10px 20px;
     font-size: 13px;
   }
 
