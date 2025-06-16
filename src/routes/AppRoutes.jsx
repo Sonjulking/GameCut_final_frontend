@@ -27,10 +27,6 @@ const router = createBrowserRouter([
       { path: "boardWrite", element: <BoardWrite /> },
       { path: "test", element: <Test /> },
 
-      //게시판관련페이지
-      { path: "boardDetail", element: <BoardDetail /> },
-      { path: "boardUpdate", element: <BoardUpdate /> },
-
       //로그인관련페이지
       { path: "findPassword", element: <FindPassword /> },
       { path: "join", element: <Join /> },

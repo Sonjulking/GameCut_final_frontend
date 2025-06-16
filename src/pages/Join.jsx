@@ -4,10 +4,10 @@ import { useNavigate } from "react-router-dom";
 
 const Join = () => {
   const [formData, setFormData] = useState({
-    user_id: "",
-    user_pwd: "",
-    user_name: "",
-    user_nickname: "",
+    userId: "",
+    userPwd: "",
+    userName: "",
+    userNickname: "",
     phone: "",
     email: "",
   });
@@ -30,7 +30,10 @@ const Join = () => {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:8080/join", formData);
+      const response = await axios.post(
+        "http://localhost:8081/user/join",
+        formData
+      );
       if (response.data.success) {
         alert("회원가입 성공!");
         navigate("/login"); // 회원가입 성공 후 로그인 화면으로 이동
@@ -52,36 +55,36 @@ const Join = () => {
         <form onSubmit={handleSubmit} style={styles.form}>
           <input
             type="text"
-            name="user_id"
+            name="userId"
             placeholder="아이디"
-            value={formData.user_id}
+            value={formData.userId}
             onChange={handleChange}
             style={styles.input}
             required
           />
           <input
             type="password"
-            name="user_pwd"
+            name="userPwd"
             placeholder="비밀번호"
-            value={formData.user_pwd}
+            value={formData.userPwd}
             onChange={handleChange}
             style={styles.input}
             required
           />
           <input
             type="text"
-            name="user_name"
+            name="userName"
             placeholder="이름"
-            value={formData.user_name}
+            value={formData.userName}
             onChange={handleChange}
             style={styles.input}
             required
           />
           <input
             type="text"
-            name="user_nickname"
+            name="userNickname"
             placeholder="닉네임"
-            value={formData.user_nickname}
+            value={formData.userNickname}
             onChange={handleChange}
             style={styles.input}
             required

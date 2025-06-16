@@ -25,7 +25,7 @@ const FindPassword = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/find-password",
+        "http://localhost:8081/user/findPassword",
         formData
       );
 
