@@ -1,5 +1,5 @@
 // src/components/VideoItem.jsx
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
 import CommentSection from "./CommentSection.jsx";
 
 // 아이콘 파일들을 import 합니다.
@@ -21,9 +21,23 @@ const VideoItem = ({board, isLoading}) => {
     } = board;
     //video 태그를 직접 조작하기위해  useRef() 사용
     const videoRef = useRef(null);
+    const commentRef = useRef(null); // ✅ 댓글창 참조
+
+
     const [isCommentOpen, setIsCommentOpen] = useState(false);
     const [comments, setComments] = useState(initialComments || []);
     const [isVideoReady, setIsVideoReady] = useState(false);
+
+    useLayoutEffect(() => {
+        const video = videoRef.current;
+        const comment = commentRef.current;
+        if (video && comment) {
+            const videoHeight = video.clientHeight;
+            comment.style.height = `${videoHeight}px`;
+        }
+    }, [isVideoReady, isCommentOpen]);
+
+
     useEffect(() => {
         const handleResize = () => {
             setIsCommentOpen(false); // 화면 크기 바뀌면 댓글창 닫기
@@ -135,9 +149,33 @@ const VideoItem = ({board, isLoading}) => {
                         />
                         브라우저가 비디오 태그를 지원하지 않습니다.
                     </video>
-                    <div className="video_texts">
-                        <div className="video_title">{user.userName}</div>
+                    <div
+                            className="video_texts"
+                            style={{display: "flex", flexDirection: "column", gap: "6px"}}
+                    >
+                        {/* 유저 정보 (이미지 + 이름 한 줄) */}
+                        <div
+                                className="video_user_profile"
+                                style={{display: "flex", alignItems: "center"}}
+                        >
+                            <img
+                                    src="/src/assets/img/main/icons/admin.jpg"
+                                    alt="프로필"
+                                    style={{
+                                        width: "36px",
+                                        height: "36px",
+                                        borderRadius: "50%",
+                                        objectFit: "cover",
+                                        marginRight: "8px",
+                                    }}
+                            />
+                            <span className="video_title">{user.userName}</span>
+                        </div>
+
+                        {/* 제목 한 줄 */}
                         <div className="video_title">제목 : {boardTitle}</div>
+
+                        {/* 내용 한 줄 */}
                         <div className="video_content">내용 : {boardContent}</div>
                     </div>
                 </div>
@@ -146,8 +184,14 @@ const VideoItem = ({board, isLoading}) => {
                         className="video_side_buttons_wrapper"
                         style={isLoading ? {pointerEvents: "none", opacity: 0.4} : {}}
                 >
-                    <button className="video_side_buttons" aria-label="좋아요">
-                        <img src={likeIcon} alt="좋아요"/>
+                    <button
+                            className="video_side_buttons"
+                            aria-label="좋아요"
+                    >
+                        <img
+                                src={likeIcon}
+                                alt="좋아요"
+                        />
                     </button>
                     <button
                             className="video_side_buttons comment_toggle_button"
@@ -156,20 +200,43 @@ const VideoItem = ({board, isLoading}) => {
                             aria-controls={`comments-for-video-${board.no}`}
                             onClick={toggleComment}
                     >
-                        <img src={commentIcon} alt="댓글"/>
+                        <img
+                                src={commentIcon}
+                                alt="댓글"
+                        />
                     </button>
-                    <button className="video_side_buttons" aria-label="공유">
-                        <img src={shareIcon} alt="공유"/>
+                    <button
+                            className="video_side_buttons"
+                            aria-label="공유"
+                    >
+                        <img
+                                src={shareIcon}
+                                alt="공유"
+                        />
                     </button>
-                    <button className="video_side_buttons" aria-label="저장">
-                        <img src={saveIcon} alt="저장"/>
+                    <button
+                            className="video_side_buttons"
+                            aria-label="저장"
+                    >
+                        <img
+                                src={saveIcon}
+                                alt="저장"
+                        />
                     </button>
-                    <button className="video_side_buttons" aria-label="신고">
-                        <img src={reportIcon} alt="신고"/>
+                    <button
+                            className="video_side_buttons"
+                            aria-label="신고"
+                    >
+                        <img
+                                src={reportIcon}
+                                alt="신고"
+                        />
                     </button>
                 </div>
 
                 <CommentSection
+                        ref={commentRef}
+                        boardNo={board.boardNo}
                         isOpen={isCommentOpen}
                         comments={comments}
                         videoId={video.videoNo}

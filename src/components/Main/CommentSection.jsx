@@ -4,9 +4,15 @@ import {Button} from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
+import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
+import axios from "axios";
 
-const CommentSection = ({isOpen, comments, videoId, onClose, onAddComment}) => {
-    const [inputText, setInputText] = useState("");
+const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComment}) => {
+    const [inputComment, setInputComment] = useState({
+        boardNo: boardNo,
+        commentContent: "",
+    });
     const commentListRef = useRef(null);
 
     useEffect(() => {
@@ -17,11 +23,14 @@ const CommentSection = ({isOpen, comments, videoId, onClose, onAddComment}) => {
     }, [comments]);
 
     const handleAddComment = () => {
-        const trimmed = inputText.trim();
-        if (trimmed) {
-            onAddComment(trimmed);
-            setInputText("");
-        }
+        axios.post(`${import.meta.env.VITE_API_URL}/comment`, inputComment)
+                .then(res => {
+                    onAddComment(res.data); // ✅ 댓글 추가!
+                    setInputComment({ boardNo, commentContent: "" }); // 입력창 초기화
+                })
+                .catch(err => {
+                    console.error("댓글 등록 실패", err);
+                });
     };
 
     const handleKeyPress = (e) => {
@@ -45,9 +54,15 @@ const CommentSection = ({isOpen, comments, videoId, onClose, onAddComment}) => {
           X
         </span>
                 </div>
-                <div className="comment-list" ref={commentListRef}>
+                <div
+                        className="comment-list"
+                        ref={commentListRef}
+                >
                     {comments.map((c, idx) => (
-                            <div className="comment" key={idx}>
+                            <div
+                                    className="comment"
+                                    key={idx}
+                            >
                                 <div className="comment-header">
                                     <img
                                             //서버에서 불러오기
@@ -64,8 +79,26 @@ const CommentSection = ({isOpen, comments, videoId, onClose, onAddComment}) => {
                                 </div>
                                 <p className="comment-content">{c.commentContent}</p>
                                 <div className="comment-actions">
-                                    <button className="like-button">👍</button>
-                                    <button className="dislike-button">👎</button>
+                                    <Button
+                                            variant="text"
+                                            sx={{
+                                                color: "white", // 흰색 따봉
+                                                minWidth: 0,
+                                                padding: "4px",
+                                            }}
+                                    >
+                                        <ThumbUpAltOutlinedIcon />
+                                    </Button>
+                                    <Button
+                                            variant="text"
+                                            sx={{
+                                                color: "white",
+                                                minWidth: 0,
+                                                padding: "4px",
+                                            }}
+                                    >
+                                        <ThumbDownAltOutlinedIcon />
+                                    </Button>
                                 </div>
                             </div>
                     ))}
@@ -75,8 +108,11 @@ const CommentSection = ({isOpen, comments, videoId, onClose, onAddComment}) => {
                             type="text"
                             placeholder="댓글쓰기"
                             className="comment-input-field"
-                            value={inputText}
-                            onChange={(e) => setInputText(e.target.value)}
+                            value={inputComment.commentContent}
+                            onChange={(e) => setInputComment({
+                                ...inputComment,
+                                commentContent: e.target.value,
+                            })}
                             onKeyPress={handleKeyPress}
                     />
                     {/*<button className="comment-submit-button">⮝</button>*/}
@@ -91,7 +127,7 @@ const CommentSection = ({isOpen, comments, videoId, onClose, onAddComment}) => {
                                 borderColor: "#90caf9",
                             }}
                     >
-                        <ArrowUpwardIcon fontSize="medium" />
+                        <ArrowUpwardIcon fontSize="medium"/>
                     </Button>
                 </div>
             </div>
