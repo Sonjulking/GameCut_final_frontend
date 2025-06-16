@@ -1,67 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import MyPageSidebar from "../components/MyPage/MyPageSidebar.jsx"; // 새로운 사이드바 import
 import "../styles/myPage.css";
-
-// 사이드바 컴포넌트
-const MySidebar = ({ activeMenu }) => {
-  const navigate = useNavigate();
-
-  const menuItems = [
-    { id: "info", name: "내 정보", path: "/mypage" },
-    { id: "message", name: "내 쪽지", path: "/mypage/message" },
-    { id: "board", name: "내 게시글", path: "/mypage/board" },
-    { id: "comment", name: "내 댓글", path: "/mypage/comment" },
-    { id: "video", name: "내 영상", path: "/mypage/video" },
-    { id: "item", name: "내 아이템", path: "/mypage/item" },
-    { id: "point", name: "내 포인트 내역", path: "/mypage/point" },
-    { id: "follow", name: "팔로우", path: "/mypage/follow" },
-    { id: "gtr", name: "게스더랭크 기록", path: "/mypage/gtr" },
-    { id: "report", name: "신고 기록", path: "/mypage/report" },
-  ];
-
-  return (
-    <div className="mypage-sidebar">
-      <h2 className="mypage-title">마이페이지</h2>
-      <nav className="mypage-menu">
-        {menuItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => navigate(item.path)}
-            className={`mypage-menu-item ${
-              activeMenu === item.id ? "active" : ""
-            }`}
-          >
-            {item.name}
-          </button>
-        ))}
-      </nav>
-    </div>
-  );
-};
 
 // 메인 마이페이지 컴포넌트
 const MyPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // 현재 활성 메뉴 결정
-  const getActiveMenu = () => {
-    const path = location.pathname;
-    if (path === "/mypage") return "info";
-    if (path.includes("/message")) return "message";
-    if (path.includes("/board")) return "board";
-    if (path.includes("/comment")) return "comment";
-    if (path.includes("/video")) return "video";
-    if (path.includes("/item")) return "item";
-    if (path.includes("/point")) return "point";
-    if (path.includes("/follow")) return "follow";
-    if (path.includes("/gtr")) return "gtr";
-    if (path.includes("/report")) return "report";
-    return "info";
-  };
 
   // 사용자 정보 로드
   const loadUserInfo = async () => {
@@ -69,12 +16,12 @@ const MyPage = () => {
       setLoading(true);
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/user/1`
-        // ,{
+        // ,
+        // {
         //   withCredentials: true, // 세션 쿠키 포함
-        // } // 세션없으니 일단 잠궈놔
+        // }
       );
       setUser(response.data);
-      console.log(user);
     } catch (error) {
       console.error("사용자 정보 로드 실패:", error);
       // 로그인이 필요한 경우 로그인 페이지로 리다이렉트
@@ -93,6 +40,7 @@ const MyPage = () => {
       handleDeleteUser();
     }
   };
+
   // 회원 탈퇴 처리
   const handleDeleteUser = async () => {
     try {
@@ -139,8 +87,8 @@ const MyPage = () => {
     <div className="mypage-container">
       <div className="mypage-content">
         <div className="content-wrapper">
-          {/* 사이드바 */}
-          <MySidebar activeMenu={getActiveMenu()} />
+          {/* 새로운 통합 사이드바 사용 */}
+          <MyPageSidebar />
 
           {/* 메인 내용 영역 */}
           <div className="mypage-user-section">
