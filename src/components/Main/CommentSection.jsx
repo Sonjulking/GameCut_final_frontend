@@ -1,12 +1,13 @@
 // src/components/CommentSection.jsx
 import React, {useEffect, useRef, useState} from "react";
-import {Button} from "@mui/material";
+import {Button, IconButton} from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
-import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
+import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
 import axios from "axios";
+import CloseIcon from "@mui/icons-material/Close";
 
 const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComment}) => {
     const [inputComment, setInputComment] = useState({
@@ -25,8 +26,8 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
     const handleAddComment = () => {
         axios.post(`${import.meta.env.VITE_API_URL}/comment`, inputComment)
                 .then(res => {
-                    onAddComment(res.data); // ✅ 댓글 추가!
-                    setInputComment({ boardNo, commentContent: "" }); // 입력창 초기화
+                    onAddComment(res.data); // 댓글 추가!
+                    setInputComment({boardNo, commentContent: ""}); // 입력창 초기화
                 })
                 .catch(err => {
                     console.error("댓글 등록 실패", err);
@@ -46,13 +47,9 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
             >
                 <div className="comment-title">
                     댓글
-                    <span
-                            style={{float: "right", cursor: "pointer", padding: "0.5rem"}}
-                            className="comment-close-button"
-                            onClick={onClose}
-                    >
-          X
-        </span>
+                    <IconButton onClick={onClose} size="small" sx={{ color: "white" }}>
+                        <CloseIcon />
+                    </IconButton>
                 </div>
                 <div
                         className="comment-list"
@@ -87,7 +84,7 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
                                                 padding: "4px",
                                             }}
                                     >
-                                        <ThumbUpAltOutlinedIcon />
+                                        <ThumbUpAltOutlinedIcon/>
                                     </Button>
                                     <Button
                                             variant="text"
@@ -97,7 +94,7 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
                                                 padding: "4px",
                                             }}
                                     >
-                                        <ThumbDownAltOutlinedIcon />
+                                        <ThumbDownAltOutlinedIcon/>
                                     </Button>
                                 </div>
                             </div>

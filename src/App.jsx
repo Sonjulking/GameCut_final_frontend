@@ -1,13 +1,13 @@
 // src/App.jsx
 import React from "react";
 import "./App.css";
-import AppRoutes from "./routes/AppRoutes.jsx";
-import {ApiContext} from "./context/ApiContext.js";
+import router from "./routes/AppRoutes.jsx";
+import {RouterProvider} from "react-router-dom";
 
 function App() {
 
     return (
-            <AppRoutes/>
+            <RouterProvider router={router} />
     );
 }
 

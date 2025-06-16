@@ -954,3 +954,18 @@ header {
     transition-duration: 0.01ms !important;
   }
 }
+
+body {
+  cursor: url("/cursor/cursor.png"), auto;
+}
+
+#gamecut_logo:hover,
+.header_icon:hover,
+a:hover,
+button:hover {
+  cursor: url("/cursor/cursor_hover.png"), auto;
+}
+input,
+textarea {
+  cursor: url("/cursor/cursor_i.png"), text;
+}
