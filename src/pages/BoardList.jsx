@@ -106,7 +106,7 @@ const BoardList = () => {
           >
             <div className="thumbnail-container">
               <img
-                src={board.thumbnail || "/default-thumbnail.jpg"}
+                src={`${import.meta.env.VITE_API_URL}` +  board.photos[0]?.attachFile.fileUrl|| "/default-thumbnail.jpg"}
                 alt={board.boardTitle}
                 className="board-thumbnail"
               />

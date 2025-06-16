@@ -182,7 +182,6 @@ const VideoItem = ({board, isLoading}) => {
 
                         {/* 내용 한 줄 */}
                         <div className="video_content">내용 : {boardContent}</div>
-                        <div className="video_content">포토: {photos[0]?.attachFile.fileUrl}</div>
                     </div>
                 </div>
 
