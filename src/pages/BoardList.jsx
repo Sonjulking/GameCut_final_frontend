@@ -67,9 +67,9 @@ const BoardList = () => {
     loadData();
   }, []);
 
-  useEffect(() => {
-    console.log(list);
-  }, [list]);
+  // useEffect(() => {
+  //   console.log(list);
+  // }, [list]);
 
   // 데이터가 변경될 때마다 현재 선택된 타입으로 필터링
   useEffect(() => {

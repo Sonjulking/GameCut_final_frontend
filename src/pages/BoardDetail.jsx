@@ -1,0 +1,322 @@
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Button, IconButton } from "@mui/material";
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import "../styles/boardDetail.css";
+
+const BoardDetail = () => {
+  const navigate = useNavigate();
+  const { boardNo } = useParams();
+  const [board, setBoard] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isLiked, setIsLiked] = useState(false);
+
+  // 댓글 관련 상태
+  const [comments, setComments] = useState([]);
+  const [inputComment, setInputComment] = useState({
+    boardNo: boardNo,
+    commentContent: "",
+  });
+
+  // boardTypeNo를 타입명으로 변환하는 함수
+  const getBoardTypeName = (boardTypeNo) => {
+    switch (boardTypeNo) {
+      case 1:
+        return "자유";
+      case 2:
+        return "공략";
+      case 3:
+        return "영상";
+      default:
+        return "기타";
+    }
+  };
+
+  // 게시글 데이터 로드
+  const loadBoardDetail = async () => {
+    console.log(boardNo);
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `http://localhost:8081/board/detail/${boardNo}`
+      );
+      setBoard(response.data);
+    } catch (error) {
+      console.error("게시글 로드 실패:", error);
+      alert("게시글을 불러올 수 없습니다.");
+      navigate("/boardList");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 댓글 로드
+  const loadComments = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/comment/${boardNo}`
+      );
+      setComments(response.data);
+    } catch (error) {
+      console.error("댓글 로드 실패:", error);
+    }
+  };
+
+  // 댓글 추가
+  const handleAddComment = async () => {
+    if (!inputComment.commentContent.trim()) {
+      alert("댓글 내용을 입력해주세요.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/comment`,
+        inputComment
+      );
+      setComments([...comments, response.data]);
+      setInputComment({ boardNo, commentContent: "" });
+    } catch (error) {
+      console.error("댓글 등록 실패:", error);
+      alert("댓글 등록에 실패했습니다.");
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleAddComment();
+    }
+  };
+
+  // 좋아요 토글
+  const toggleLike = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8081/board/like/${boardNo}`
+      );
+      setIsLiked(!isLiked);
+      setBoard((prev) => ({
+        ...prev,
+        boardLike: isLiked ? prev.boardLike - 1 : prev.boardLike + 1,
+      }));
+    } catch (error) {
+      console.error("좋아요 처리 실패:", error);
+    }
+  };
+
+  // 게시글 삭제
+  //   const handleDelete = async () => {
+  //     if (window.confirm("정말로 이 게시글을 삭제하시겠습니까?")) {
+  //       try {
+  //         await axios.delete(`http://localhost:8081/board/delete/${boardNo}`);
+  //         alert("게시글이 삭제되었습니다.");
+  //         navigate("/board/list");
+  //       } catch (error) {
+  //         console.error("삭제 실패:", error);
+  //         alert("삭제 중 오류가 발생했습니다.");
+  //       }
+  //     }
+  //   };
+
+  // 게시글 수정
+  const handleEdit = () => {
+    navigate(`/board/edit/${boardNo}`);
+  };
+
+  // 목록으로 돌아가기
+  const handleBackToList = () => {
+    navigate("/boardList");
+  };
+
+  useEffect(() => {
+    if (boardNo) {
+      loadBoardDetail();
+      loadComments();
+    }
+  }, [boardNo]);
+
+  if (loading) {
+    return (
+      <div className="board-detail-container">
+        <div className="loading-spinner">
+          <div className="spinner"></div>
+          <p>게시글을 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!board) {
+    return (
+      <div className="board-detail-container">
+        <div className="error-message">
+          <h2>게시글을 찾을 수 없습니다</h2>
+          <button onClick={handleBackToList} className="back-btn">
+            목록으로 돌아가기
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const typeName = getBoardTypeName(board.boardTypeNo);
+
+  return (
+    <div className="board-detail-container">
+      {/* 헤더 영역 */}
+      <div className="detail-header">
+        <button onClick={handleBackToList} className="back-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z" />
+          </svg>
+          목록으로
+        </button>
+        <div className="detail-actions">
+          <button onClick={handleEdit} className="edit-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+            </svg>
+            수정
+          </button>
+        </div>
+      </div>
+
+      {/* 게시글 정보 */}
+      <div className="detail-content">
+        <div className="detail-meta">
+          <div className="meta-left">
+            <span className={`detail-type-badge type-${board.boardTypeNo}`}>
+              {typeName}
+            </span>
+            <h1 className="detail-title">{board.boardTitle}</h1>
+          </div>
+          <div className="meta-right">
+            <div className="author-info">
+              <span className="author-name">작성자: {board.userNo}</span>
+              <span className="create-date">{board.boardCreateDate}</span>
+            </div>
+            <div className="board-stats">
+              <span className="stat-item">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                </svg>
+                {board.boardCount}
+              </span>
+              <button
+                onClick={toggleLike}
+                className={`stat-item like-btn ${isLiked ? "liked" : ""}`}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg>
+                {board.boardLike}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* 게시글 내용 - 이미지가 포함된 HTML 콘텐츠 */}
+        <div className="detail-body">
+          <div
+            className="content-text"
+            dangerouslySetInnerHTML={{ __html: board.boardContent }}
+          />
+        </div>
+
+        {/* 좋아요 버튼 */}
+        <div className="detail-actions-bottom">
+          <button
+            onClick={toggleLike}
+            className={`like-button ${isLiked ? "liked" : ""}`}
+          >
+            <ThumbUpAltOutlinedIcon />
+            좋아요 {board.boardLike}
+          </button>
+        </div>
+      </div>
+
+      {/* 댓글 섹션 */}
+      <div className="comment-section">
+        <div className="comment-header">
+          <h3>댓글 {comments.length}개</h3>
+        </div>
+
+        {/* 댓글 입력창 */}
+        <div className="comment-input-section">
+          <div className="comment-input-wrapper">
+            <input
+              type="text"
+              placeholder="댓글을 입력하세요..."
+              className="comment-input-field"
+              value={inputComment.commentContent}
+              onChange={(e) =>
+                setInputComment({
+                  ...inputComment,
+                  commentContent: e.target.value,
+                })
+              }
+              onKeyPress={handleKeyPress}
+            />
+            <Button
+              variant="contained"
+              onClick={handleAddComment}
+              sx={{
+                minWidth: "80px",
+                height: "40px",
+                bgcolor: "#1976d2",
+                "&:hover": { bgcolor: "#1565c0" },
+              }}
+              endIcon={<ArrowUpwardIcon />}
+            >
+              등록
+            </Button>
+          </div>
+        </div>
+
+        {/* 댓글 목록 */}
+        <div className="comment-list">
+          {comments.length > 0 ? (
+            comments.map((comment, index) => (
+              <div key={index} className="comment-item">
+                <div className="comment-header-info">
+                  <img
+                    src="/src/assets/img/main/icons/admin.jpg"
+                    alt="profile"
+                    className="comment-profile-img"
+                  />
+                  <div className="comment-info">
+                    <span className="comment-nickname">
+                      {comment.user?.userNickname || "익명"}
+                    </span>
+                    <span className="comment-date">
+                      {new Date(comment.commentCreateDate).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+                <p className="comment-content">{comment.commentContent}</p>
+              </div>
+            ))
+          ) : (
+            <div className="no-comments">
+              <p>첫 번째 댓글을 작성해보세요!</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BoardDetail;

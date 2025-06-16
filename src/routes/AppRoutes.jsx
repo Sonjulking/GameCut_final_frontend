@@ -6,6 +6,7 @@ import BoardWrite from "../pages/BoardWrite.jsx";
 import LoadingScreen from "../components/Loading/LoadingScreen.jsx";
 import ErrorPage from "../pages/Error.jsx";
 import BoardList from "../pages/BoardList.jsx";
+import BoardDetail from "../pages/BoardDetail.jsx";
 const delayImport = (importFunc, delay = 5000) => {
   return new Promise((resolve) => {
     setTimeout(() => resolve(importFunc()), delay);
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
       { path: "boardList", element: <BoardList /> },
       { path: "test", element: <Test /> },
       { path: "boardList", element: <BoardList /> },
+      { path: "board/detail/:boardNo", element: <BoardDetail /> },
       //404에러
       { path: "*", element: <ErrorPage /> },
     ],
