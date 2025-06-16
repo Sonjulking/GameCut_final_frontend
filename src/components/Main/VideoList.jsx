@@ -133,7 +133,14 @@ const VideoList = () => {
                 ))}
 
 
-                {isEnd && <p style={{textAlign: "center", color: "#888"}}>마지막 게시글입니다.</p>}
+                {isEnd && <p
+                        style={{
+                            fontSize: "15pt",
+                            textAlign: "center",
+                            color: "#888",
+                            paddingBottom: "10rem"
+                        }}
+                >마지막 영상입니다.</p>}
             </div>
     );
 };

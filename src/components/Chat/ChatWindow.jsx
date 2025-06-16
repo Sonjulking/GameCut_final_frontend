@@ -73,7 +73,7 @@ const ChatWindow = ({ onClose }) => {
                         }}
                 >
                     <Typography variant="subtitle1" fontWeight="bold">
-                        실시간 채팅
+                        AI 채팅
                     </Typography>
                     <IconButton onClick={onClose} size="small" sx={{ color: "white" }}>
                         <CloseIcon />
