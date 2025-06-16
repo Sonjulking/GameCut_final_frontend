@@ -24,10 +24,10 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       //게시글 작성페이지
       { path: "boardWrite", element: <BoardWrite /> },
-      { path: "boardList", element: <BoardList /> },
-      { path: "test", element: <Test /> },
+      { path: "boardEdit/:boardNo", element: <BoardWrite isEdit={true} /> },
       { path: "boardList", element: <BoardList /> },
       { path: "board/detail/:boardNo", element: <BoardDetail /> },
+      { path: "test", element: <Test /> },
       //404에러
       { path: "*", element: <ErrorPage /> },
     ],
