@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
+// === 환경변수 ===
 const GOOGLE_CLIENT_ID =
   "752741472899-quo69i7p0r9cgi0kh67steu3dtbjkvac.apps.googleusercontent.com";
 const NAVER_CLIENT_ID = "CQbPXwMaS8p6gHpnTpsS";
@@ -15,6 +16,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // 일반 로그인
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -41,6 +43,7 @@ const Login = () => {
     setLoading(false);
   };
 
+  // 구글 로그인 성공
   const handleGoogleSuccess = async (credentialResponse) => {
     const credential = credentialResponse.credential;
     try {
@@ -60,6 +63,7 @@ const Login = () => {
     }
   };
 
+  // 네이버 로그인
   const naverLogin = () => {
     const state = Math.random().toString(36).substring(2);
     const url = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&redirect_uri=${encodeURIComponent(
@@ -97,19 +101,30 @@ const Login = () => {
             {error && <p style={styles.error}>{error}</p>}
           </form>
 
-          {/* 소셜 로그인 구역 */}
+          {/* 소셜 로그인 통일 */}
           <div style={styles.socialWrapper}>
-            <div style={styles.socialButtonWrapper}>
+            <div style={styles.fullWidthSocial}>
               <GoogleLogin
                 onSuccess={handleGoogleSuccess}
                 onError={() => console.log("Google Login Failed")}
-                theme="outline"
-                size="large"
+                width="100%"
               />
             </div>
-
             <button onClick={naverLogin} style={styles.naverButton}>
               네이버 로그인
+            </button>
+          </div>
+
+          {/* 회원가입 & 비밀번호 찾기 */}
+          <div style={styles.bottomWrapper}>
+            <button onClick={() => navigate("/join")} style={styles.linkButton}>
+              회원가입
+            </button>
+            <button
+              onClick={() => navigate("/findPassword")}
+              style={styles.linkButton}
+            >
+              비밀번호 찾기
             </button>
           </div>
         </div>
@@ -118,6 +133,7 @@ const Login = () => {
   );
 };
 
+// === 스타일 ===
 const styles = {
   container: {
     height: "100vh",
@@ -134,22 +150,15 @@ const styles = {
     width: "350px",
     textAlign: "center",
   },
-  title: {
-    marginBottom: "20px",
-    fontSize: "24px",
-    color: "#ffffff",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-  },
+  title: { marginBottom: "20px", fontSize: "24px", color: "#ffffff" },
+  form: { display: "flex", flexDirection: "column" },
   input: {
     padding: "12px",
     marginBottom: "15px",
     border: "1px solid #333",
     borderRadius: "5px",
-    backgroundColor: "#dce3f3",
-    color: "#000",
+    backgroundColor: "#2c2c2c",
+    color: "#ffffff",
   },
   button: {
     padding: "12px",
@@ -162,20 +171,17 @@ const styles = {
     marginBottom: "10px",
     width: "100%",
   },
-  error: {
-    color: "#ff4d4f",
-    marginTop: "10px",
-  },
+  error: { color: "#ff4d4f", marginTop: "10px" },
   socialWrapper: {
     marginTop: "20px",
     display: "flex",
     flexDirection: "column",
     gap: "10px",
   },
-  socialButtonWrapper: {
+  fullWidthSocial: {
+    width: "100%",
     display: "flex",
     justifyContent: "center",
-    width: "100%", // 이 부분이 핵심
   },
   naverButton: {
     padding: "12px",
@@ -186,6 +192,19 @@ const styles = {
     cursor: "pointer",
     fontWeight: "bold",
     width: "100%",
+  },
+  bottomWrapper: {
+    marginTop: "20px",
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  linkButton: {
+    background: "none",
+    border: "none",
+    color: "#ffffff",
+    cursor: "pointer",
+    fontSize: "14px",
+    textDecoration: "underline",
   },
 };
 
