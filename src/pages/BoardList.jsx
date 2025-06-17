@@ -1,17 +1,29 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import "../styles/boardList.css";
 
 const BoardList = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [totalPages, setTotalPages] = useState(1); // 먼저 선언
+  const [totalElements, setTotalElements] = useState(1); // 먼저 선언
+
+  const pageParamRaw = parseInt(searchParams.get("page") || "0", 10);
+  const pageParam = isNaN(pageParamRaw) ? 0 : pageParamRaw; // 일단 이걸 기본값으로 사용
+
+
   const navigate = useNavigate();
   const [list, setList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
   const [viewMode, setViewMode] = useState("card"); // 'list' 또는 'card'
   const [selectedType, setSelectedType] = useState("전체"); // 선택된 타입
 
-  const boardTypes = ["전체", "자유", "공략", "영상"];
 
+
+  const boardTypes = ["전체", "자유", "공략", "영상"];
+  useEffect(() => {
+    console.log("데이터 확인:", filteredList);
+  }, [filteredList]);
   // boardTypeNo를 타입명으로 변환하는 함수
   const getBoardTypeName = (boardTypeNo) => {
     switch (boardTypeNo) {
@@ -40,13 +52,13 @@ const BoardList = () => {
     }
   };
 
-  const loadData = async () => {
-    await axios
-      .get(`${import.meta.env.VITE_API_URL}/board/listAll`)
-      .then((res) => {
-        setList(res.data);
-        setFilteredList(res.data); // 초기에는 전체 목록 표시
-      });
+  const loadData = async (page) => {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/board/listAll`, {
+      params: { page, size: 10 },
+    });
+    setList(res.data.content);         // 게시글 목록
+    setTotalPages(res.data.totalPages); // 총 페이지 수
+      setTotalElements(res.data.totalElements);
   };
 
   // 타입별 필터링 함수
@@ -66,8 +78,8 @@ const BoardList = () => {
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
+    loadData(pageParam);
+  }, [pageParam]);
 
   // useEffect(() => {
   //   console.log(list);
@@ -224,7 +236,7 @@ const BoardList = () => {
               {type}
               {selectedType === type && (
                 <span className="active-count">
-                  ({selectedType === "전체" ? list.length : filteredList.length}
+                  ({selectedType === "전체" ? `${totalElements}` : 0 }
                   )
                 </span>
               )}
@@ -246,6 +258,18 @@ const BoardList = () => {
       {/* 뷰 모드에 따른 렌더링 */}
       <div className="board-content">
         {viewMode === "list" ? renderListView() : renderCardView()}
+      </div>
+
+      <div className="pagination">
+        {Array.from({ length: totalPages }).map((_, i) => (
+                <button
+                        key={i}
+                        className={pageParam === i ? "active" : ""}
+                        onClick={() => setSearchParams({ page: i })}
+                >
+                  {i + 1}
+                </button>
+        ))}
       </div>
     </div>
   );
