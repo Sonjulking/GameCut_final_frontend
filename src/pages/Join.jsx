@@ -14,6 +14,12 @@ const Join = () => {
 
   const [idCheckMessage, setIdCheckMessage] = useState("");
   const [nicknameCheckMessage, setNicknameCheckMessage] = useState("");
+  const [emailVerifyMessage, setEmailVerifyMessage] = useState("");
+  const [emailCodeSent, setEmailCodeSent] = useState(false);
+  const [inputEmailCode, setInputEmailCode] = useState("");
+  const [serverEmailCode, setServerEmailCode] = useState("");
+  const [emailVerified, setEmailVerified] = useState(false);
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -35,11 +41,11 @@ const Join = () => {
       const response = await axios.get(
         `http://localhost:8081/user/checkUserId?userId=${formData.userId}`
       );
-      if (response.data.exists) {
-        setIdCheckMessage("이미 사용중인 아이디입니다.");
-      } else {
-        setIdCheckMessage("사용 가능한 아이디입니다.");
-      }
+      setIdCheckMessage(
+        response.data.exists
+          ? "이미 사용중인 아이디입니다."
+          : "사용 가능한 아이디입니다."
+      );
     } catch (err) {
       console.error(err);
     }
@@ -54,21 +60,83 @@ const Join = () => {
       const response = await axios.get(
         `http://localhost:8081/user/checkUserNickname?userNickname=${formData.userNickname}`
       );
-      if (response.data.exists) {
-        setNicknameCheckMessage("이미 사용중인 닉네임입니다.");
-      } else {
-        setNicknameCheckMessage("사용 가능한 닉네임입니다.");
-      }
+      setNicknameCheckMessage(
+        response.data.exists
+          ? "이미 사용중인 닉네임입니다."
+          : "사용 가능한 닉네임입니다."
+      );
     } catch (err) {
       console.error(err);
     }
   };
 
+  // ✨ 이메일 인증버튼 기능 (인증번호 받기)
+  const sendEmailCode = async () => {
+    if (!formData.email) {
+      setEmailVerifyMessage("이메일을 입력하세요.");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `http://localhost:8081/user/email/send`,
+        { email: formData.email }
+      );
+      if (response.data.success) {
+        setEmailVerifyMessage("인증번호가 전송되었습니다.");
+        setEmailCodeSent(true);
+        setServerEmailCode(response.data.code); // 백엔드에서 받은 인증코드 저장
+      } else {
+        setEmailVerifyMessage("이메일 전송 실패.");
+      }
+    } catch (err) {
+      console.error(err);
+      setEmailVerifyMessage("서버 오류 발생.");
+    }
+  };
+
+  // ✨ 인증번호 확인
+  const checkEmailCode = () => {
+    if (inputEmailCode === serverEmailCode) {
+      setEmailVerifyMessage("이메일 인증 성공!");
+      setEmailVerified(true);
+    } else {
+      setEmailVerifyMessage("인증번호가 일치하지 않습니다.");
+    }
+  };
+
+  const validateForm = () => {
+    if (
+      !formData.userId ||
+      !formData.userPwd ||
+      !formData.userName ||
+      !formData.userNickname ||
+      !formData.email
+    ) {
+      setError("필수 입력값을 모두 작성해주세요.");
+      return false;
+    }
+    if (idCheckMessage === "이미 사용중인 아이디입니다.") {
+      setError("아이디 중복 확인을 다시 해주세요.");
+      return false;
+    }
+    if (nicknameCheckMessage === "이미 사용중인 닉네임입니다.") {
+      setError("닉네임 중복 확인을 다시 해주세요.");
+      return false;
+    }
+    if (!emailVerified) {
+      setError("이메일 인증을 완료해주세요.");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    if (loading) return;
     setError("");
+    if (!validateForm()) return;
 
+    setLoading(true);
     try {
       const response = await axios.post(
         "http://localhost:8081/user/join",
@@ -84,7 +152,6 @@ const Join = () => {
       console.error(err);
       setError("서버 오류가 발생했습니다.");
     }
-
     setLoading(false);
   };
 
@@ -107,15 +174,13 @@ const Join = () => {
               type="button"
               style={styles.smallButton}
               onClick={checkUserId}
+              disabled={loading}
             >
               중복확인
             </button>
           </div>
           <p
-            style={{
-              color: idCheckMessage.includes("가능") ? "green" : "red",
-              marginBottom: "10px",
-            }}
+            style={{ color: idCheckMessage.includes("가능") ? "green" : "red" }}
           >
             {idCheckMessage}
           </p>
@@ -129,7 +194,6 @@ const Join = () => {
             style={styles.input}
             required
           />
-
           <input
             type="text"
             name="userName"
@@ -154,6 +218,7 @@ const Join = () => {
               type="button"
               style={styles.smallButton}
               onClick={checkUserNickname}
+              disabled={loading}
             >
               중복확인
             </button>
@@ -161,7 +226,6 @@ const Join = () => {
           <p
             style={{
               color: nicknameCheckMessage.includes("가능") ? "green" : "red",
-              marginBottom: "10px",
             }}
           >
             {nicknameCheckMessage}
@@ -175,16 +239,57 @@ const Join = () => {
             onChange={handleChange}
             style={styles.input}
           />
-          <input
-            type="email"
-            name="email"
-            placeholder="이메일"
-            value={formData.email}
-            onChange={handleChange}
-            style={styles.input}
-            required
-          />
-          <button type="submit" style={styles.button} disabled={loading}>
+
+          <div style={styles.inputGroup}>
+            <input
+              type="email"
+              name="email"
+              placeholder="이메일"
+              value={formData.email}
+              onChange={handleChange}
+              style={styles.input}
+              required
+            />
+            <button
+              type="button"
+              style={styles.smallButton}
+              onClick={sendEmailCode}
+              disabled={loading}
+            >
+              인증번호발송
+            </button>
+          </div>
+
+          {emailCodeSent && (
+            <>
+              <div style={styles.inputGroup}>
+                <input
+                  type="text"
+                  placeholder="인증번호 입력"
+                  value={inputEmailCode}
+                  onChange={(e) => setInputEmailCode(e.target.value)}
+                  style={styles.input}
+                />
+                <button
+                  type="button"
+                  style={styles.smallButton}
+                  onClick={checkEmailCode}
+                >
+                  확인
+                </button>
+              </div>
+            </>
+          )}
+
+          <p
+            style={{
+              color: emailVerifyMessage.includes("성공") ? "green" : "red",
+            }}
+          >
+            {emailVerifyMessage}
+          </p>
+
+          <button type="submit" style={styles.submitButton} disabled={loading}>
             {loading ? "가입 중..." : "회원가입"}
           </button>
           {error && <p style={styles.error}>{error}</p>}
@@ -194,7 +299,6 @@ const Join = () => {
   );
 };
 
-// 기존 스타일 + 버튼 스타일 추가
 const styles = {
   container: {
     height: "100vh",
@@ -206,56 +310,42 @@ const styles = {
   card: {
     background: "#1e1e1e",
     padding: "40px",
-    borderRadius: "10px",
+    borderRadius: "12px",
     boxShadow: "0 4px 8px rgba(0,0,0,0.6)",
-    width: "400px",
+    width: "420px",
     textAlign: "center",
   },
-  title: {
-    marginBottom: "20px",
-    fontSize: "24px",
-    color: "#ffffff",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-  },
+  title: { marginBottom: "20px", fontSize: "26px", color: "#ffffff" },
+  form: { display: "flex", flexDirection: "column" },
   input: {
     padding: "12px",
-    marginBottom: "10px",
     border: "1px solid #333",
     borderRadius: "5px",
     backgroundColor: "#2c2c2c",
     color: "#ffffff",
-    width: "100%",
+    flex: 1,
   },
-  inputGroup: {
-    display: "flex",
-    marginBottom: "10px",
-  },
+  inputGroup: { display: "flex", gap: "10px", marginBottom: "10px" },
   smallButton: {
-    padding: "10px",
-    marginLeft: "10px",
+    padding: "12px 16px",
     backgroundColor: "#28a745",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-    whiteSpace: "nowrap",
-  },
-  button: {
-    padding: "12px",
-    backgroundColor: "#007bff",
     color: "white",
     border: "none",
     borderRadius: "5px",
     cursor: "pointer",
     fontWeight: "bold",
   },
-  error: {
-    color: "#ff4d4f",
+  submitButton: {
+    padding: "14px",
+    backgroundColor: "#007bff",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+    fontWeight: "bold",
     marginTop: "10px",
   },
+  error: { color: "#ff4d4f", marginTop: "10px" },
 };
 
 export default Join;
