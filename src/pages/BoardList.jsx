@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/boardList.css";
+
 const BoardList = () => {
   const navigate = useNavigate();
   const [list, setList] = useState([]);
@@ -11,11 +12,41 @@ const BoardList = () => {
 
   const boardTypes = ["전체", "자유", "공략", "영상"];
 
+  // boardTypeNo를 타입명으로 변환하는 함수
+  const getBoardTypeName = (boardTypeNo) => {
+    switch (boardTypeNo) {
+      case 1:
+        return "자유";
+      case 2:
+        return "공략";
+      case 3:
+        return "영상";
+      default:
+        return "기타";
+    }
+  };
+
+  // 타입명을 boardTypeNo로 변환하는 함수
+  const getBoardTypeNo = (typeName) => {
+    switch (typeName) {
+      case "자유":
+        return 1;
+      case "공략":
+        return 2;
+      case "영상":
+        return 3;
+      default:
+        return null;
+    }
+  };
+
   const loadData = async () => {
-    await axios.get("http://localhost:8081/board/listAll").then((res) => {
-      setList(res.data);
-      setFilteredList(res.data); // 초기에는 전체 목록 표시
-    });
+    await axios
+      .get(`${import.meta.env.VITE_API_URL}/board/listAll`)
+      .then((res) => {
+        setList(res.data);
+        setFilteredList(res.data); // 초기에는 전체 목록 표시
+      });
   };
 
   // 타입별 필터링 함수
@@ -24,7 +55,8 @@ const BoardList = () => {
     if (type === "전체") {
       setFilteredList(list);
     } else {
-      const filtered = list.filter((board) => board.boardType === type);
+      const typeNo = getBoardTypeNo(type);
+      const filtered = list.filter((board) => board.boardTypeNo === typeNo);
       setFilteredList(filtered);
     }
   };
@@ -37,9 +69,9 @@ const BoardList = () => {
     loadData();
   }, []);
 
-  useEffect(() => {
-    console.log(list);
-  }, [list]);
+  // useEffect(() => {
+  //   console.log(list);
+  // }, [list]);
 
   // 데이터가 변경될 때마다 현재 선택된 타입으로 필터링
   useEffect(() => {
@@ -62,29 +94,34 @@ const BoardList = () => {
       </thead>
       <tbody>
         {filteredList && filteredList.length > 0 ? (
-          filteredList.map((board) => (
-            <tr key={board.boardNo}>
-              <td>{board.boardNo}</td>
-              <td>
-                <span className={`board-type-badge ${board.boardType}`}>
-                  {board.boardType}
-                </span>
-              </td>
-              <td className="title_cell">
-                <span
-                  className="board_title_link"
-                  onClick={() => handleTitleClick(board.boardNo)}
-                  style={{ cursor: "pointer" }}
-                >
-                  {board.boardTitle}
-                </span>
-              </td>
-              <td>{board.userNo}</td>
-              <td>{board.boardCount}</td>
-              <td>{board.boardLike}</td>
-              <td>{board.boardCreateDate}</td>
-            </tr>
-          ))
+          filteredList.map((board) => {
+            const typeName = getBoardTypeName(board.boardTypeNo);
+            return (
+              <tr key={board.boardNo}>
+                <td>{board.boardNo}</td>
+                <td>
+                  <span
+                    className={`board-type-badge type-${board.boardTypeNo}`}
+                  >
+                    {typeName}
+                  </span>
+                </td>
+                <td className="title_cell">
+                  <span
+                    className="board_title_link"
+                    onClick={() => handleTitleClick(board.boardNo)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {board.boardTitle}
+                  </span>
+                </td>
+                <td>{board.userNo}</td>
+                <td>{board.boardCount}</td>
+                <td>{board.boardLike}</td>
+                <td>{board.boardCreateDate}</td>
+              </tr>
+            );
+          })
         ) : (
           <tr className="mypage_empty_row">
             <td colSpan="7">등록된 게시글이 없습니다.</td>
@@ -98,35 +135,46 @@ const BoardList = () => {
   const renderCardView = () => (
     <div className="board-card-container">
       {filteredList && filteredList.length > 0 ? (
-        filteredList.map((board) => (
-          <div
-            key={board.boardNo}
-            className="board-card"
-            onClick={() => handleTitleClick(board.boardNo)}
-          >
-            <div className="thumbnail-container">
-              <img
-                src={board.thumbnail || "/default-thumbnail.jpg"}
-                alt={board.boardTitle}
-                className="board-thumbnail"
-              />
-              <div className={`card-type-badge ${board.boardType}`}>
-                {board.boardType}
-              </div>
-            </div>
-            <div className="board-info">
-              <h3 className="board-title">{board.boardTitle}</h3>
-              <div className="board-meta">
-                <p className="board-author">작성자: {board.userNo}</p>
-                <div className="board-stats">
-                  <span className="board-views">조회수 {board.boardCount}</span>
-                  <span className="board-likes">좋아요 {board.boardLike}</span>
+        filteredList.map((board) => {
+          const typeName = getBoardTypeName(board.boardTypeNo);
+          return (
+            <div
+              key={board.boardNo}
+              className="board-card"
+              onClick={() => handleTitleClick(board.boardNo)}
+            >
+              <div className="thumbnail-container">
+                <img
+                  src={
+                    `${import.meta.env.VITE_API_URL}` +
+                      board.photos[0]?.attachFile.fileUrl ||
+                    "/default-thumbnail.jpg"
+                  }
+                  alt={board.boardTitle}
+                  className="board-thumbnail"
+                />
+                <div className={`card-type-badge type-${board.boardTypeNo}`}>
+                  {typeName}
                 </div>
-                <p className="board-date">{board.boardCreateDate}</p>
+              </div>
+              <div className="board-info">
+                <h3 className="board-title">{board.boardTitle}</h3>
+                <div className="board-meta">
+                  <p className="board-author">작성자: {board.userNo}</p>
+                  <div className="board-stats">
+                    <span className="board-views">
+                      조회수 {board.boardCount}
+                    </span>
+                    <span className="board-likes">
+                      좋아요 {board.boardLike}
+                    </span>
+                  </div>
+                  <p className="board-date">{board.boardCreateDate}</p>
+                </div>
               </div>
             </div>
-          </div>
-        ))
+          );
+        })
       ) : (
         <div className="empty-state">
           <p>등록된 게시글이 없습니다.</p>
@@ -162,24 +210,37 @@ const BoardList = () => {
         </div>
       </div>
 
-      {/* 타입 필터 버튼들 */}
-      <div className="type-filter-container">
-        {boardTypes.map((type) => (
-          <button
-            key={type}
-            className={`type-filter-btn ${
-              selectedType === type ? "active" : ""
-            }`}
-            onClick={() => filterByType(type)}
-          >
-            {type}
-            {selectedType === type && (
-              <span className="active-count">
-                ({selectedType === "전체" ? list.length : filteredList.length})
-              </span>
-            )}
-          </button>
-        ))}
+      {/* 타입 필터 버튼들과 글작성 버튼 */}
+      <div className="filter-and-write-container">
+        <div className="type-filter-container">
+          {boardTypes.map((type) => (
+            <button
+              key={type}
+              className={`type-filter-btn ${
+                selectedType === type ? "active" : ""
+              }`}
+              onClick={() => filterByType(type)}
+            >
+              {type}
+              {selectedType === type && (
+                <span className="active-count">
+                  ({selectedType === "전체" ? list.length : filteredList.length}
+                  )
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+        <button
+          className="write-btn"
+          onClick={() => navigate("/boardWrite")}
+          title="새 글 작성"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+          </svg>
+          글쓰기
+        </button>
       </div>
 
       {/* 뷰 모드에 따른 렌더링 */}

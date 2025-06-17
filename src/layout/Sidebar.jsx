@@ -78,14 +78,14 @@ const Sidebar = () => {
         </div>
         <span className="sidebar_label">홈</span>
       </Link>
-      <Link to={"/BoardList"} className="sidebar_item">
+      <Link to={"/boardList"} className="sidebar_item">
         <div className="icon-wrapper">
           <img src={boardViewIcon} className="sidebar_icons" alt="게시판" />
           <img src={boardCaption} className="caption_image" alt="게시판 캡션" />
         </div>
         <span className="sidebar_label">게시판</span>
       </Link>
-      <Link to={"/profile"} className="sidebar_item">
+      <Link to={"/myPage"} className="sidebar_item">
         <div className="icon-wrapper">
           <img src={profileIcon} className="sidebar_icons" alt="프로필" />
           <img
