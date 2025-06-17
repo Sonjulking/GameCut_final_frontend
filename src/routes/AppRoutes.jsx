@@ -25,9 +25,9 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       //게시글 작성페이지
-      { path: "boardWrite", element: <BoardWrite /> },
-      { path: "boardEdit/:boardNo", element: <BoardWrite isEdit={true} /> },
-      { path: "boardList", element: <BoardList /> },
+      { path: "board/write", element: <BoardWrite /> },
+      { path: "board/edit/:boardNo", element: <BoardWrite isEdit={true} /> },
+      { path: "board/list", element: <BoardList /> },
       { path: "board/detail/:boardNo", element: <BoardDetail /> },
       { path: "test", element: <Test /> },
       { path: "myPage", element: <MyPage /> },

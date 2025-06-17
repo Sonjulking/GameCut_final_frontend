@@ -30,6 +30,7 @@ const VideoUploader = ({
     isEdit,
     existingVideo,
     setExistingVideo,
+    setExistingVideoNo,
     existingPhoto,
     setExistingPhoto
 }) => {
@@ -144,6 +145,7 @@ const VideoUploader = ({
             setAutoThumbnailFile(null);       // 자동 썸네일 제거
             setCustomThumbnailFile(null);     // 커스텀 썸네일 제거
             setExistingVideo("");             // 기존 비디오 정보 제거
+            setExistingVideoNo(null);             // 기존 비디오 정보 제거
             setExistingPhoto(null); //  기존 썸네일 제거
             setThumbnailMode("auto");         // 썸네일 모드 초기화
             setThumbnailText("");             // 썸네일 텍스트 초기화
