@@ -22,8 +22,13 @@ const Login = () => {
       });
 
       if (response.data.success) {
-        alert("로그인 성공!");
-        navigate("/index"); // 로그인 성공시 이동할 페이지
+        const { token, userNinkname, userId } = response.data; // nickname 가져오기
+        localStorage.setItem("token", token);
+        localStorage.setItem("nickname", userNinkname); // 닉네임 저장
+        localStorage.setItem("userId", userId); // 닉네임 저장
+        alert(`${userNinkname}님 환영합니다!`); // 여기가 핵심!
+
+        navigate("/");
       } else {
         setError("아이디 또는 비밀번호가 틀렸습니다.");
       }
