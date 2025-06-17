@@ -8,6 +8,8 @@ import FindPassword from "../pages/FindPassword.jsx";
 import Join from "../pages/Join.jsx";
 import Login from "../pages/Login.jsx";
 import ErrorPage from "../pages/Error.jsx";
+import NaverCallback from "../pages/NaverCallback";
+
 const delayImport = (importFunc, delay = 5000) => {
   return new Promise((resolve) => {
     setTimeout(() => resolve(importFunc()), delay);
@@ -31,7 +33,7 @@ const router = createBrowserRouter([
       { path: "findPassword", element: <FindPassword /> },
       { path: "join", element: <Join /> },
       { path: "login", element: <Login /> },
-
+      { path: "naver/callback", element: <NaverCallback /> },
       //404에러
       { path: "*", element: <ErrorPage /> },
     ],
