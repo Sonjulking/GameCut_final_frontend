@@ -13,6 +13,7 @@ const BoardWrite = ({isEdit = false}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [existingVideo, setExistingVideo] = useState({});
     const [existingPhoto, setExistingPhoto] = useState({});
+    const [existingVideoNo, setExistingVideoNo] = useState({});
     useEffect(() => {
         if (isEdit && boardNo) {
             axios.get(`${import.meta.env.VITE_API_URL}/board/${boardNo}`)
@@ -26,6 +27,8 @@ const BoardWrite = ({isEdit = false}) => {
                         });
                         setExistingVideo(data.video.attachFile);
                         setExistingPhoto(data.photos[0]?.attachFile);
+                        setExistingVideoNo(data.video.videoNo);
+
                     })
                     .catch((err) => console.error("수정용 데이터 로드 실패", err))
                     .finally(() => setIsLoading(false));
@@ -69,6 +72,8 @@ const BoardWrite = ({isEdit = false}) => {
             if (videoFile) {
                 formData.append("file", videoFile);
             }
+            formData.append("existingVideoNo", existingVideoNo);
+
 
             //썸네일 처리
             if (thumbnailMode === "auto" && autoThumbnailFile) {
@@ -106,7 +111,7 @@ const BoardWrite = ({isEdit = false}) => {
                 });
                 alert("게시글이 등록되었습니다.");
             }
-            navigate("/boardList");
+            navigate("/board/list");
         } catch (err) {
             console.error(err);
             if (isEdit) {
@@ -168,6 +173,7 @@ const BoardWrite = ({isEdit = false}) => {
                                             setExistingVideo={setExistingVideo}
                                             existingPhoto={existingPhoto}
                                             setExistingPhoto={setExistingPhoto}
+                                            setExistingVideoNo={setExistingVideoNo}
                                     />
                             ) : (
                                     <>

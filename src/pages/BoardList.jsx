@@ -233,7 +233,7 @@ const BoardList = () => {
         </div>
         <button
           className="write-btn"
-          onClick={() => navigate("/boardWrite")}
+          onClick={() => navigate("/board/write")}
           title="새 글 작성"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
