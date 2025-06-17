@@ -1,12 +1,40 @@
 // /components/BoardWrite/BoardWrite.jsx
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Container, Paper, Typography, Button, Stack, Box} from "@mui/material";
 import FormInputGroup from "../components/BoardWrite/FormInputGroup.jsx";
 import VideoUploader from "../components/BoardWrite/VideoUploader";
 import PhotoUploader from "../components/BoardWrite/PhotoUploader";
 import axios from "axios";
+import {useNavigate, useParams} from "react-router-dom";
 
-const BoardWrite = () => {
+const BoardWrite = ({isEdit = false}) => {
+    const navigate = useNavigate(); // 추가
+    const {boardNo} = useParams();
+    const [isLoading, setIsLoading] = useState(false);
+    const [existingVideo, setExistingVideo] = useState({});
+    const [existingPhoto, setExistingPhoto] = useState({});
+    const [existingVideoNo, setExistingVideoNo] = useState({});
+    useEffect(() => {
+        if (isEdit && boardNo) {
+            axios.get(`${import.meta.env.VITE_API_URL}/board/${boardNo}`)
+                    .then((res) => {
+                        const data = res.data;
+                        setForm({
+                            boardTitle: data.boardTitle,
+                            boardContent: data.boardContent,
+                            boardTypeNo: data.boardTypeNo,
+                            userNo: data.user.userNo,
+                        });
+                        setExistingVideo(data.video.attachFile);
+                        setExistingPhoto(data.photos[0]?.attachFile);
+                        setExistingVideoNo(data.video.videoNo);
+
+                    })
+                    .catch((err) => console.error("수정용 데이터 로드 실패", err))
+                    .finally(() => setIsLoading(false));
+        }
+    }, [isEdit, boardNo]);
+
     const [form, setForm] = useState({
         boardTitle: "",
         boardContent: "",
@@ -44,6 +72,8 @@ const BoardWrite = () => {
             if (videoFile) {
                 formData.append("file", videoFile);
             }
+            formData.append("existingVideoNo", existingVideoNo);
+
 
             //썸네일 처리
             if (thumbnailMode === "auto" && autoThumbnailFile) {
@@ -56,20 +86,39 @@ const BoardWrite = () => {
         }
 
         try {
-            await axios.post(`${import.meta.env.VITE_API_URL}/board`, formData, {
-                headers: {"Content-Type": "multipart/form-data"},
-                //업로드 진행률을 추적하는 콜백함수
-                onUploadProgress: (e) => {
-                    //퍼센트로 변환
-                    const percent = Math.round((e.loaded * 100) / e.total);
-                    //계산된 퍼센트를 state에 저장
-                    setUploadProgress(percent);
-                }
-            });
-            alert("게시글이 등록되었습니다.");
+            if (isEdit) {
+                await axios.put(`${import.meta.env.VITE_API_URL}/board/${boardNo}`, formData, {
+                    headers: {"Content-Type": "multipart/form-data"},
+                    //업로드 진행률을 추적하는 콜백함수
+                    onUploadProgress: (e) => {
+                        //퍼센트로 변환
+                        const percent = Math.round((e.loaded * 100) / e.total);
+                        //계산된 퍼센트를 state에 저장
+                        setUploadProgress(percent);
+                    }
+                });
+                alert("게시글이 수정되었습니다.");
+            } else {
+                await axios.post(`${import.meta.env.VITE_API_URL}/board`, formData, {
+                    headers: {"Content-Type": "multipart/form-data"},
+                    //업로드 진행률을 추적하는 콜백함수
+                    onUploadProgress: (e) => {
+                        //퍼센트로 변환
+                        const percent = Math.round((e.loaded * 100) / e.total);
+                        //계산된 퍼센트를 state에 저장
+                        setUploadProgress(percent);
+                    }
+                });
+                alert("게시글이 등록되었습니다.");
+            }
+            navigate("/board/list");
         } catch (err) {
             console.error(err);
-            alert("게시글이 등록실패했습니다.");
+            if (isEdit) {
+                alert("게시글이 수정실패했습니다.");
+            } else {
+                alert("게시글이 등록실패했습니다.");
+            }
         } finally {
             setUploadProgress(0);
         }
@@ -110,6 +159,7 @@ const BoardWrite = () => {
                             />
                             {form.boardTypeNo === 3 ? (
                                     <VideoUploader
+                                            isEdit={isEdit}
                                             videoFile={videoFile}
                                             setVideoFile={setVideoFile}
                                             autoThumbnailFile={autoThumbnailFile}
@@ -119,13 +169,21 @@ const BoardWrite = () => {
                                             thumbnailMode={thumbnailMode}
                                             setThumbnailMode={setThumbnailMode}
                                             uploadProgress={uploadProgress}
+                                            existingVideo={existingVideo}
+                                            setExistingVideo={setExistingVideo}
+                                            existingPhoto={existingPhoto}
+                                            setExistingPhoto={setExistingPhoto}
+                                            setExistingVideoNo={setExistingVideoNo}
                                     />
                             ) : (
-                                    <PhotoUploader
-                                            photoFiles={photoFiles}
-                                            setPhotoFiles={setPhotoFiles}
-                                    />
+                                    <>
+                                    </>
                             )}
+                            {/*       <PhotoUploader
+                                    photoFiles={photoFiles}
+                                    setPhotoFiles={setPhotoFiles}
+                            />
+                        */}
                             <Button
                                     type="submit"
                                     variant="contained"

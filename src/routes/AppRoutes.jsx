@@ -9,6 +9,10 @@ import Join from "../pages/Join.jsx";
 import Login from "../pages/Login.jsx";
 import ErrorPage from "../pages/Error.jsx";
 import NaverCallback from "../pages/NaverCallback";
+import BoardList from "../pages/BoardList.jsx";
+import BoardDetail from "../pages/BoardDetail.jsx";
+import MyPage from "../pages/MyPage.jsx";
+import MyBoard from "../pages/MyBoard.jsx";
 
 const delayImport = (importFunc, delay = 5000) => {
   return new Promise((resolve) => {
@@ -26,14 +30,18 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       //게시글 작성페이지
-      { path: "boardWrite", element: <BoardWrite /> },
+      { path: "board/write", element: <BoardWrite /> },
+      { path: "board/edit/:boardNo", element: <BoardWrite isEdit={true} /> },
+      { path: "board/list", element: <BoardList /> },
+      { path: "board/detail/:boardNo", element: <BoardDetail /> },
       { path: "test", element: <Test /> },
-
       //로그인관련페이지
       { path: "findPassword", element: <FindPassword /> },
       { path: "join", element: <Join /> },
       { path: "login", element: <Login /> },
       { path: "naver/callback", element: <NaverCallback /> },
+      { path: "myPage", element: <MyPage /> },
+      { path: "myBoard", element: <MyBoard /> },
       //404에러
       { path: "*", element: <ErrorPage /> },
     ],

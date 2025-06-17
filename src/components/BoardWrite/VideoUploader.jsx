@@ -26,7 +26,13 @@ const VideoUploader = ({
     setCustomThumbnailFile,
     thumbnailMode,
     setThumbnailMode,
-    uploadProgress
+    uploadProgress,
+    isEdit,
+    existingVideo,
+    setExistingVideo,
+    setExistingVideoNo,
+    existingPhoto,
+    setExistingPhoto
 }) => {
     //useRef()는 특정 DOM 요소나 값에 직접 접근하고 조작하고 싶을 때 사용하는 Hook
     const videoRef = useRef(null);
@@ -45,9 +51,14 @@ const VideoUploader = ({
         }
     }, [thumbnailMode, videoFile, debouncedText]);
 
+    useEffect(() => {
+        if (existingPhoto) {
+            setThumbnailMode("existingPhoto");
+        }
+    }, [existingPhoto]);
     //썸네일 자동 생성
     const generateThumbnail = (file) => {
-
+        setExistingPhoto(null);
         //브라우저 메모리에서 사용할 빋오 요소 생성(화면에 표시안됨)
         const videoEl = document.createElement("video");
 
@@ -92,7 +103,7 @@ const VideoUploader = ({
             //썸네일 텍스트가 있을 때만 그리기
             if (debouncedText.trim() !== "") {
                 // 배경 어둡게 덧씌우기 (반투명 블랙 오버레이)
-                ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+                ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
                 ctx.font = "bold 48px 'Malgun Gothic', 'Segoe UI', sans-serif";
@@ -129,6 +140,17 @@ const VideoUploader = ({
     const handleVideoChange = (e) => {
         const file = e.target.files[0];
         if (file && file.size <= MAX_FILE_SIZE) {
+            // 기존 데이터 초기화
+            setVideoFile(null);               // 기존 파일 제거
+            setAutoThumbnailFile(null);       // 자동 썸네일 제거
+            setCustomThumbnailFile(null);     // 커스텀 썸네일 제거
+            setExistingVideo("");             // 기존 비디오 정보 제거
+            setExistingVideoNo(null);             // 기존 비디오 정보 제거
+            setExistingPhoto(null); //  기존 썸네일 제거
+            setThumbnailMode("auto");         // 썸네일 모드 초기화
+            setThumbnailText("");             // 썸네일 텍스트 초기화
+
+            // 새 파일 적용 및 썸네일 생성
             setVideoFile(file);
             if (thumbnailMode === "auto") {
                 generateThumbnail(file);
@@ -138,11 +160,28 @@ const VideoUploader = ({
         }
     };
 
+    const fetchVideoAsFile = async (url, fileName) => {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        return new File([blob], fileName, {type: blob.type});
+    };
+
+    useEffect(() => {
+        const initExistingVideo = async () => {
+            if (existingVideo.fileUrl && !videoFile) {
+                const fullUrl = import.meta.env.VITE_API_URL + existingVideo.fileUrl;
+                const file = await fetchVideoAsFile(fullUrl, existingVideo.originalFileName || "video.mp4");
+                setVideoFile(file);
+            }
+        };
+        initExistingVideo();
+    }, [existingVideo]);
     //커스텀 섬네일 업로드
     const handleCustomThumbnailChange = (e) => {
         const file = e.target.files[0];
         if (file && file.size <= MAX_FILE_SIZE) {
             setCustomThumbnailFile(file);
+            setExistingPhoto(null);
         } else {
             alert("100MB 이하의 이미지만 업로드 가능합니다.");
         }
@@ -164,20 +203,31 @@ const VideoUploader = ({
                     />
                 </Button>
 
-                {videoFile && (
+                {(existingVideo.fileUrl || videoFile) && (
                         <>
-                            <Typography color="gray">{videoFile.name}</Typography>
-                            <video
-                                    ref={videoRef}
-                                    src={videoURL}
-                                    controls
-                                    style={{width: "100%", maxHeight: 300, borderRadius: 8}}
-                            />
+                            {videoFile ? <Typography color="gray">{videoFile.name}</Typography> :
+                                    <Typography
+                                            color="gray"
+                                    >{existingVideo.originalFileName}</Typography>}
+                            {existingVideo.fileUrl ?
+                                    <video
+                                            ref={videoRef}
+                                            src={`${import.meta.env.VITE_API_URL}` + existingVideo.fileUrl}
+                                            controls
+                                            style={{width: "100%", maxHeight: 300, borderRadius: 8}}
+                                    /> : <video
+                                            ref={videoRef}
+                                            src={videoURL}
+                                            controls
+                                            style={{width: "100%", maxHeight: 300, borderRadius: 8}}
+                                    />}
+
                             {/*삭제버튼*/}
                             <IconButton
                                     onClick={() => {
                                         setVideoFile(null);
                                         setAutoThumbnailFile(null);
+                                        setExistingVideo("");
                                     }}
                             >
                                 <DeleteIcon sx={{color: "red"}}/>
@@ -192,6 +242,20 @@ const VideoUploader = ({
                             value={thumbnailMode}
                             onChange={(e) => setThumbnailMode(e.target.value)}
                     >
+
+                        {existingPhoto?.fileUrl &&
+                                <FormControlLabel
+                                        value="existingPhoto"
+                                        control={<Radio
+                                                sx={{
+                                                    color: "#aaa",
+                                                    "&.Mui-checked": {color: "#42a5f5"}
+                                                }}
+                                        />}
+                                        label="기존 썸네일"
+                                        sx={{color: "#fff"}}
+                                />
+                        }
                         <FormControlLabel
                                 value="auto"
                                 control={<Radio
@@ -230,7 +294,16 @@ const VideoUploader = ({
                         />
 
                 )}
-
+                {existingPhoto?.fileUrl && thumbnailMode === "existingPhoto" && (
+                        <Box>
+                            <Typography color="gray">기존 썸네일</Typography>
+                            <img
+                                    src={`${import.meta.env.VITE_API_URL}` + existingPhoto.fileUrl}
+                                    alt="auto"
+                                    style={{width: "100%", borderRadius: 8}}
+                            />
+                        </Box>
+                )}
 
                 {thumbnailMode === "auto" && autoThumbnailFile && (
                         <Box>
