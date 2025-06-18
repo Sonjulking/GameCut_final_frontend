@@ -50,13 +50,19 @@ const Login = () => {
   };
 
   const googleLogin = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
+    onSuccess: async (response) => {
+      const accessToken = response.access_token;
+      console.log("🔥 받은 accessToken:", accessToken);
+      if (!accessToken) {
+        setError("accessToken 없음. flow 설정 확인 필요.");
+        return;
+      }
+
       try {
         const res = await axios.post(
           "http://localhost:8081/user/oauth/google",
-          {
-            token: tokenResponse.access_token,
-          }
+          { accessToken },
+          { headers: { "Content-Type": "application/json" } }
         );
         if (res.data.success) {
           localStorage.setItem("token", res.data.token);
@@ -64,15 +70,17 @@ const Login = () => {
           localStorage.setItem("userId", res.data.userId);
           alert(`${res.data.userNickname}님 환영합니다!`);
           navigate("/");
+        } else {
+          setError("구글 로그인 실패");
         }
       } catch (err) {
         console.error(err);
-        setError("구글 로그인 실패");
+        setError("구글 로그인 실패 (서버)");
       }
     },
-    onError: () => {
-      setError("구글 로그인 실패");
-    },
+    flow: "implicit", // ✅ 반드시 추가!
+    scope:
+      "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
   });
 
   const naverLogin = () => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom"; // ✅ useLocation 추가
 import logoImg from "../assets/img/main/logo/gamecut_logo.png";
 import searchIcon from "../assets/img/main/icons/search_icon.png";
 import loginIcon from "../assets/img/main/icons/login_icon.png";
@@ -8,18 +8,20 @@ import hamburgerIcon from "../assets/img/main/icons/hamburger_icon.png";
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate(); // 추가
+  const navigate = useNavigate();
+  const location = useLocation(); // ✅ 현재 URL 경로를 추적
 
+  // ✅ location이 바뀔 때마다 토큰 확인
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
-  }, []);
+  }, [location]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
     alert("로그아웃 성공!");
-    navigate("/"); // 로그아웃 후 홈으로 이동
+    navigate("/");
   };
 
   return (
@@ -38,7 +40,7 @@ const Header = () => {
           <Link
             to="/"
             onClick={(e) => {
-              e.preventDefault(); // 기본 이동 막고
+              e.preventDefault();
               handleLogout();
             }}
           >
