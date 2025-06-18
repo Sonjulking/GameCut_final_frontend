@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar.jsx"; // 새로운 사이드바 import
-import "../styles/myPage.css";
+import "../styles/MyPage.css";
 
 // 메인 마이페이지 컴포넌트
 const MyPage = () => {
