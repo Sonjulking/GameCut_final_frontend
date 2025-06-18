@@ -308,30 +308,6 @@
   color: white;
 }
 
-
-
-/* 새로운 댓글 섹션 - 충돌 방지용 */
-.board-comment-section {
-  background-color: #161b22;
-  border-radius: 12px;
-  border: 1px solid #30363d;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-}
-
-.board-comment-header {
-  padding: 20px 24px;
-  background-color: #21262d;
-  border-bottom: 1px solid #30363d;
-}
-
-.board-comment-header h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #f0f6fc;
-}
-
 /* 댓글 입력 영역 */
 .board-comment-input-area {
   padding: 20px 24px;
