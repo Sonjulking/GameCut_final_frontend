@@ -11,15 +11,34 @@ import "@toast-ui/editor/dist/toastui-editor.css";
 import "../../styles/toast-editor-dark.css";
 import axios from "axios"; // 이미지 업로드에 필요
 
-const FormInputGroup = ({form, handleChange}) => {
+const FormInputGroup = ({form, handleChange, isEdit}) => {
     const editorRef = useRef(null);
+
     useEffect(() => {
-        if (editorRef.current && form.boardTypeNo !== 3) {
-            const instance = editorRef.current.getInstance();
-            instance.setHTML(form.boardContent || ""); // 이걸 명확하게 설정
-            instance.changeMode("wysiwyg", true); // 선택사항이지만 추천
+        if (!isEdit) {
+            handleChange({
+                target: {name: "boardContent", value: ""},
+            });
+
+            if (form.boardTypeNo !== 3) {
+                // 에디터가 렌더링된 다음 프레임에 초기화
+                requestAnimationFrame(() => {
+                    if (editorRef.current) {
+                        const instance = editorRef.current.getInstance();
+                        instance.setHTML(form.boardContent || "");
+                        instance.changeMode("wysiwyg", true);
+                    }
+                });
+            }
+        } else {
+            if (form.boardTypeNo !== 3 && editorRef.current) {
+                const instance = editorRef.current.getInstance();
+                instance.setHTML(form.boardContent || ""); // 여기에서 form.boardContent를 확실히 반영
+                instance.changeMode("wysiwyg", true);
+            }
         }
-    }, [form.boardContent, form.boardTypeNo]);
+
+    }, [form.boardTypeNo, form.boardContent]);
 
 
     return (
@@ -31,6 +50,7 @@ const FormInputGroup = ({form, handleChange}) => {
                             value={form.boardTypeNo}
                             onChange={handleChange}
                             variant="outlined"
+                            disabled={isEdit} // ← 요거 추가!
                             sx={{
                                 color: "#fff",
                                 backgroundColor: "#2b2b2b",
@@ -39,6 +59,27 @@ const FormInputGroup = ({form, handleChange}) => {
                                 "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                                     borderColor: "#1976d2",
                                 },
+                                "&.Mui-disabled": {
+                                    color: "#aaa", // 텍스트 색상
+                                    "-webkit-text-fill-color": "#aaa", // Webkit 계열 브라우저 텍스트 색상
+                                    backgroundColor: "#2b2b2b", // 배경 유지
+                                    "& .MuiOutlinedInput-notchedOutline": {
+                                        borderColor: "#444", // 테두리 색상
+                                    },
+                                    "& .MuiSelect-select.Mui-disabled": {
+                                        color: "#aaa", // 드롭다운 텍스트 색상
+                                        WebkitTextFillColor: "#aaa", // 크롬에서 적용 안될 시
+                                    },
+                                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                                        borderColor: "#999",
+                                    },
+                                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                        borderColor: "#1976d2",
+                                    },
+                                    "&.Mui-disabled .MuiOutlinedInput-notchedOutline": {
+                                        borderColor: "#444", // disabled일 때 테두리
+                                    },
+                                }
                             }}
                     >
                         <MenuItem value={1}>자유 게시판</MenuItem>
@@ -86,11 +127,10 @@ const FormInputGroup = ({form, handleChange}) => {
                 ) : (
                         <div style={{marginTop: "24px"}}>
                             <Editor
+                                    key={form.boardTypeNo}
                                     ref={editorRef}
-                                    initialValue=""
                                     previewStyle="vertical"
                                     hideModeSwitch={true}
-
                                     initialEditType="wysiwyg"
                                     useCommandShortcut={true}
                                     onChange={() => {
@@ -109,31 +149,26 @@ const FormInputGroup = ({form, handleChange}) => {
                                         ["heading", "bold", "italic", "strike"],
                                         ["hr", "quote"],
                                         ["ul", "ol", "task"],
-                                        ["table", "link", "image"], // 이미지 버튼 활성화
+                                        ["table", "link", "image"],
                                         ["code", "codeblock"],
                                     ]}
                                     hooks={{
                                         addImageBlobHook: async (blob, callback) => {
                                             const token = localStorage.getItem("token");
-                                            const axiosConfig = {
-                                                headers: {
-                                                    Authorization: `Bearer ${token}`,
-                                                }
-                                            };
-                                            console.log("🔥 이미지 업로드 훅 실행됨", blob);
                                             const formData = new FormData();
                                             formData.append("image", blob);
 
                                             try {
                                                 const res = await axios.post(
                                                         `${import.meta.env.VITE_API_URL}/board/img`,
-                                                        formData, axiosConfig
+                                                        formData,
+                                                        {
+                                                            headers: {
+                                                                Authorization: `Bearer ${token}`,
+                                                            },
+                                                        }
                                                 );
-
-                                                console.log("url : " + res.data.imageUrl);
-
-                                                const imageUrl = `${import.meta.env.VITE_API_URL}` + res.data.imageUrl; // 서버에서 받은 이미지 URL
-                                                //에디터에서 자동으로 url 받아서 img 설정
+                                                const imageUrl = `${import.meta.env.VITE_API_URL}${res.data.imageUrl}`;
                                                 callback(imageUrl);
                                             } catch (err) {
                                                 console.error("이미지 업로드 실패", err);
@@ -142,6 +177,7 @@ const FormInputGroup = ({form, handleChange}) => {
                                         },
                                     }}
                             />
+
                         </div>
                 )}
             </>

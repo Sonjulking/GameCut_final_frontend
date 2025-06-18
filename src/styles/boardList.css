@@ -601,3 +601,7 @@
   color: white;
   border-color: #3f51b5;
 }
+
+.empty-thumbnail{
+  width: 50%;
+}

@@ -168,6 +168,7 @@ const BoardWrite = ({isEdit = false}) => {
                             <FormInputGroup
                                     form={form}
                                     handleChange={handleChange}
+                                    isEdit={isEdit}
                             />
                             {form.boardTypeNo === 3 ? (
                                     <VideoUploader
