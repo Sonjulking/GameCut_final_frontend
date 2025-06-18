@@ -12,6 +12,7 @@ const BoardDetail = () => {
   const [board, setBoard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
+  const [showReplies, setShowReplies] = useState({});
 
   // 댓글 관련 상태
   const [comments, setComments] = useState([]);
@@ -19,6 +20,13 @@ const BoardDetail = () => {
     boardNo: boardNo,
     commentContent: "",
   });
+
+  const toggleReplies = (commentNo) => {
+    setShowReplies((prev) => ({
+      ...prev,
+      [commentNo]: !prev[commentNo], // 해당 댓글의 대댓글 표시 상태를 반전
+    }));
+  };
 
   // boardTypeNo를 타입명으로 변환하는 함수
   const getBoardTypeName = (boardTypeNo) => {
@@ -151,6 +159,7 @@ const BoardDetail = () => {
   useEffect(() => {
     if (boardNo) {
       loadBoardDetail(); // 게시글만 로드하면 comments도 함께 옴
+      console.log(board);
     }
   }, [boardNo]);
 
@@ -305,28 +314,109 @@ const BoardDetail = () => {
         {/* 댓글 목록 */}
         <div className="board-comment-list">
           {comments.length > 0 ? (
-            comments.map((comment, index) => (
-              <div key={index} className="board-comment-item">
-                <div className="board-comment-user-info">
-                  <img
-                    src="/src/assets/img/main/icons/admin.jpg"
-                    alt="profile"
-                    className="board-comment-profile-img"
-                  />
-                  <div className="board-comment-info">
-                    <span className="board-comment-nickname">
-                      {comment.user?.userNickname || "익명"}
-                    </span>
-                    <span className="board-comment-date">
-                      {new Date(comment.commentCreateDate).toLocaleString()}
-                    </span>
+            comments
+              .filter((comment) => !comment.parentComment)
+              .map((comment, index) => (
+                <div key={index} className="board-comment-item">
+                  <div
+                    class="reply-insert-button"
+                    style={{ marginLeft: "auto" }}
+                  >
+                    답글달기
                   </div>
+                  <div className="board-comment-user-info">
+                    <img
+                      src="/src/assets/img/main/icons/admin.jpg"
+                      alt="profile"
+                      className="board-comment-profile-img"
+                    />
+                    <div className="board-comment-info">
+                      <span className="board-comment-nickname">
+                        {comment.user.userNickname}
+                      </span>
+                      <span className="board-comment-date">
+                        {new Date(comment.commentCreateDate).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="board-comment-content">
+                    {comment.commentContent}
+                  </p>
+                  <input type="text" placeholder="대댓글을 입력하세요." />
+                  {/* 대댓글 */}
+                  {(() => {
+                    // 현재 댓글의 대댓글 개수 계산
+                    const replyCount = comments.filter(
+                      (reply) =>
+                        reply.parentComment &&
+                        reply.parentComment.commentNo === comment.commentNo
+                    ).length;
+
+                    // 대댓글이 없으면 아무것도 표시하지 않음
+                    if (replyCount === 0) return null;
+
+                    return (
+                      <div>
+                        {/* 답글 개수 표시 및 토글 버튼 */}
+                        <div
+                          id="reply-show-button"
+                          onClick={() => toggleReplies(comment.commentNo)}
+                          style={{
+                            color: "#1976d2",
+                            fontSize: "14px",
+                            padding: "8px 0",
+                            userSelect: "none",
+                          }}
+                        >
+                          {showReplies[comment.commentNo]
+                            ? "답글 닫기"
+                            : `답글 ${replyCount}개`}
+                        </div>
+                        {/* 대댓글 내용 - 조건부 렌더링 */}
+                        {showReplies[comment.commentNo] && (
+                          <div className="replies-container">
+                            {comments
+                              .filter(
+                                (reply) =>
+                                  reply.parentComment &&
+                                  reply.parentComment.commentNo ===
+                                    comment.commentNo
+                              )
+                              .map((reply, replyIndex) => (
+                                <div key={replyIndex} className="reply-item">
+                                  <div className="reply-content">
+                                    <br />
+                                    <div className="board-comment-user-info">
+                                      ↳
+                                      <img
+                                        src="/src/assets/img/main/icons/admin.jpg"
+                                        alt="profile"
+                                        className="board-comment-profile-img small"
+                                      />
+                                      <div className="board-comment-info">
+                                        <span className="board-comment-nickname">
+                                          {reply.user.userNickname}
+                                        </span>
+                                        <span className="board-comment-date">
+                                          {new Date(
+                                            reply.commentCreateDate
+                                          ).toLocaleString()}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <p className="board-comment-content">
+                                      {reply.commentContent}
+                                    </p>
+                                  </div>
+                                </div>
+                              ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
-                <p className="board-comment-content">
-                  {comment.commentContent}
-                </p>
-              </div>
-            ))
+              ))
           ) : (
             <div className="board-no-comments">
               <p>첫 번째 댓글을 작성해보세요!</p>

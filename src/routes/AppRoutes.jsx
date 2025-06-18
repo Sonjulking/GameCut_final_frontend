@@ -30,8 +30,8 @@ const router = createBrowserRouter([
       { path: "boardList", element: <BoardList /> },
       { path: "board/detail/:boardNo", element: <BoardDetail /> },
       { path: "test", element: <Test /> },
-      { path: "myPage", element: <MyPage /> },
-      { path: "myBoard", element: <MyBoard /> },
+      { path: "mypage/info", element: <MyPage /> },
+      { path: "mypage/board", element: <MyBoard /> },
       //404에러
       { path: "*", element: <ErrorPage /> },
     ],

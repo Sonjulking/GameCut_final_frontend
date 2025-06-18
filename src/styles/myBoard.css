@@ -1,7 +1,7 @@
-/* MyBoard.css - BoardList.css 기반 + 마이페이지 전용 스타일 */
+/* MyBoard.css - 카드 레이아웃 개선 */
 
 /* =========================== */
-/* 마이페이지 컨테이너 (기존 유지) */
+/* 마이페이지 컨테이너 수정 */
 /* =========================== */
 .mypage-container {
   min-height: 100vh;
@@ -11,7 +11,7 @@
 }
 
 .mypage-content {
-  max-width: 1400px;
+  max-width: 1400px; /* 1400px에서 1600px로 확장 */
   margin: 0 auto;
 }
 
@@ -27,6 +27,7 @@
   border-radius: 12px;
   padding: 24px;
   border: 1px solid #30363d;
+  min-width: 0; /* 플렉스 아이템이 축소될 수 있도록 */
 }
 
 /* 마이페이지 안에서 board-container 스타일 재정의 */
@@ -39,7 +40,207 @@
 }
 
 /* =========================== */
-/* BoardList.css 완전 복사 */
+/* 카드 뷰 스타일 개선 */
+/* =========================== */
+.board-card-container {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(280px, 1fr)
+  ); /* 320px에서 280px로 줄임 */
+  gap: 16px; /* 20px에서 16px로 줄임 */
+  width: 100%;
+}
+
+.board-card {
+  background: #161b22;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #30363d;
+  position: relative;
+  width: 100%;
+}
+
+.board-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  border-color: #58a6ff;
+}
+
+.thumbnail-container {
+  width: 100%;
+  height: 160px; /* 180px에서 160px로 줄임 */
+  overflow: hidden;
+  background-color: #21262d;
+  position: relative;
+}
+
+.board-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  filter: brightness(0.9);
+}
+
+.board-card:hover .board-thumbnail {
+  transform: scale(1.05);
+  filter: brightness(1);
+}
+
+/* 카드 타입 배지 - boardTypeNo 기반 */
+.my-card-type-badge {
+  position: absolute;
+  top: 8px; /* 12px에서 8px로 줄임 */
+  left: 8px; /* 위치 변경 */
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: auto;
+  max-width: 60px;
+  text-align: center;
+}
+
+.my-card-type-badge.type-1 {
+  background-color: rgba(31, 111, 235, 0.9);
+  color: white;
+}
+
+.my-card-type-badge.type-2 {
+  background-color: rgba(35, 134, 54, 0.9);
+  color: white;
+}
+
+.my-card-type-badge.type-3 {
+  background-color: rgba(218, 54, 51, 0.9);
+  color: white;
+}
+
+.board-info {
+  padding: 14px; /* 16px에서 14px로 줄임 */
+}
+
+.board-title {
+  font-size: 15px; /* 16px에서 15px로 줄임 */
+  font-weight: 600;
+  color: #f0f6fc;
+  margin: 0 0 10px 0; /* 12px에서 10px로 줄임 */
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.board-title:hover {
+  color: #58a6ff;
+}
+
+.board-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* 8px에서 6px로 줄임 */
+}
+
+.board-author {
+  font-size: 13px; /* 14px에서 13px로 줄임 */
+  color: #8b949e;
+  margin: 0;
+  font-weight: 500;
+}
+
+.board-stats {
+  display: flex;
+  gap: 10px; /* 12px에서 10px로 줄임 */
+  font-size: 12px;
+  color: #7d8590;
+}
+
+.board-views,
+.board-likes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.board-views::before {
+  content: "👁";
+  font-size: 12px;
+}
+
+.board-likes::before {
+  content: "💚";
+  font-size: 12px;
+}
+
+.board-date {
+  font-size: 12px;
+  color: #656d76;
+  margin: 0;
+}
+
+/* 카드 위에 표시되는 수정/삭제 버튼 */
+.card-actions {
+  position: absolute;
+  top: 8px; /* 12px에서 8px로 줄임 */
+  right: 8px; /* 12px에서 8px로 줄임 */
+  display: flex;
+  gap: 6px; /* 8px에서 6px로 줄임 */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+}
+
+.board-card:hover .card-actions {
+  opacity: 1;
+}
+
+.card-edit-btn,
+.card-delete-btn {
+  padding: 6px 10px; /* 8px 12px에서 6px 10px로 줄임 */
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 11px; /* 12px에서 11px로 줄임 */
+  font-weight: 600;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.card-edit-btn {
+  background-color: rgba(35, 134, 54, 0.9);
+  color: white;
+}
+
+.card-edit-btn:hover {
+  background-color: rgba(35, 134, 54, 1);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4);
+}
+
+.card-delete-btn {
+  background-color: rgba(218, 54, 51, 0.9);
+  color: white;
+}
+
+.card-delete-btn:hover {
+  background-color: rgba(218, 54, 51, 1);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(218, 54, 51, 0.4);
+}
+
+/* =========================== */
+/* 기존 스타일들 유지 */
 /* =========================== */
 
 /* 전체 컨테이너 */
@@ -145,19 +346,6 @@
   box-shadow: 0 6px 16px rgba(31, 111, 235, 0.6);
 }
 
-.write-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(31, 111, 235, 0.4);
-}
-
-.write-btn svg {
-  transition: transform 0.2s ease;
-}
-
-.write-btn:hover svg {
-  transform: rotate(15deg);
-}
-
 .board-title-header {
   margin: 0;
   font-size: 28px;
@@ -201,14 +389,6 @@
   box-shadow: 0 2px 8px rgba(35, 134, 54, 0.4);
 }
 
-.toggle-btn svg {
-  transition: transform 0.2s ease;
-}
-
-.toggle-btn:hover svg {
-  transform: scale(1.1);
-}
-
 /* 컨텐츠 영역 */
 .board-content {
   min-height: 400px;
@@ -250,10 +430,6 @@
 .mypage_board_table tbody tr:hover {
   background-color: #21262d;
   transition: all 0.2s ease;
-}
-
-.mypage_board_table tbody tr:last-child td {
-  border-bottom: none;
 }
 
 .title_cell {
@@ -311,184 +487,6 @@
   color: white;
 }
 
-/* =========================== */
-/* 카드 뷰 스타일 */
-/* =========================== */
-.board-card-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
-}
-
-.board-card {
-  background: #161b22;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 1px solid #30363d;
-  position: relative;
-}
-
-.board-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  border-color: #58a6ff;
-}
-
-.thumbnail-container {
-  width: 100%;
-  height: 180px;
-  overflow: hidden;
-  background-color: #21262d;
-  position: relative;
-}
-
-.board-thumbnail {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-  filter: brightness(0.9);
-}
-
-.board-card:hover .board-thumbnail {
-  transform: scale(1.05);
-  filter: brightness(1);
-}
-
-/* 카드 타입 배지 - boardTypeNo 기반 */
-.card-type-badge {
-  position: absolute;
-  top: 12px;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  min-width: auto;
-  max-width: 60px;
-  text-align: center;
-}
-
-.card-type-badge.type-1 {
-  background-color: rgba(31, 111, 235, 0.9);
-  color: white;
-}
-
-.card-type-badge.type-2 {
-  background-color: rgba(35, 134, 54, 0.9);
-  color: white;
-}
-
-.card-type-badge.type-3 {
-  background-color: rgba(218, 54, 51, 0.9);
-  color: white;
-}
-
-.board-info {
-  padding: 16px;
-}
-
-.board-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #f0f6fc;
-  margin: 0 0 12px 0;
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.board-title:hover {
-  color: #58a6ff;
-}
-
-.board-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.board-author {
-  font-size: 14px;
-  color: #8b949e;
-  margin: 0;
-  font-weight: 500;
-}
-
-.board-stats {
-  display: flex;
-  gap: 12px;
-  font-size: 12px;
-  color: #7d8590;
-}
-
-.board-views,
-.board-likes {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.board-views::before {
-  content: "👁";
-  font-size: 12px;
-}
-
-.board-likes::before {
-  content: "💚";
-  font-size: 12px;
-}
-
-.board-date {
-  font-size: 12px;
-  color: #656d76;
-  margin: 0;
-}
-
-.empty-state {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 60px 20px;
-  color: #7d8590;
-  font-size: 16px;
-  background: #161b22;
-  border-radius: 12px;
-  border: 1px dashed #30363d;
-}
-
-.write-first-btn {
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #238636, #2ea043);
-  color: white;
-  border: none;
-  border-radius: 25px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4);
-  margin-top: 16px;
-}
-
-.write-first-btn:hover {
-  background: linear-gradient(135deg, #2ea043, #238636);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(35, 134, 54, 0.6);
-}
-
-/* =========================== */
-/* 내 게시글 전용 추가 스타일 */
-/* =========================== */
-
 /* 테이블의 액션 버튼들 */
 .action-buttons {
   display: flex;
@@ -534,55 +532,35 @@
   box-shadow: 0 2px 8px rgba(218, 54, 51, 0.3);
 }
 
-/* 카드 위에 표시되는 수정/삭제 버튼 */
-.card-actions {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  display: flex;
-  gap: 8px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 10;
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: #7d8590;
+  font-size: 16px;
+  background: #161b22;
+  border-radius: 12px;
+  border: 1px dashed #30363d;
 }
 
-.board-card:hover .card-actions {
-  opacity: 1;
-}
-
-.card-edit-btn,
-.card-delete-btn {
-  padding: 8px 12px;
-  border-radius: 6px;
+.write-first-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #238636, #2ea043);
+  color: white;
   border: none;
-  cursor: pointer;
-  font-size: 12px;
+  border-radius: 25px;
+  font-size: 14px;
   font-weight: 600;
-  transition: all 0.2s ease;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.card-edit-btn {
-  background-color: rgba(35, 134, 54, 0.9);
-  color: white;
-}
-
-.card-edit-btn:hover {
-  background-color: rgba(35, 134, 54, 1);
-  transform: scale(1.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4);
+  margin-top: 16px;
 }
 
-.card-delete-btn {
-  background-color: rgba(218, 54, 51, 0.9);
-  color: white;
-}
-
-.card-delete-btn:hover {
-  background-color: rgba(218, 54, 51, 1);
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(218, 54, 51, 0.4);
+.write-first-btn:hover {
+  background: linear-gradient(135deg, #2ea043, #238636);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(35, 134, 54, 0.6);
 }
 
 /* 로딩 스피너 */
@@ -615,50 +593,26 @@
 }
 
 /* =========================== */
-/* 글로우 효과 및 추가 시각적 효과 */
-/* =========================== */
-
-/* 카드 호버 시 글로우 효과 */
-.board-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    transparent 0%,
-    rgba(88, 166, 255, 0.03) 100%
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-  border-radius: 12px;
-}
-
-.board-card:hover::before {
-  opacity: 1;
-}
-
-/* 토글 버튼 글로우 효과 */
-.toggle-btn.active {
-  box-shadow: 0 2px 8px rgba(35, 134, 54, 0.4), 0 0 0 1px rgba(35, 134, 54, 0.3);
-}
-
-/* 테이블 행 호버 효과 개선 */
-.mypage_board_table tbody tr {
-  transition: all 0.2s ease;
-}
-
-.mypage_board_table tbody tr:hover {
-  background-color: #21262d;
-  transform: scale(1.002);
-}
-
-/* =========================== */
 /* 반응형 디자인 */
 /* =========================== */
+@media (max-width: 1400px) {
+  .board-card-container {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .mypage-content {
+    max-width: 1200px;
+  }
+
+  .board-card-container {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+}
+
 @media (max-width: 768px) {
   .content-wrapper {
     flex-direction: column;
@@ -683,7 +637,6 @@
     align-self: center;
   }
 
-  /* 필터와 글쓰기 반응형 */
   .filter-and-write-container {
     flex-direction: column;
     gap: 16px;
@@ -695,18 +648,6 @@
     gap: 8px;
   }
 
-  .type-filter-btn {
-    padding: 8px 16px;
-    font-size: 13px;
-  }
-
-  .write-btn {
-    align-self: center;
-    padding: 10px 20px;
-    font-size: 13px;
-  }
-
-  /* 카드 뷰 반응형 */
   .board-card-container {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
@@ -724,36 +665,6 @@
     font-size: 15px;
   }
 
-  /* 테이블 반응형 */
-  .mypage_board_table {
-    font-size: 12px;
-  }
-
-  .mypage_board_table th,
-  .mypage_board_table td {
-    padding: 12px 8px;
-  }
-
-  .board-type-badge {
-    font-size: 10px;
-    padding: 3px 8px;
-    min-width: 40px;
-  }
-
-  /* 액션 버튼 반응형 */
-  .action-buttons {
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .edit-btn,
-  .delete-btn {
-    font-size: 11px;
-    padding: 4px 8px;
-    min-width: 40px;
-  }
-
-  /* 카드 액션 버튼 반응형 */
   .card-actions {
     position: relative;
     top: auto;
@@ -774,44 +685,265 @@
   .thumbnail-container {
     height: 200px;
   }
+}
 
-  /* 테이블을 모바일에서 스크롤 가능하게 */
-  .board-content {
-    overflow-x: auto;
+/* 일괄 선택 및 삭제 컨트롤 */
+.bulk-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #161b22;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #30363d;
+}
+
+.select-all-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.select-all-checkbox,
+.board-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #58a6ff;
+  cursor: pointer;
+}
+
+.select-all-label {
+  color: #e6edf3;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+
+.bulk-delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: #da3633;
+  color: white;
+  border: 1px solid #da3633;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bulk-delete-btn:hover {
+  background-color: #f85149;
+  border-color: #f85149;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(248, 81, 73, 0.3);
+}
+
+/* 리스트 뷰 컨테이너 */
+.list-view-container {
+  width: 100%;
+}
+
+/* 테이블 스타일 업데이트 */
+.mypage_board_table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #161b22;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #30363d;
+}
+
+.mypage_board_table th {
+  background-color: #21262d;
+  color: #f0f6fc;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 1px solid #30363d;
+  font-size: 14px;
+}
+
+.mypage_board_table td {
+  padding: 12px;
+  border-bottom: 1px solid #30363d;
+  color: #e6edf3;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.mypage_board_table tr:hover:not(.mypage_empty_row) {
+  background-color: #21262d;
+}
+
+.mypage_board_table tr.selected-row {
+  background-color: rgba(88, 166, 255, 0.1);
+  border-left: 3px solid #58a6ff;
+}
+
+.mypage_board_table tr.selected-row:hover {
+  background-color: rgba(88, 166, 255, 0.15);
+}
+
+/* 썸네일 셀 */
+.thumbnail-cell {
+  text-align: center;
+  padding: 8px !important;
+}
+
+.list-thumbnail {
+  width: 60px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #30363d;
+  background-color: #21262d;
+}
+
+/* 게시글 타입 배지 */
+.board-type-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: white;
+}
+
+.board-type-badge.type-1 {
+  background-color: #3fb950; /* 자유 - 녹색 */
+}
+
+.board-type-badge.type-2 {
+  background-color: #58a6ff; /* 공략 - 파란색 */
+}
+
+.board-type-badge.type-3 {
+  background-color: #f85149; /* 영상 - 빨간색 */
+}
+
+/* 제목 셀 */
+.title_cell {
+  max-width: 300px;
+}
+
+.board_title_link {
+  color: #58a6ff;
+  text-decoration: none;
+  font-weight: 500;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.board_title_link:hover {
+  color: #79c0ff;
+  text-decoration: underline;
+}
+
+/* 액션 버튼들 */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.edit-btn,
+.delete-btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.edit-btn {
+  background-color: #30363d;
+  color: #e6edf3;
+  border-color: #30363d;
+}
+
+.edit-btn:hover {
+  background-color: #444c56;
+  border-color: #58a6ff;
+  color: #58a6ff;
+}
+
+.delete-btn {
+  background-color: #da3633;
+  color: white;
+  border-color: #da3633;
+}
+
+.delete-btn:hover {
+  background-color: #f85149;
+  border-color: #f85149;
+}
+
+/* 빈 상태 */
+.mypage_empty_row td {
+  text-align: center;
+  color: #8b949e;
+  padding: 40px;
+  font-style: italic;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .bulk-actions {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .select-all-container {
+    justify-content: center;
+  }
+
+  .bulk-delete-btn {
+    justify-content: center;
   }
 
   .mypage_board_table {
-    min-width: 600px;
+    font-size: 12px;
   }
 
-  /* 테이블에서 일부 컬럼 숨기기 */
-  .mypage_board_table th:nth-child(1),
-  .mypage_board_table td:nth-child(1),
-  .mypage_board_table th:nth-child(4),
-  .mypage_board_table td:nth-child(4),
-  .mypage_board_table th:nth-child(5),
-  .mypage_board_table td:nth-child(5) {
+  .mypage_board_table th,
+  .mypage_board_table td {
+    padding: 8px 4px;
+  }
+
+  .list-thumbnail {
+    width: 40px;
+    height: 28px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* 모바일에서는 일부 컬럼 숨기기 */
+  .mypage_board_table th:nth-child(3),
+  .mypage_board_table td:nth-child(3),
+  .mypage_board_table th:nth-child(6),
+  .mypage_board_table td:nth-child(6),
+  .mypage_board_table th:nth-child(7),
+  .mypage_board_table td:nth-child(7) {
     display: none;
   }
-}
-
-/* =========================== */
-/* 스크롤바 다크모드 스타일 */
-/* =========================== */
-.board-content::-webkit-scrollbar {
-  height: 8px;
-}
-
-.board-content::-webkit-scrollbar-track {
-  background: #21262d;
-  border-radius: 4px;
-}
-
-.board-content::-webkit-scrollbar-thumb {
-  background: #656d76;
-  border-radius: 4px;
-}
-
-.board-content::-webkit-scrollbar-thumb:hover {
-  background: #8b949e;
 }

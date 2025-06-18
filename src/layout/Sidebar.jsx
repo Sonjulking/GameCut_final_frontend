@@ -85,7 +85,7 @@ const Sidebar = () => {
         </div>
         <span className="sidebar_label">게시판</span>
       </Link>
-      <Link to={"/myPage"} className="sidebar_item">
+      <Link to={"/mypage/info"} className="sidebar_item">
         <div className="icon-wrapper">
           <img src={profileIcon} className="sidebar_icons" alt="프로필" />
           <img
