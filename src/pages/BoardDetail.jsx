@@ -20,6 +20,7 @@ const BoardDetail = () => {
         commentContent: "",
     });
 
+
     // boardTypeNo를 타입명으로 변환하는 함수
     const getBoardTypeName = (boardTypeNo) => {
         switch (boardTypeNo) {
@@ -84,15 +85,21 @@ const BoardDetail = () => {
 
     // 댓글 추가
     const handleAddComment = async () => {
+
         if (!inputComment.commentContent.trim()) {
             alert("댓글 내용을 입력해주세요.");
             return;
         }
-
         try {
+            const token = localStorage.getItem("token");
+            const axiosConfig = {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            };
             const response = await axios.post(
                     `${import.meta.env.VITE_API_URL}/comment`,
-                    inputComment
+                    inputComment, axiosConfig
             );
             setComments([...comments, response.data]);
             setInputComment({boardNo, commentContent: ""});
@@ -211,7 +218,7 @@ const BoardDetail = () => {
                         </div>
                         <div className="meta-right">
                             <div className="author-info">
-                                <span className="author-name">작성자: {board.userNo}</span>
+                                <span className="author-name">작성자: {board.user.userNickname}</span>
                                 <span className="create-date">{board.boardCreateDate}</span>
                             </div>
                             <div className="board-stats">
@@ -246,14 +253,15 @@ const BoardDetail = () => {
 
                     {/* 게시글 내용 - 이미지가 포함된 HTML 콘텐츠 */}
                     <div className="detail-body">
+                        {board.boardTypeNo === 3 ? <video
+                                src={`${import.meta.env.VITE_API_URL}` + board.video?.attachFile.fileUrl}
+                                style={{width: "100%"}} controls={true}
+                        ></video> : null}
                         <div
                                 className="content-text"
                                 dangerouslySetInnerHTML={{__html: board.boardContent}}
                         />
-                        <video
-                                src={`${import.meta.env.VITE_API_URL}` + board.video?.attachFile.fileUrl}
-                                style={{width: "100%"}} controls={true}
-                        ></video>
+
                     </div>
 
                     {/* 좋아요 버튼 */}

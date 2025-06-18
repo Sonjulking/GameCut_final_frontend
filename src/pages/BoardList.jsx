@@ -130,7 +130,7 @@ const BoardList = () => {
                     {board.boardTitle}
                   </span>
                 </td>
-                <td>{board.userNo}</td>
+                <td>{board.user.userNickname}</td>
                 <td>{board.boardCount}</td>
                 <td>{board.boardLike}</td>
                 <td>{board.boardCreateDate}</td>
@@ -175,7 +175,7 @@ const BoardList = () => {
               <div className="board-info">
                 <h3 className="board-title">{board.boardTitle}</h3>
                 <div className="board-meta">
-                  <p className="board-author">작성자: {board.userNo}</p>
+                  <p className="board-author">작성자: {board.user.userNickname}</p>
                   <div className="board-stats">
                     <span className="board-views">
                       조회수 {board.boardCount}
