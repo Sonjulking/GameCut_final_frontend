@@ -114,7 +114,12 @@ const FormInputGroup = ({form, handleChange}) => {
                                     ]}
                                     hooks={{
                                         addImageBlobHook: async (blob, callback) => {
-
+                                            const token = localStorage.getItem("token");
+                                            const axiosConfig = {
+                                                headers: {
+                                                    Authorization: `Bearer ${token}`,
+                                                }
+                                            };
                                             console.log("🔥 이미지 업로드 훅 실행됨", blob);
                                             const formData = new FormData();
                                             formData.append("image", blob);
@@ -122,7 +127,7 @@ const FormInputGroup = ({form, handleChange}) => {
                                             try {
                                                 const res = await axios.post(
                                                         `${import.meta.env.VITE_API_URL}/board/img`,
-                                                        formData,
+                                                        formData, axiosConfig
                                                 );
 
                                                 console.log("url : " + res.data.imageUrl);

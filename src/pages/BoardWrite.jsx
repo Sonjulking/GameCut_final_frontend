@@ -86,9 +86,18 @@ const BoardWrite = ({isEdit = false}) => {
         }
 
         try {
+            const token = localStorage.getItem("token");
+            const axiosConfig = {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            };
             if (isEdit) {
                 await axios.put(`${import.meta.env.VITE_API_URL}/board/${boardNo}`, formData, {
-                    headers: {"Content-Type": "multipart/form-data"},
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        "Content-Type": "multipart/form-data"
+                    },
                     //업로드 진행률을 추적하는 콜백함수
                     onUploadProgress: (e) => {
                         //퍼센트로 변환
@@ -100,7 +109,10 @@ const BoardWrite = ({isEdit = false}) => {
                 alert("게시글이 수정되었습니다.");
             } else {
                 await axios.post(`${import.meta.env.VITE_API_URL}/board`, formData, {
-                    headers: {"Content-Type": "multipart/form-data"},
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        "Content-Type": "multipart/form-data"
+                    },
                     //업로드 진행률을 추적하는 콜백함수
                     onUploadProgress: (e) => {
                         //퍼센트로 변환

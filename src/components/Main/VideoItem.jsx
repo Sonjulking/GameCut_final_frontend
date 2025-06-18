@@ -174,7 +174,7 @@ const VideoItem = ({board, isLoading}) => {
                                         marginRight: "8px",
                                     }}
                             />
-                            <span className="video_title">{user.userName}</span>
+                            <span className="video_title">{user.userNickname}</span>
                         </div>
 
                         {/* 제목 한 줄 */}
