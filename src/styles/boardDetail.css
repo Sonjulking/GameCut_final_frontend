@@ -308,67 +308,7 @@
   color: white;
 }
 
-/* 댓글 섹션 */
-.comment-section {
-  background-color: #161b22;
-  border-radius: 12px;
-  border: 1px solid #30363d;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-}
 
-.comment-header {
-  padding: 20px 24px;
-  background-color: #21262d;
-  border-bottom: 1px solid #30363d;
-}
-
-.comment-header h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #f0f6fc;
-}
-
-/* 댓글 입력 영역 */
-.comment-input-section {
-  padding: 20px 24px;
-  background-color: #0d1117;
-  border-bottom: 1px solid #30363d;
-}
-
-.comment-input-wrapper {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.comment-input-field {
-  flex: 1;
-  padding: 12px 16px;
-  background-color: #21262d;
-  border: 1px solid #30363d;
-  border-radius: 8px;
-  color: #e6edf3;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.comment-input-field:focus {
-  border-color: #58a6ff;
-}
-
-.comment-input-field::placeholder {
-  color: #7d8590;
-}
-
-/* 댓글 목록 - 스크롤바 제거하고 전체 스크롤 사용 (강제 적용) */
-.comment-list {
-  max-height: none !important;
-  overflow: visible !important;
-  overflow-y: visible !important;
-}
 
 /* 새로운 댓글 섹션 - 충돌 방지용 */
 .board-comment-section {

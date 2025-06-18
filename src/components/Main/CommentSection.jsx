@@ -24,7 +24,13 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
     }, [comments]);
 
     const handleAddComment = () => {
-        axios.post(`${import.meta.env.VITE_API_URL}/comment`, inputComment)
+        const token = localStorage.getItem("token");
+        const axiosConfig = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        };
+        axios.post(`${import.meta.env.VITE_API_URL}/comment`, inputComment, axiosConfig)
                 .then(res => {
                     onAddComment(res.data); // 댓글 추가!
                     setInputComment({boardNo, commentContent: ""}); // 입력창 초기화
@@ -47,8 +53,8 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
             >
                 <div className="comment-title">
                     댓글
-                    <IconButton onClick={onClose} size="small" sx={{ color: "white" }}>
-                        <CloseIcon />
+                    <IconButton onClick={onClose} size="small" sx={{color: "white"}}>
+                        <CloseIcon/>
                     </IconButton>
                 </div>
                 <div
