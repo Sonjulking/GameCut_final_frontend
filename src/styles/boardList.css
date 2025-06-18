@@ -570,3 +570,34 @@
   background-color: #21262d;
   transform: scale(1.002);
 }
+
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 20px;
+  padding-bottom: 30px; /* 하단 여백 */
+}
+
+/*페이징 처리 css*/
+.pagination button {
+  padding: 6px 12px;
+  background-color: transparent;
+  border: 1px solid #666;
+  border-radius: 6px;
+  color: #ccc;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.pagination button:hover {
+  background-color: #333;
+}
+
+.pagination button.active {
+  background-color: #3f51b5;
+  color: white;
+  border-color: #3f51b5;
+}

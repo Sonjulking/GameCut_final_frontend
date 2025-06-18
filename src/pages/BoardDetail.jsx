@@ -250,7 +250,10 @@ const BoardDetail = () => {
                                 className="content-text"
                                 dangerouslySetInnerHTML={{__html: board.boardContent}}
                         />
-                        <video src={`${import.meta.env.VITE_API_URL}` + board.video?.attachFile.fileUrl} style={{width : "100%"}} controls={true}></video>
+                        <video
+                                src={`${import.meta.env.VITE_API_URL}` + board.video?.attachFile.fileUrl}
+                                style={{width: "100%"}} controls={true}
+                        ></video>
                     </div>
 
                     {/* 좋아요 버튼 */}

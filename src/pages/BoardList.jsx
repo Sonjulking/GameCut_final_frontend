@@ -2,28 +2,28 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import "../styles/boardList.css";
-
+import { Button, Stack } from "@mui/material";
 const BoardList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [totalPages, setTotalPages] = useState(1); // 먼저 선언
   const [totalElements, setTotalElements] = useState(1); // 먼저 선언
 
-  const pageParamRaw = parseInt(searchParams.get("page") || "0", 10);
-  const pageParam = isNaN(pageParamRaw) ? 0 : pageParamRaw; // 일단 이걸 기본값으로 사용
+    const pageParamRaw = parseInt(searchParams.get("page") || "1", 10); // 기본은 1
+    const pageParam = isNaN(pageParamRaw) ? 0 : pageParamRaw - 1; // 내부용은 0부터 시작
 
 
   const navigate = useNavigate();
   const [list, setList] = useState([]);
-  const [filteredList, setFilteredList] = useState([]);
   const [viewMode, setViewMode] = useState("card"); // 'list' 또는 'card'
-  const [selectedType, setSelectedType] = useState("전체"); // 선택된 타입
+
+
+  const typeParam = searchParams.get("type") || "전체";
+  const [selectedType, setSelectedType] = useState(typeParam);
 
 
 
   const boardTypes = ["전체", "자유", "공략", "영상"];
-  useEffect(() => {
-    console.log("데이터 확인:", filteredList);
-  }, [filteredList]);
+
   // boardTypeNo를 타입명으로 변환하는 함수
   const getBoardTypeName = (boardTypeNo) => {
     switch (boardTypeNo) {
@@ -52,43 +52,46 @@ const BoardList = () => {
     }
   };
 
-  const loadData = async (page) => {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/board/listAll`, {
-      params: { page, size: 10 },
-    });
-    setList(res.data.content);         // 게시글 목록
-    setTotalPages(res.data.totalPages); // 총 페이지 수
-      setTotalElements(res.data.totalElements);
-  };
+    const loadData = async (page, boardTypeNo) => {
+        const size = viewMode === "card" ? 6 : 10;
+        const params = { page, size };
+
+        if (boardTypeNo !== null) {
+            params.boardTypeNo = boardTypeNo;
+        }
+
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/board/listAll`, {
+            params,
+        });
+
+        setList(res.data.content);
+        setTotalPages(res.data.totalPages);
+        setTotalElements(res.data.totalElements);
+    };
 
   // 타입별 필터링 함수
   const filterByType = (type) => {
     setSelectedType(type);
-    if (type === "전체") {
-      setFilteredList(list);
-    } else {
-      const typeNo = getBoardTypeNo(type);
-      const filtered = list.filter((board) => board.boardTypeNo === typeNo);
-      setFilteredList(filtered);
-    }
+    setSearchParams({ page: 1, type }); // page 초기화
   };
+
 
   const handleTitleClick = (boardNo) => {
     navigate(`/board/detail/${boardNo}`);
   };
 
   useEffect(() => {
-    loadData(pageParam);
-  }, [pageParam]);
+    const typeNo = getBoardTypeNo(selectedType);
+    loadData(pageParam, typeNo); // 선택된 타입과 페이지 기반으로 요청
+  }, [pageParam, selectedType]);
 
   // useEffect(() => {
   //   console.log(list);
   // }, [list]);
 
-  // 데이터가 변경될 때마다 현재 선택된 타입으로 필터링
-  useEffect(() => {
-    filterByType(selectedType);
-  }, [list]);
+    const currentGroup = Math.floor(pageParam / 10);
+    const startPage = currentGroup * 10;
+    const endPage = Math.min(startPage + 10, totalPages);
 
   // 리스트 뷰 렌더링
   const renderListView = () => (
@@ -105,8 +108,8 @@ const BoardList = () => {
         </tr>
       </thead>
       <tbody>
-        {filteredList && filteredList.length > 0 ? (
-          filteredList.map((board) => {
+        {list && list.length > 0 ? (
+                list.map((board) => {
             const typeName = getBoardTypeName(board.boardTypeNo);
             return (
               <tr key={board.boardNo}>
@@ -146,8 +149,8 @@ const BoardList = () => {
   // 카드 뷰 렌더링
   const renderCardView = () => (
     <div className="board-card-container">
-      {filteredList && filteredList.length > 0 ? (
-        filteredList.map((board) => {
+      {list && list.length > 0 ? (
+              list.map((board) => {
           const typeName = getBoardTypeName(board.boardTypeNo);
           return (
             <div
@@ -236,8 +239,7 @@ const BoardList = () => {
               {type}
               {selectedType === type && (
                 <span className="active-count">
-                  ({selectedType === "전체" ? `${totalElements}` : 0 }
-                  )
+                  ({totalElements})
                 </span>
               )}
             </button>
@@ -260,17 +262,31 @@ const BoardList = () => {
         {viewMode === "list" ? renderListView() : renderCardView()}
       </div>
 
-      <div className="pagination">
-        {Array.from({ length: totalPages }).map((_, i) => (
-                <button
-                        key={i}
-                        className={pageParam === i ? "active" : ""}
-                        onClick={() => setSearchParams({ page: i })}
-                >
-                  {i + 1}
-                </button>
-        ))}
-      </div>
+        <div className="pagination">
+            {startPage > 0 && (
+                    <button onClick={() => setSearchParams({ page: startPage, type: selectedType })}>
+                        ◀
+                    </button>
+            )}
+            {Array.from({ length: endPage - startPage }).map((_, i) => {
+                const pageNumber = startPage + i;
+                return (
+                        <button
+                                key={pageNumber}
+                                className={pageParam === pageNumber ? "active" : ""}
+                                onClick={() => setSearchParams({ page: pageNumber + 1, type: selectedType })}
+                        >
+                            {pageNumber + 1}
+                        </button>
+                );
+            })}
+            {endPage < totalPages && (
+                    <button onClick={() => setSearchParams({ page: endPage + 1, type: selectedType })}>
+                        ▶
+                    </button>
+            )}
+        </div>
+
     </div>
   );
 };
