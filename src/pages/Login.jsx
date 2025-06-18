@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useGoogleLogin } from "@react-oauth/google";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../store/authSlice"; // 경로 맞게 조정
 
 const NAVER_CLIENT_ID = "CQbPXwMaS8p6gHpnTpsS";
 const REDIRECT_URI = "http://localhost:5173/naver/callback";
@@ -12,6 +14,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,12 +35,26 @@ const Login = () => {
         userId,
         pwd,
       });
+
       if (response.data.success) {
-        const { token, userNinkname, userId } = response.data;
+        const { token, userNickname, userId: loggedInUserId } = response.data;
+
+        localStorage.setItem("userId", loggedInUserId);
         localStorage.setItem("token", token);
-        localStorage.setItem("nickname", userNinkname);
-        localStorage.setItem("userId", userId);
-        alert(`${userNinkname}님 환영합니다!`);
+        localStorage.setItem("nickname", userNickname);
+
+        dispatch(
+          loginSuccess({
+            token,
+            userId: loggedInUserId,
+            nickname: userNickname,
+          })
+        );
+
+        console.log("nickname:", response.data.userNickname); // ✅ 수정됨
+        console.log("userId:", response.data.userId); // ✅ 수정됨
+
+        alert(`${userNickname}님 환영합니다!`);
         navigate("/");
       } else {
         setError("아이디 또는 비밀번호가 틀렸습니다.");
@@ -68,6 +85,14 @@ const Login = () => {
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("nickname", res.data.userNickname);
           localStorage.setItem("userId", res.data.userId);
+          dispatch(
+            loginSuccess({
+              token: res.data.token,
+              userId: res.data.userId,
+              nickname: res.data.userNickname,
+            })
+          );
+
           alert(`${res.data.userNickname}님 환영합니다!`);
           navigate("/");
         } else {

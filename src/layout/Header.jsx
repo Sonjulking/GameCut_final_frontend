@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom"; // ✅ useLocation 추가
+import React from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../store/authSlice";
 import logoImg from "../assets/img/main/logo/gamecut_logo.png";
 import searchIcon from "../assets/img/main/icons/search_icon.png";
 import loginIcon from "../assets/img/main/icons/login_icon.png";
@@ -7,19 +9,13 @@ import logoutIcon from "../assets/img/main/icons/logout_Icon.png";
 import hamburgerIcon from "../assets/img/main/icons/hamburger_icon.png";
 
 const Header = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation(); // ✅ 현재 URL 경로를 추적
-
-  // ✅ location이 바뀔 때마다 토큰 확인
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
-  }, [location]);
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
+    localStorage.clear();
+    dispatch(logout());
     alert("로그아웃 성공!");
     navigate("/");
   };
