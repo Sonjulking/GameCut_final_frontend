@@ -417,7 +417,7 @@ const MyBoard = () => {
           <p>작성한 게시글이 없습니다.</p>
           <button
             className="write-first-btn"
-            onClick={() => navigate("/boardWrite")}
+            onClick={() => navigate("/board/write")}
           >
             첫 번째 게시글 작성하기
           </button>
@@ -533,7 +533,7 @@ const MyBoard = () => {
                 )}
                 <button
                   className="write-btn"
-                  onClick={() => navigate("/boardWrite")}
+                  onClick={() => navigate("/board/write")}
                   title="새 글 작성"
                 >
                   <svg

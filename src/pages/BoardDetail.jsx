@@ -60,35 +60,11 @@ const BoardDetail = () => {
     } catch (error) {
       console.error("게시글 로드 실패:", error);
       alert("게시글을 불러올 수 없습니다.");
-      navigate("/boardList");
+      navigate("/board/list");
     } finally {
       setLoading(false);
     }
   };
-
-  // 댓글 로드 함수는 이제 필요없으므로 제거하거나 비활성화
-  // const loadComments = async () => {
-  //   console.log("🔵 댓글 로드 시작");
-  //   console.log("📌 API URL:", import.meta.env.VITE_API_URL);
-  //   console.log("📌 boardNo:", boardNo);
-  //   console.log("📌 Full URL:", `${import.meta.env.VITE_API_URL}/comment/${boardNo}`);
-
-  //   try {
-  //     const response = await axios.get(
-  //       `${import.meta.env.VITE_API_URL}/comment/${boardNo}`
-  //     );
-  //     console.log("✅ 댓글 로드 성공:", response.data);
-  //     setComments(response.data);
-  //   } catch (error) {
-  //     console.error("❌ 댓글 로드 실패 상세:", {
-  //       message: error.message,
-  //       status: error.response?.status,
-  //       statusText: error.response?.statusText,
-  //       data: error.response?.data,
-  //       url: error.config?.url
-  //     });
-  //   }
-  // };
 
   // 댓글 추가
   const handleAddComment = async () => {
@@ -96,11 +72,17 @@ const BoardDetail = () => {
       alert("댓글 내용을 입력해주세요.");
       return;
     }
-
     try {
+      const token = localStorage.getItem("token");
+      const axiosConfig = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/comment`,
-        inputComment
+        inputComment,
+        axiosConfig
       );
       setComments([...comments, response.data]);
       setInputComment({ boardNo, commentContent: "" });
@@ -153,13 +135,12 @@ const BoardDetail = () => {
 
   // 목록으로 돌아가기
   const handleBackToList = () => {
-    navigate("/boardList");
+    navigate("/board/list");
   };
 
   useEffect(() => {
     if (boardNo) {
       loadBoardDetail(); // 게시글만 로드하면 comments도 함께 옴
-      console.log(board);
     }
   }, [boardNo]);
 
@@ -220,7 +201,9 @@ const BoardDetail = () => {
           </div>
           <div className="meta-right">
             <div className="author-info">
-              <span className="author-name">작성자: {board.userNo}</span>
+              <span className="author-name">
+                작성자: {board.user.userNickname}
+              </span>
               <span className="create-date">{board.boardCreateDate}</span>
             </div>
             <div className="board-stats">
@@ -255,6 +238,16 @@ const BoardDetail = () => {
 
         {/* 게시글 내용 - 이미지가 포함된 HTML 콘텐츠 */}
         <div className="detail-body">
+          {board.boardTypeNo === 3 ? (
+            <video
+              src={
+                `${import.meta.env.VITE_API_URL}` +
+                board.video?.attachFile.fileUrl
+              }
+              style={{ width: "100%" }}
+              controls={true}
+            ></video>
+          ) : null}
           <div
             className="content-text"
             dangerouslySetInnerHTML={{ __html: board.boardContent }}
@@ -279,36 +272,24 @@ const BoardDetail = () => {
           <h3>댓글 {comments.length}개</h3>
         </div>
 
-        {/* 댓글 입력창 */}
-        <div className="board-comment-input-area">
-          <div className="board-comment-input-wrapper">
-            <input
-              type="text"
-              placeholder="댓글을 입력하세요..."
-              className="board-comment-input-field"
-              value={inputComment.commentContent}
-              onChange={(e) =>
-                setInputComment({
-                  ...inputComment,
-                  commentContent: e.target.value,
-                })
-              }
-              onKeyPress={handleKeyPress}
-            />
-            <Button
-              variant="contained"
-              onClick={handleAddComment}
-              sx={{
-                minWidth: "80px",
-                height: "40px",
-                bgcolor: "#1976d2",
-                "&:hover": { bgcolor: "#1565c0" },
-              }}
-              endIcon={<ArrowUpwardIcon />}
-            >
-              등록
-            </Button>
-          </div>
+        {/* 댓글 입력 */}
+        <div className="comment-input-section">
+          <input
+            type="text"
+            placeholder="댓글을 입력하세요..."
+            value={inputComment.commentContent}
+            onChange={(e) =>
+              setInputComment({
+                ...inputComment,
+                commentContent: e.target.value,
+              })
+            }
+            onKeyPress={handleKeyPress}
+            className="comment-input"
+          />
+          <button onClick={handleAddComment} className="comment-submit-btn">
+            댓글 작성
+          </button>
         </div>
 
         {/* 댓글 목록 */}
@@ -318,12 +299,6 @@ const BoardDetail = () => {
               .filter((comment) => !comment.parentComment)
               .map((comment, index) => (
                 <div key={index} className="board-comment-item">
-                  <div
-                    class="reply-insert-button"
-                    style={{ marginLeft: "auto" }}
-                  >
-                    답글달기
-                  </div>
                   <div className="board-comment-user-info">
                     <img
                       src="/src/assets/img/main/icons/admin.jpg"
@@ -338,11 +313,18 @@ const BoardDetail = () => {
                         {new Date(comment.commentCreateDate).toLocaleString()}
                       </span>
                     </div>
+                    <div
+                      className="reply-insert-button"
+                      style={{ marginLeft: "auto" }}
+                    >
+                      답글달기
+                    </div>
                   </div>
                   <p className="board-comment-content">
                     {comment.commentContent}
                   </p>
                   <input type="text" placeholder="대댓글을 입력하세요." />
+
                   {/* 대댓글 */}
                   {(() => {
                     // 현재 댓글의 대댓글 개수 계산
@@ -366,6 +348,7 @@ const BoardDetail = () => {
                             fontSize: "14px",
                             padding: "8px 0",
                             userSelect: "none",
+                            cursor: "pointer",
                           }}
                         >
                           {showReplies[comment.commentNo]
