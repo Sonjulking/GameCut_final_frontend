@@ -13,6 +13,7 @@ import BoardList from "../pages/BoardList.jsx";
 import BoardDetail from "../pages/BoardDetail.jsx";
 import MyPage from "../pages/MyPage.jsx";
 import MyBoard from "../pages/MyBoard.jsx";
+import Settings from "../pages/Settings.jsx";
 
 const delayImport = (importFunc, delay = 5000) => {
   return new Promise((resolve) => {
@@ -42,6 +43,8 @@ const router = createBrowserRouter([
       { path: "naver/callback", element: <NaverCallback /> },
       { path: "myPage", element: <MyPage /> },
       { path: "myBoard", element: <MyBoard /> },
+      //셋팅페이지
+      { path: "settings", element: <Settings /> },
       //404에러
       { path: "*", element: <ErrorPage /> },
     ],

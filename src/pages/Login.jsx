@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../lib/axiosInstance"; // ✅ 변경된 경로에 맞게 수정
 import { useGoogleLogin } from "@react-oauth/google";
 import { useDispatch } from "react-redux";
-import { loginSuccess } from "../store/authSlice"; // 경로 맞게 조정
+import { loginSuccess } from "../store/authSlice";
 
 const NAVER_CLIENT_ID = "CQbPXwMaS8p6gHpnTpsS";
 const REDIRECT_URI = "http://localhost:5173/naver/callback";
@@ -20,21 +20,12 @@ const Login = () => {
     e.preventDefault();
     setError("");
 
-    if (!userId.trim()) {
-      setError("아이디를 입력해주세요.");
-      return;
-    }
-    if (!pwd.trim()) {
-      setError("비밀번호를 입력해주세요.");
-      return;
-    }
+    if (!userId.trim()) return setError("아이디를 입력해주세요.");
+    if (!pwd.trim()) return setError("비밀번호를 입력해주세요.");
 
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:8081/user/login", {
-        userId,
-        pwd,
-      });
+      const response = await axios.post("/user/login", { userId, pwd });
 
       if (response.data.success) {
         const { token, userNickname, userId: loggedInUserId } = response.data;
@@ -51,8 +42,8 @@ const Login = () => {
           })
         );
 
-        console.log("nickname:", response.data.userNickname); // ✅ 수정됨
-        console.log("userId:", response.data.userId); // ✅ 수정됨
+        console.log("nickname:", userNickname);
+        console.log("userId:", loggedInUserId);
 
         alert(`${userNickname}님 환영합니다!`);
         navigate("/");
@@ -69,31 +60,24 @@ const Login = () => {
   const googleLogin = useGoogleLogin({
     onSuccess: async (response) => {
       const accessToken = response.access_token;
-      console.log("🔥 받은 accessToken:", accessToken);
       if (!accessToken) {
         setError("accessToken 없음. flow 설정 확인 필요.");
         return;
       }
 
       try {
-        const res = await axios.post(
-          "http://localhost:8081/user/oauth/google",
-          { accessToken },
-          { headers: { "Content-Type": "application/json" } }
-        );
-        if (res.data.success) {
-          localStorage.setItem("token", res.data.token);
-          localStorage.setItem("nickname", res.data.userNickname);
-          localStorage.setItem("userId", res.data.userId);
-          dispatch(
-            loginSuccess({
-              token: res.data.token,
-              userId: res.data.userId,
-              nickname: res.data.userNickname,
-            })
-          );
+        const res = await axios.post("/user/oauth/google", { accessToken });
 
-          alert(`${res.data.userNickname}님 환영합니다!`);
+        if (res.data.success) {
+          const { token, userId, userNickname } = res.data;
+
+          localStorage.setItem("token", token);
+          localStorage.setItem("nickname", userNickname);
+          localStorage.setItem("userId", userId);
+
+          dispatch(loginSuccess({ token, userId, nickname: userNickname }));
+
+          alert(`${userNickname}님 환영합니다!`);
           navigate("/");
         } else {
           setError("구글 로그인 실패");
@@ -103,7 +87,7 @@ const Login = () => {
         setError("구글 로그인 실패 (서버)");
       }
     },
-    flow: "implicit", // ✅ 반드시 추가!
+    flow: "implicit",
     scope:
       "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
   });
@@ -148,7 +132,6 @@ const Login = () => {
           <button onClick={() => googleLogin()} style={styles.googleButton}>
             Google 계정으로 로그인
           </button>
-
           <button onClick={naverLogin} style={styles.naverButton}>
             네이버 로그인
           </button>
@@ -198,13 +181,13 @@ const styles = {
   },
   button: {
     padding: "12px",
-    backgroundColor: "#FF8C00", // 🎯 새로운 오렌지색 계열로 변경
+    backgroundColor: "#FF8C00",
     color: "white",
     border: "none",
     borderRadius: "5px",
     cursor: "pointer",
     fontWeight: "bold",
-    marginBottom: "0px", // 간격 맞추기 위해 margin 제거
+    marginBottom: "0px",
     width: "100%",
   },
   error: { color: "#ff4d4f", marginTop: "10px" },
@@ -212,7 +195,7 @@ const styles = {
     marginTop: "20px",
     display: "flex",
     flexDirection: "column",
-    gap: "15px", // 모든 소셜 버튼 간격 일정하게
+    gap: "15px",
   },
   googleButton: {
     padding: "12px",
