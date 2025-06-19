@@ -962,7 +962,8 @@ body {
 #gamecut_logo:hover,
 .header_icon:hover,
 a:hover,
-button:hover {
+button:hover,
+#reply-show-button {
   cursor: url("/cursor/cursor_hover.png"), auto;
 }
 input,
