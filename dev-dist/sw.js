@@ -79,6 +79,7 @@ define(["./workbox-54d0af47"], function (workbox) {
    * requests for URLs in the manifest.
    * See https://goo.gl/S9QRab
    */
+
   workbox.precacheAndRoute(
     [
       {
@@ -92,6 +93,7 @@ define(["./workbox-54d0af47"], function (workbox) {
     ],
     {}
   );
+
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(
     new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
