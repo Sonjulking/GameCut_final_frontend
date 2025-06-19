@@ -28,24 +28,12 @@ const Login = () => {
       const response = await axios.post("/user/login", { userId, pwd });
 
       if (response.data.success) {
-        const { token, userNickname, userId: loggedInUserId } = response.data;
-
-        localStorage.setItem("userId", loggedInUserId);
+        const { token, userNinkname, userId, userNo } = response.data;
         localStorage.setItem("token", token);
-        localStorage.setItem("nickname", userNickname);
-
-        dispatch(
-          loginSuccess({
-            token,
-            userId: loggedInUserId,
-            nickname: userNickname,
-          })
-        );
-
-        console.log("nickname:", userNickname);
-        console.log("userId:", loggedInUserId);
-
-        alert(`${userNickname}님 환영합니다!`);
+        localStorage.setItem("nickname", userNinkname);
+        localStorage.setItem("userId", userId);
+        localStorage.setItem("userNo", userNo);
+        alert(`${userNinkname}님 환영합니다!`);
         navigate("/");
       } else {
         setError("아이디 또는 비밀번호가 틀렸습니다.");
@@ -74,7 +62,7 @@ const Login = () => {
           localStorage.setItem("token", token);
           localStorage.setItem("nickname", userNickname);
           localStorage.setItem("userId", userId);
-
+          localStorage.setItem("userNo", userNo);
           dispatch(loginSuccess({ token, userId, nickname: userNickname }));
 
           alert(`${userNickname}님 환영합니다!`);

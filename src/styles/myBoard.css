@@ -1,4 +1,4 @@
-/* MyBoard.css - 카드 레이아웃 개선 */
+/* MyBoard.css - 카드 레이아웃 개선 (rem 단위 적용) */
 
 /* =========================== */
 /* 마이페이지 컨테이너 수정 */
@@ -7,26 +7,26 @@
   min-height: 100vh;
   background-color: #0d1117;
   color: #e6edf3;
-  padding: 20px;
+  padding: 1.25rem;
 }
 
 .mypage-content {
-  max-width: 1400px; /* 1400px에서 1600px로 확장 */
+  max-width: 87.5rem; /* 1400px -> 87.5rem */
   margin: 0 auto;
 }
 
 .content-wrapper {
   display: flex;
-  gap: 24px;
+  gap: 1.5rem;
   align-items: flex-start;
 }
 
 .mypage-user-section {
   flex: 1;
   background-color: #161b22;
-  border-radius: 12px;
-  padding: 24px;
-  border: 1px solid #30363d;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 0.0625rem solid #30363d;
   min-width: 0; /* 플렉스 아이템이 축소될 수 있도록 */
 }
 
@@ -46,33 +46,33 @@
   display: grid;
   grid-template-columns: repeat(
     auto-fill,
-    minmax(280px, 1fr)
-  ); /* 320px에서 280px로 줄임 */
-  gap: 16px; /* 20px에서 16px로 줄임 */
+    minmax(17.5rem, 1fr)
+  ); /* 280px -> 17.5rem */
+  gap: 1rem; /* 16px -> 1rem */
   width: 100%;
 }
 
 .board-card {
   background: #161b22;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  border-radius: 0.75rem;
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.3);
   overflow: hidden;
   cursor: pointer;
   transition: all 0.3s ease;
-  border: 1px solid #30363d;
+  border: 0.0625rem solid #30363d;
   position: relative;
   width: 100%;
 }
 
 .board-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  transform: translateY(-0.25rem);
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.5);
   border-color: #58a6ff;
 }
 
 .thumbnail-container {
   width: 100%;
-  height: 160px; /* 180px에서 160px로 줄임 */
+  height: 10rem; /* 160px -> 10rem */
   overflow: hidden;
   background-color: #21262d;
   position: relative;
@@ -94,16 +94,16 @@
 /* 카드 타입 배지 - boardTypeNo 기반 */
 .my-card-type-badge {
   position: absolute;
-  top: 8px; /* 12px에서 8px로 줄임 */
-  left: 8px; /* 위치 변경 */
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 11px;
+  top: 0.5rem; /* 8px -> 0.5rem */
+  left: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(0.625rem);
+  border: 0.0625rem solid rgba(255, 255, 255, 0.1);
   min-width: auto;
-  max-width: 60px;
+  max-width: 3.75rem;
   text-align: center;
 }
 
@@ -123,14 +123,14 @@
 }
 
 .board-info {
-  padding: 14px; /* 16px에서 14px로 줄임 */
+  padding: 0.875rem; /* 14px -> 0.875rem */
 }
 
 .board-title {
-  font-size: 15px; /* 16px에서 15px로 줄임 */
+  font-size: 0.9375rem; /* 15px -> 0.9375rem */
   font-weight: 600;
   color: #f0f6fc;
-  margin: 0 0 10px 0; /* 12px에서 10px로 줄임 */
+  margin: 0 0 0.625rem 0; /* 10px -> 0.625rem */
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -148,11 +148,11 @@
 .board-meta {
   display: flex;
   flex-direction: column;
-  gap: 6px; /* 8px에서 6px로 줄임 */
+  gap: 0.375rem; /* 6px -> 0.375rem */
 }
 
 .board-author {
-  font-size: 13px; /* 14px에서 13px로 줄임 */
+  font-size: 0.8125rem; /* 13px -> 0.8125rem */
   color: #8b949e;
   margin: 0;
   font-weight: 500;
@@ -160,8 +160,8 @@
 
 .board-stats {
   display: flex;
-  gap: 10px; /* 12px에서 10px로 줄임 */
-  font-size: 12px;
+  gap: 0.625rem; /* 10px -> 0.625rem */
+  font-size: 0.75rem;
   color: #7d8590;
 }
 
@@ -169,21 +169,21 @@
 .board-likes {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .board-views::before {
   content: "👁";
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .board-likes::before {
   content: "💚";
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .board-date {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #656d76;
   margin: 0;
 }
@@ -191,10 +191,10 @@
 /* 카드 위에 표시되는 수정/삭제 버튼 */
 .card-actions {
   position: absolute;
-  top: 8px; /* 12px에서 8px로 줄임 */
-  right: 8px; /* 12px에서 8px로 줄임 */
+  top: 0.5rem; /* 8px -> 0.5rem */
+  right: 0.5rem;
   display: flex;
-  gap: 6px; /* 8px에서 6px로 줄임 */
+  gap: 0.375rem; /* 6px -> 0.375rem */
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: 10;
@@ -206,15 +206,15 @@
 
 .card-edit-btn,
 .card-delete-btn {
-  padding: 6px 10px; /* 8px 12px에서 6px 10px로 줄임 */
-  border-radius: 6px;
+  padding: 0.375rem 0.625rem; /* 6px 10px -> 0.375rem 0.625rem */
+  border-radius: 0.375rem;
   border: none;
   cursor: pointer;
-  font-size: 11px; /* 12px에서 11px로 줄임 */
+  font-size: 0.6875rem; /* 11px -> 0.6875rem */
   font-weight: 600;
   transition: all 0.2s ease;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(0.625rem);
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
 }
 
 .card-edit-btn {
@@ -225,7 +225,7 @@
 .card-edit-btn:hover {
   background-color: rgba(35, 134, 54, 1);
   transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4);
+  box-shadow: 0 0.25rem 0.75rem rgba(35, 134, 54, 0.4);
 }
 
 .card-delete-btn {
@@ -236,7 +236,7 @@
 .card-delete-btn:hover {
   background-color: rgba(218, 54, 51, 1);
   transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(218, 54, 51, 0.4);
+  box-shadow: 0 0.25rem 0.75rem rgba(218, 54, 51, 0.4);
 }
 
 /* =========================== */
@@ -245,9 +245,9 @@
 
 /* 전체 컨테이너 */
 .board-container {
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
-  padding: 20px;
+  padding: 1.25rem;
   background-color: #0d1117;
   color: #e6edf3;
   min-height: 100vh;
@@ -258,9 +258,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-/*  border-bottom: 2px solid #30363d;*/
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 0.125rem solid #30363d;
 }
 
 /* 필터와 글쓰기 버튼 컨테이너 */
@@ -268,57 +268,57 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding: 16px;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
   background-color: #161b22;
-  border-radius: 12px;
-  border: 1px solid #30363d;
-  gap: 20px;
+  border-radius: 0.75rem;
+  border: 0.0625rem solid #30363d;
+  gap: 1.25rem;
 }
 
 /* 타입 필터 컨테이너 */
 .type-filter-container {
   display: flex;
-  gap: 12px;
+  gap: 0.75rem;
   flex-wrap: wrap;
   flex: 1;
 }
 
 .type-filter-btn {
-  padding: 10px 20px;
-  border: 2px solid #30363d;
-  border-radius: 25px;
+  padding: 0.625rem 1.25rem;
+  border: 0.125rem solid #30363d;
+  border-radius: 1.5625rem;
   background-color: transparent;
   color: #8b949e;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .type-filter-btn:hover {
   background-color: #21262d;
   color: #e6edf3;
   border-color: #58a6ff;
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
 }
 
 .type-filter-btn.active {
   background: linear-gradient(135deg, #238636, #2ea043);
   color: white;
   border-color: #238636;
-  box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4);
+  box-shadow: 0 0.25rem 0.75rem rgba(35, 134, 54, 0.4);
 }
 
 .active-count {
   background-color: rgba(255, 255, 255, 0.2);
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 12px;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
@@ -326,29 +326,29 @@
 .write-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
   background: linear-gradient(135deg, #1f6feb, #388bfd);
   color: white;
   border: none;
-  border-radius: 25px;
-  font-size: 14px;
+  border-radius: 1.5625rem;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(31, 111, 235, 0.4);
+  box-shadow: 0 0.25rem 0.75rem rgba(31, 111, 235, 0.4);
   white-space: nowrap;
 }
 
 .write-btn:hover {
   background: linear-gradient(135deg, #0969da, #1f6feb);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(31, 111, 235, 0.6);
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.375rem 1rem rgba(31, 111, 235, 0.6);
 }
 
 .board-title-header {
   margin: 0;
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: 700;
   color: #f0f6fc;
 }
@@ -356,21 +356,21 @@
 /* 토글 버튼 영역 */
 .view-toggle {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   background-color: #21262d;
-  padding: 4px;
-  border-radius: 8px;
-  border: 1px solid #30363d;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  border: 0.0625rem solid #30363d;
 }
 
 .toggle-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 0.375rem;
   background-color: transparent;
   color: #7d8590;
   cursor: pointer;
@@ -386,12 +386,12 @@
 .toggle-btn.active {
   background-color: #238636;
   color: white;
-  box-shadow: 0 2px 8px rgba(35, 134, 54, 0.4);
+  box-shadow: 0 0.125rem 0.5rem rgba(35, 134, 54, 0.4);
 }
 
 /* 컨텐츠 영역 */
 .board-content {
-  min-height: 400px;
+  min-height: 25rem;
 }
 
 /* =========================== */
@@ -401,10 +401,10 @@
   width: 100%;
   border-collapse: collapse;
   background: #161b22;
-  border-radius: 12px;
+  border-radius: 0.75rem;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  border: 1px solid #30363d;
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.4);
+  border: 0.0625rem solid #30363d;
 }
 
 .mypage_board_table thead {
@@ -412,19 +412,20 @@
 }
 
 .mypage_board_table th {
-  padding: 16px 12px;
+  padding: 1rem 0.75rem;
   text-align: left;
   font-weight: 600;
   color: #f0f6fc;
-  border-bottom: 2px solid #30363d;
-  font-size: 14px;
+  border-bottom: 0.125rem solid #30363d;
+  font-size: 0.875rem;
 }
 
 .mypage_board_table td {
-  padding: 16px 12px;
-  border-bottom: 1px solid #30363d;
+  padding: 1rem 0.75rem;
+  height: 6rem;
+  border-bottom: 0.0625rem solid #30363d;
   color: #e6edf3;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .mypage_board_table tbody tr:hover {
@@ -433,7 +434,7 @@
 }
 
 .title_cell {
-  max-width: 300px;
+  max-width: 18.75rem;
 }
 
 .board_title_link {
@@ -455,20 +456,20 @@
 
 .mypage_empty_row td {
   text-align: center;
-  padding: 60px 20px;
+  padding: 3.75rem 1.25rem;
   color: #7d8590;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 /* 타입 배지 스타일 - boardTypeNo 기반 */
 .board-type-badge {
-  padding: 3px 8px;
-  border-radius: 12px;
-  font-size: 11px;
+  padding: 0.1875rem 0.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   text-align: center;
-  min-width: 40px;
-  max-width: 50px;
+  min-width: 2.5rem;
+  max-width: 3.125rem;
   display: inline-block;
 }
 
@@ -490,20 +491,20 @@
 /* 테이블의 액션 버튼들 */
 .action-buttons {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   justify-content: center;
 }
 
 .edit-btn,
 .delete-btn {
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  border: 0.0625rem solid;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   transition: all 0.2s ease;
-  min-width: 50px;
+  min-width: 3.125rem;
 }
 
 .edit-btn {
@@ -515,8 +516,8 @@
 .edit-btn:hover {
   background-color: #238636;
   color: white;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(35, 134, 54, 0.3);
+  transform: translateY(-0.0625rem);
+  box-shadow: 0 0.125rem 0.5rem rgba(35, 134, 54, 0.3);
 }
 
 .delete-btn {
@@ -528,39 +529,39 @@
 .delete-btn:hover {
   background-color: #da3633;
   color: white;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(218, 54, 51, 0.3);
+  transform: translateY(-0.0625rem);
+  box-shadow: 0 0.125rem 0.5rem rgba(218, 54, 51, 0.3);
 }
 
 .empty-state {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 60px 20px;
+  padding: 3.75rem 1.25rem;
   color: #7d8590;
-  font-size: 16px;
+  font-size: 1rem;
   background: #161b22;
-  border-radius: 12px;
-  border: 1px dashed #30363d;
+  border-radius: 0.75rem;
+  border: 0.0625rem dashed #30363d;
 }
 
 .write-first-btn {
-  padding: 12px 24px;
+  padding: 0.75rem 1.5rem;
   background: linear-gradient(135deg, #238636, #2ea043);
   color: white;
   border: none;
-  border-radius: 25px;
-  font-size: 14px;
+  border-radius: 1.5625rem;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4);
-  margin-top: 16px;
+  box-shadow: 0 0.25rem 0.75rem rgba(35, 134, 54, 0.4);
+  margin-top: 1rem;
 }
 
 .write-first-btn:hover {
   background: linear-gradient(135deg, #2ea043, #238636);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(35, 134, 54, 0.6);
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.375rem 1rem rgba(35, 134, 54, 0.6);
 }
 
 /* 로딩 스피너 */
@@ -569,18 +570,18 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 20px;
+  padding: 3.75rem 1.25rem;
   color: #7d8590;
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #30363d;
-  border-top: 4px solid #58a6ff;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0.25rem solid #30363d;
+  border-top: 0.25rem solid #58a6ff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 @keyframes spin {
@@ -595,41 +596,41 @@
 /* =========================== */
 /* 반응형 디자인 */
 /* =========================== */
-@media (max-width: 1400px) {
+@media (max-width: 87.5rem) {
   .board-card-container {
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(16.25rem, 1fr));
+    gap: 0.875rem;
   }
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 75rem) {
   .mypage-content {
-    max-width: 1200px;
+    max-width: 75rem;
   }
 
   .board-card-container {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 0.75rem;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .content-wrapper {
     flex-direction: column;
   }
 
   .board-container {
-    padding: 16px;
+    padding: 1rem;
   }
 
   .board-header {
     flex-direction: column;
-    gap: 16px;
+    gap: 1rem;
     align-items: stretch;
   }
 
   .board-title-header {
-    font-size: 24px;
+    font-size: 1.5rem;
     text-align: center;
   }
 
@@ -639,30 +640,30 @@
 
   .filter-and-write-container {
     flex-direction: column;
-    gap: 16px;
-    padding: 12px;
+    gap: 1rem;
+    padding: 0.75rem;
   }
 
   .type-filter-container {
     justify-content: center;
-    gap: 8px;
+    gap: 0.5rem;
   }
 
   .board-card-container {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(17.5rem, 1fr));
+    gap: 1rem;
   }
 
   .thumbnail-container {
-    height: 160px;
+    height: 10rem;
   }
 
   .board-info {
-    padding: 12px;
+    padding: 0.75rem;
   }
 
   .board-title {
-    font-size: 15px;
+    font-size: 0.9375rem;
   }
 
   .card-actions {
@@ -671,19 +672,19 @@
     right: auto;
     opacity: 1;
     justify-content: center;
-    margin-top: 8px;
-    padding: 0 16px;
+    margin-top: 0.5rem;
+    padding: 0 1rem;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   .board-card-container {
     grid-template-columns: 1fr;
     padding: 0;
   }
 
   .thumbnail-container {
-    height: 200px;
+    height: 12.5rem;
   }
 }
 
@@ -692,30 +693,30 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
+  padding: 1rem;
   background-color: #161b22;
-  border-radius: 8px;
-  margin-bottom: 16px;
-  border: 1px solid #30363d;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  border: 0.0625rem solid #30363d;
 }
 
 .select-all-container {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .select-all-checkbox,
 .board-checkbox {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   accent-color: #58a6ff;
   cursor: pointer;
 }
 
 .select-all-label {
   color: #e6edf3;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   user-select: none;
@@ -724,13 +725,13 @@
 .bulk-delete-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
   background-color: #da3633;
   color: white;
-  border: 1px solid #da3633;
-  border-radius: 6px;
-  font-size: 14px;
+  border: 0.0625rem solid #da3633;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -739,8 +740,8 @@
 .bulk-delete-btn:hover {
   background-color: #f85149;
   border-color: #f85149;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(248, 81, 73, 0.3);
+  transform: translateY(-0.0625rem);
+  box-shadow: 0 0.25rem 0.5rem rgba(248, 81, 73, 0.3);
 }
 
 /* 리스트 뷰 컨테이너 */
@@ -753,26 +754,26 @@
   width: 100%;
   border-collapse: collapse;
   background-color: #161b22;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   overflow: hidden;
-  border: 1px solid #30363d;
+  border: 0.0625rem solid #30363d;
 }
 
 .mypage_board_table th {
   background-color: #21262d;
   color: #f0f6fc;
-  padding: 12px;
+  padding: 0.75rem;
   text-align: left;
   font-weight: 600;
-  border-bottom: 1px solid #30363d;
-  font-size: 14px;
+  border-bottom: 0.0625rem solid #30363d;
+  font-size: 0.875rem;
 }
 
 .mypage_board_table td {
-  padding: 12px;
-  border-bottom: 1px solid #30363d;
+  padding: 0.3rem;
+  border-bottom: 0.0625rem solid #30363d;
   color: #e6edf3;
-  font-size: 14px;
+  font-size: 0.875rem;
   vertical-align: middle;
 }
 
@@ -782,7 +783,7 @@
 
 .mypage_board_table tr.selected-row {
   background-color: rgba(88, 166, 255, 0.1);
-  border-left: 3px solid #58a6ff;
+  border-left: 0.1875rem solid #58a6ff;
 }
 
 .mypage_board_table tr.selected-row:hover {
@@ -792,23 +793,23 @@
 /* 썸네일 셀 */
 .thumbnail-cell {
   text-align: center;
-  padding: 8px !important;
+  padding: 0, 0, 0, 0;
 }
 
 .list-thumbnail {
-  width: 60px;
-  height: 40px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 4px;
-  border: 1px solid #30363d;
+  border-radius: 0.9rem;
+  border: 0.0625rem solid #30363d;
   background-color: #21262d;
 }
 
 /* 게시글 타입 배지 */
 .board-type-badge {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: white;
 }
@@ -827,7 +828,7 @@
 
 /* 제목 셀 */
 .title_cell {
-  max-width: 300px;
+  max-width: 18.75rem;
 }
 
 .board_title_link {
@@ -848,19 +849,19 @@
 /* 액션 버튼들 */
 .action-buttons {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   justify-content: center;
 }
 
 .edit-btn,
 .delete-btn {
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 12px;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 1px solid transparent;
+  border: 0.0625rem solid transparent;
 }
 
 .edit-btn {
@@ -890,15 +891,15 @@
 .mypage_empty_row td {
   text-align: center;
   color: #8b949e;
-  padding: 40px;
+  padding: 2.5rem;
   font-style: italic;
 }
 
 /* 반응형 디자인 */
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .bulk-actions {
     flex-direction: column;
-    gap: 12px;
+    gap: 0.75rem;
     align-items: stretch;
   }
 
@@ -911,32 +912,32 @@
   }
 
   .mypage_board_table {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 
   .mypage_board_table th,
   .mypage_board_table td {
-    padding: 8px 4px;
+    padding: 0.5rem 0.25rem;
   }
 
   .list-thumbnail {
-    width: 40px;
-    height: 28px;
+    width: 4.5rem;
+    height: 4.75rem;
   }
 
   .action-buttons {
     flex-direction: column;
-    gap: 4px;
+    gap: 0.25rem;
   }
 
   .edit-btn,
   .delete-btn {
-    padding: 4px 8px;
-    font-size: 11px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.6875rem;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30rem) {
   /* 모바일에서는 일부 컬럼 숨기기 */
   .mypage_board_table th:nth-child(3),
   .mypage_board_table td:nth-child(3),

@@ -119,7 +119,7 @@ const MyBoard = () => {
   const loadUserInfo = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/user/1`
+        `${import.meta.env.VITE_API_URL}/user/${localStorage.getItem("userNo")}`
       );
       setUser(response.data);
       return response.data;
@@ -135,6 +135,7 @@ const MyBoard = () => {
 
   // 내 게시글 로드
   const loadMyBoards = async (userInfo) => {
+    console.log(localStorage.getItem("userNo"));
     try {
       setLoading(true);
 
@@ -143,10 +144,10 @@ const MyBoard = () => {
       );
 
       // 현재 사용자가 작성한 게시글만 필터링
-      const userBoards = response.data.filter(
-        (board) => board.user.userNo === 1
+      const userBoards = response.data.content.filter(
+        (board) => board.user.userNo == localStorage.getItem("userNo")
       );
-
+      console.log(response.data);
       setMyBoards(userBoards);
       setFilteredList(userBoards);
     } catch (error) {
@@ -263,9 +264,9 @@ const MyBoard = () => {
                 />
               </div>
             </th>
-            <th width="80">썸네일</th>
             <th width="60">번호</th>
             <th width="80">타입</th>
+            <th width="80">썸네일</th>
             <th>제목</th>
             <th width="80">조회수</th>
             <th width="80">좋아요</th>
@@ -293,13 +294,6 @@ const MyBoard = () => {
                       onClick={(e) => e.stopPropagation()}
                     />
                   </td>
-                  <td className="thumbnail-cell">
-                    <img
-                      src={getThumbnailUrl(board)}
-                      alt={board.boardTitle}
-                      className="list-thumbnail"
-                    />
-                  </td>
                   <td>{board.boardNo}</td>
                   <td>
                     <span
@@ -307,6 +301,13 @@ const MyBoard = () => {
                     >
                       {typeName}
                     </span>
+                  </td>
+                  <td className="thumbnail-cell">
+                    <img
+                      src={getThumbnailUrl(board)}
+                      alt={board.boardTitle}
+                      className="list-thumbnail"
+                    />
                   </td>
                   <td className="title_cell">
                     <span
