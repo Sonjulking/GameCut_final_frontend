@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../store/authSlice";
 import logoImg from "../assets/img/main/logo/gamecut_logo.png";
 import searchIcon from "../assets/img/main/icons/search_icon.png";
 import loginIcon from "../assets/img/main/icons/login_icon.png";
@@ -7,19 +9,15 @@ import logoutIcon from "../assets/img/main/icons/logout_Icon.png";
 import hamburgerIcon from "../assets/img/main/icons/hamburger_icon.png";
 
 const Header = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate(); // 추가
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
-  }, []);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
+    localStorage.clear();
+    dispatch(logout());
     alert("로그아웃 성공!");
-    navigate("/"); // 로그아웃 후 홈으로 이동
+    navigate("/");
   };
 
   return (
@@ -38,7 +36,7 @@ const Header = () => {
           <Link
             to="/"
             onClick={(e) => {
-              e.preventDefault(); // 기본 이동 막고
+              e.preventDefault();
               handleLogout();
             }}
           >
