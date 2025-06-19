@@ -3,6 +3,7 @@ import React from "react";
 import "./App.css";
 import router from "./routes/AppRoutes.jsx";
 import { RouterProvider } from "react-router-dom";
+
 import useAuthInit from "./hooks/useAuthInit"; // 경로 확인
 
 function App() {

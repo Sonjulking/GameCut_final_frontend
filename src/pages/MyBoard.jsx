@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
-import "../styles/myBoard.css";
+import "../styles/MyBoard.css";
 
 const MyBoard = () => {
   const navigate = useNavigate();
@@ -12,6 +12,10 @@ const MyBoard = () => {
   const [selectedType, setSelectedType] = useState("전체");
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+
+  // 체크박스 관련 상태 추가
+  const [selectedBoards, setSelectedBoards] = useState(new Set());
+  const [isAllSelected, setIsAllSelected] = useState(false);
 
   const boardTypes = ["전체", "자유", "공략", "영상"];
 
@@ -40,6 +44,74 @@ const MyBoard = () => {
         return 3;
       default:
         return null;
+    }
+  };
+
+  // 체크박스 관련 함수들
+  const handleSelectBoard = (boardNo) => {
+    const newSelected = new Set(selectedBoards);
+    if (newSelected.has(boardNo)) {
+      newSelected.delete(boardNo);
+    } else {
+      newSelected.add(boardNo);
+    }
+    setSelectedBoards(newSelected);
+    setIsAllSelected(
+      newSelected.size === filteredList.length && filteredList.length > 0
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedBoards(new Set());
+      setIsAllSelected(false);
+    } else {
+      const allBoardNos = new Set(filteredList.map((board) => board.boardNo));
+      setSelectedBoards(allBoardNos);
+      setIsAllSelected(true);
+    }
+  };
+
+  // 선택된 게시글들 일괄 삭제
+  const handleBulkDelete = async () => {
+    if (selectedBoards.size === 0) {
+      alert("삭제할 게시글을 선택해주세요.");
+      return;
+    }
+
+    const selectedTitles = filteredList
+      .filter((board) => selectedBoards.has(board.boardNo))
+      .map((board) => board.boardTitle)
+      .join(", ");
+
+    if (
+      window.confirm(
+        `선택된 ${selectedBoards.size}개의 게시글을 정말 삭제하시겠습니까?\n\n${selectedTitles}`
+      )
+    ) {
+      try {
+        // 선택된 게시글들을 순차적으로 삭제
+        const deletePromises = Array.from(selectedBoards).map((boardNo) =>
+          axios.delete(
+            `${import.meta.env.VITE_API_URL}/board/delete/${boardNo}`
+          )
+        );
+
+        await Promise.all(deletePromises);
+
+        alert(`${selectedBoards.size}개의 게시글이 삭제되었습니다.`);
+
+        // 삭제 후 목록 새로고침 및 선택 상태 초기화
+        setSelectedBoards(new Set());
+        setIsAllSelected(false);
+
+        if (user) {
+          await loadMyBoards(user);
+        }
+      } catch (error) {
+        console.error("일괄 삭제 실패:", error);
+        alert("게시글 삭제 중 오류가 발생했습니다.");
+      }
     }
   };
 
@@ -88,6 +160,10 @@ const MyBoard = () => {
   // 타입별 필터링 함수
   const filterByType = (type) => {
     setSelectedType(type);
+    // 필터링 시 선택 상태 초기화
+    setSelectedBoards(new Set());
+    setIsAllSelected(false);
+
     if (type === "전체") {
       setFilteredList(myBoards);
     } else {
@@ -170,79 +246,114 @@ const MyBoard = () => {
     filterByType(selectedType);
   }, [myBoards, selectedType]);
 
-  // 리스트 뷰 렌더링
+  // 리스트 뷰 렌더링 (체크박스와 썸네일 추가)
   const renderListView = () => (
-    <table className="mypage_board_table">
-      <thead>
-        <tr>
-          <th>번호</th>
-          <th>타입</th>
-          <th>제목</th>
-          <th>조회수</th>
-          <th>좋아요</th>
-          <th>작성일</th>
-          <th>관리</th>
-        </tr>
-      </thead>
-      <tbody>
-        {filteredList && filteredList.length > 0 ? (
-          filteredList.map((board) => {
-            const typeName = getBoardTypeName(board.boardTypeNo);
-            return (
-              <tr key={board.boardNo}>
-                <td>{board.boardNo}</td>
-                <td>
-                  <span
-                    className={`board-type-badge type-${board.boardTypeNo}`}
-                  >
-                    {typeName}
-                  </span>
-                </td>
-                <td className="title_cell">
-                  <span
-                    className="board_title_link"
-                    onClick={() => handleTitleClick(board.boardNo)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {board.boardTitle}
-                  </span>
-                </td>
-                <td>{board.boardCount}</td>
-                <td>{board.boardLike}</td>
-                <td>{formatDate(board.boardCreateDate)}</td>
-                <td>
-                  <div className="action-buttons">
-                    <button
-                      className="edit-btn"
-                      onClick={(e) => handleEditClick(e, board.boardNo)}
-                      title="수정"
-                    >
-                      수정
-                    </button>
-                    <button
-                      className="delete-btn"
-                      onClick={(e) =>
-                        handleDeleteClick(e, board.boardNo, board.boardTitle)
-                      }
-                      title="삭제"
-                    >
-                      삭제
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            );
-          })
-        ) : (
-          <tr className="mypage_empty_row">
-            <td colSpan="7">작성한 게시글이 없습니다.</td>
+    <div className="list-view-container">
+      <table className="mypage_board_table">
+        <thead>
+          <tr>
+            <th width="50">
+              <div className="select-all-container">
+                <input
+                  type="checkbox"
+                  id="selectAll"
+                  checked={isAllSelected}
+                  onChange={handleSelectAll}
+                  className="select-all-checkbox"
+                />
+              </div>
+            </th>
+            <th width="80">썸네일</th>
+            <th width="60">번호</th>
+            <th width="80">타입</th>
+            <th>제목</th>
+            <th width="80">조회수</th>
+            <th width="80">좋아요</th>
+            <th width="100">작성일</th>
+            <th width="120">관리</th>
           </tr>
-        )}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {filteredList && filteredList.length > 0 ? (
+            filteredList.map((board) => {
+              const typeName = getBoardTypeName(board.boardTypeNo);
+              const isSelected = selectedBoards.has(board.boardNo);
+
+              return (
+                <tr
+                  key={board.boardNo}
+                  className={isSelected ? "selected-row" : ""}
+                >
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => handleSelectBoard(board.boardNo)}
+                      className="board-checkbox"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </td>
+                  <td className="thumbnail-cell">
+                    <img
+                      src={getThumbnailUrl(board)}
+                      alt={board.boardTitle}
+                      className="list-thumbnail"
+                    />
+                  </td>
+                  <td>{board.boardNo}</td>
+                  <td>
+                    <span
+                      className={`board-type-badge type-${board.boardTypeNo}`}
+                    >
+                      {typeName}
+                    </span>
+                  </td>
+                  <td className="title_cell">
+                    <span
+                      className="board_title_link"
+                      onClick={() => handleTitleClick(board.boardNo)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {board.boardTitle}
+                    </span>
+                  </td>
+                  <td>{board.boardCount}</td>
+                  <td>{board.boardLike}</td>
+                  <td>{formatDate(board.boardCreateDate)}</td>
+                  <td>
+                    <div className="action-buttons">
+                      <button
+                        className="edit-btn"
+                        onClick={(e) => handleEditClick(e, board.boardNo)}
+                        title="수정"
+                      >
+                        수정
+                      </button>
+                      <button
+                        className="delete-btn"
+                        onClick={(e) =>
+                          handleDeleteClick(e, board.boardNo, board.boardTitle)
+                        }
+                        title="삭제"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })
+          ) : (
+            <tr className="mypage_empty_row">
+              <td colSpan="9">작성한 게시글이 없습니다.</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 
-  // 카드 뷰 렌더링
+  // 카드 뷰 렌더링 (기존과 동일)
   const renderCardView = () => (
     <div className="board-card-container">
       {filteredList && filteredList.length > 0 ? (
@@ -260,7 +371,7 @@ const MyBoard = () => {
                   alt={board.boardTitle}
                   className="board-thumbnail"
                 />
-                <div className={`card-type-badge type-${board.boardTypeNo}`}>
+                <div className={`my-card-type-badge type-${board.boardTypeNo}`}>
                   {typeName}
                 </div>
                 <div className="card-actions">
@@ -403,6 +514,23 @@ const MyBoard = () => {
                     </button>
                   ))}
                 </div>
+                {selectedBoards.size > 0 && (
+                  <button
+                    className="bulk-delete-btn"
+                    onClick={handleBulkDelete}
+                    title={`선택된 ${selectedBoards.size}개 항목 삭제`}
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                    </svg>
+                    선택삭제 ({selectedBoards.size})
+                  </button>
+                )}
                 <button
                   className="write-btn"
                   onClick={() => navigate("/board/write")}

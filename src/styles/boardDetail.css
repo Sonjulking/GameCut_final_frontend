@@ -611,3 +611,14 @@
     font-size: 20px;
   }
 }
+
+/* 대댓글달기 전용 css */
+.reply-insert-button {
+  color: #666;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  user-select: none;
+}

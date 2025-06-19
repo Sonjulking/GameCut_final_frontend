@@ -149,7 +149,7 @@ const VideoItem = ({board, isLoading}) => {
                             style={isLoading ? {pointerEvents: "none"} : {}}
                     >
                         <source
-                                src={import.meta.env.VITE_API_URL + video.attachFile.fileUrl}
+                                src={import.meta.env.VITE_API_URL + video?.attachFile.fileUrl}
                                 type="video/mp4"
                         />
                         브라우저가 비디오 태그를 지원하지 않습니다.
@@ -174,7 +174,7 @@ const VideoItem = ({board, isLoading}) => {
                                         marginRight: "8px",
                                     }}
                             />
-                            <span className="video_title">{user.userName}</span>
+                            <span className="video_title">{user.userNickname}</span>
                         </div>
 
                         {/* 제목 한 줄 */}
@@ -244,7 +244,7 @@ const VideoItem = ({board, isLoading}) => {
                         boardNo={board.boardNo}
                         isOpen={isCommentOpen}
                         comments={comments}
-                        videoId={video.videoNo}
+                        videoId={video?.videoNo}
                         onClose={toggleComment}
                         onAddComment={addComment}
                 />
