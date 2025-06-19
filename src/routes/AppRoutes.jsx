@@ -14,6 +14,7 @@ import BoardDetail from "../pages/BoardDetail.jsx";
 import MyPage from "../pages/MyPage.jsx";
 import MyBoard from "../pages/MyBoard.jsx";
 import Settings from "../pages/Settings.jsx";
+import RankingsPage from "../pages/RankingsPage.jsx"; // 새로운 페이지 import
 
 const delayImport = (importFunc, delay = 5000) => {
   return new Promise((resolve) => {
@@ -47,6 +48,9 @@ const router = createBrowserRouter([
       { path: "myBoard", element: <MyBoard /> },
       //셋팅페이지
       { path: "settings", element: <Settings /> },
+
+      //랭킹페이지
+      { path: "rankings", element: <RankingsPage /> },
       //404에러
       { path: "*", element: <ErrorPage /> },
     ],
