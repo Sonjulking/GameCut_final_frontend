@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 ### sw.js ###
-/dev-dist/sw.js
+dev-dist/sw.js

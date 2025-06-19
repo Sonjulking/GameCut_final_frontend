@@ -28,12 +28,12 @@ const Login = () => {
       const response = await axios.post("/user/login", { userId, pwd });
 
       if (response.data.success) {
-        const { token, userNickname, userId: loggedInUserId } = response.data;
-
-        localStorage.setItem("userId", loggedInUserId);
+        const { token, userNinkname, userId, userNo } = response.data;
         localStorage.setItem("token", token);
-        localStorage.setItem("nickname", userNickname);
 
+        localStorage.setItem("nickname", userNickname);
+        localStorage.setItem("userId", userId);
+        localStorage.setItem("userNo", userNo);
         dispatch(
           loginSuccess({
             token,
@@ -72,7 +72,7 @@ const Login = () => {
           localStorage.setItem("token", token);
           localStorage.setItem("nickname", userNickname);
           localStorage.setItem("userId", userId);
-
+          localStorage.setItem("userNo", userNo);
           dispatch(loginSuccess({ token, userId, nickname: userNickname }));
 
           alert(`${userNickname}님 환영합니다!`);

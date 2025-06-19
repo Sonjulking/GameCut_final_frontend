@@ -15,6 +15,8 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
     const editorRef = useRef(null);
 
     useEffect(() => {
+        if (!editorRef.current) return;
+        
         if (!isEdit) {
             handleChange({
                 target: {name: "boardContent", value: ""},
