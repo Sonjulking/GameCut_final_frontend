@@ -205,7 +205,7 @@ const BoardList = () => {
             <div className="board-container">
                 {/* 헤더와 토글 버튼 */}
                 <div className="board-header">
-                    <h2 className="board-title-header">게시글 목록</h2>
+                    <h2 className="board-title-header"></h2>
                     <div className="view-toggle">
                         <button
                                 className={`toggle-btn ${viewMode === "list" ? "active" : ""}`}
