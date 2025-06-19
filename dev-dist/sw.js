@@ -84,6 +84,7 @@ define(['./workbox-54d0af47'], (function (workbox) { 'use strict';
     "url": "index.html",
     "revision": "0.lt1sqi063j"
   }], {});
+
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
     allowlist: [/^\/$/]
