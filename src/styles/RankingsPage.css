@@ -1,0 +1,94 @@
+/* 컨테이너 스타일 */
+.rankings-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 24px;
+  background-color: #1e1e1e;
+  color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 제목 */
+.rankings-container h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 24px;
+  color: #ffffff;
+}
+
+/* 버튼 영역 */
+.ranking-buttons {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.ranking-buttons button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  background-color: #2c2c2c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.ranking-buttons button:hover {
+  background-color: #3d3d3d;
+}
+
+.ranking-buttons button.active {
+  background-color: #4caf50;
+}
+
+/* 테이블 전체 */
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* 테이블 헤더 */
+.ranking-table thead th {
+  background-color: #333;
+  padding: 12px;
+  font-size: 16px;
+  color: #ffffff;
+  line-height: 1.4;
+  vertical-align: middle;
+  border-bottom: 2px solid #555;
+}
+
+/* 테이블 셀 */
+.ranking-table tbody td {
+  padding: 12px;
+  font-size: 15px;
+  line-height: 1.4;
+  vertical-align: middle;
+  border-bottom: 1px solid #444;
+}
+
+/* 마우스 오버 효과 */
+.ranking-table tbody tr:hover {
+  background-color: #2a2a2a;
+}
+
+/* 반응형 대응 */
+@media (max-width: 500px) {
+  .ranking-buttons button {
+    margin: 5px 4px;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .ranking-table thead th,
+  .ranking-table tbody td {
+    font-size: 14px;
+    padding: 10px;
+  }
+}

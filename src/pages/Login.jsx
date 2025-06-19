@@ -42,13 +42,11 @@ const Login = () => {
           })
         );
 
-        console.log("nickname:", userNickname);
-        console.log("userId:", loggedInUserId);
-
         alert(`${userNickname}님 환영합니다!`);
         navigate("/");
       } else {
-        setError("아이디 또는 비밀번호가 틀렸습니다.");
+        // 🔥 백엔드에서 보내준 메시지를 그대로 출력
+        setError(response.data.message || "아이디 또는 비밀번호가 틀렸습니다.");
       }
     } catch (err) {
       console.error(err);
