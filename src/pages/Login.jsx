@@ -27,10 +27,11 @@ const Login = () => {
         pwd,
       });
       if (response.data.success) {
-        const { token, userNinkname, userId } = response.data;
+        const { token, userNinkname, userId, userNo } = response.data;
         localStorage.setItem("token", token);
         localStorage.setItem("nickname", userNinkname);
         localStorage.setItem("userId", userId);
+        localStorage.setItem("userNo", userNo);
         alert(`${userNinkname}님 환영합니다!`);
         navigate("/");
       } else {
@@ -54,6 +55,7 @@ const Login = () => {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("nickname", res.data.userNickname);
         localStorage.setItem("userId", res.data.userId);
+        localStorage.setItem("userNo", res.data.userNo);
         alert(`${res.data.userNickname}님 환영합니다!`);
         navigate("/");
       }

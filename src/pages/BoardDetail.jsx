@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button, IconButton } from "@mui/material";
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import CommentSection from "./CommentSection.jsx"; // 새로 만든 컴포넌트 import
 import "../styles/boardDetail.css";
 
 const BoardDetail = () => {
@@ -12,21 +13,9 @@ const BoardDetail = () => {
   const [board, setBoard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
-  const [showReplies, setShowReplies] = useState({});
 
-  // 댓글 관련 상태
+  // 댓글 관련 상태 - CommentSection으로 전달할 예정
   const [comments, setComments] = useState([]);
-  const [inputComment, setInputComment] = useState({
-    boardNo: boardNo,
-    commentContent: "",
-  });
-
-  const toggleReplies = (commentNo) => {
-    setShowReplies((prev) => ({
-      ...prev,
-      [commentNo]: !prev[commentNo], // 해당 댓글의 대댓글 표시 상태를 반전
-    }));
-  };
 
   // boardTypeNo를 타입명으로 변환하는 함수
   const getBoardTypeName = (boardTypeNo) => {
@@ -63,38 +52,6 @@ const BoardDetail = () => {
       navigate("/board/list");
     } finally {
       setLoading(false);
-    }
-  };
-
-  // 댓글 추가
-  const handleAddComment = async () => {
-    if (!inputComment.commentContent.trim()) {
-      alert("댓글 내용을 입력해주세요.");
-      return;
-    }
-    try {
-      const token = localStorage.getItem("token");
-      const axiosConfig = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/comment`,
-        inputComment,
-        axiosConfig
-      );
-      setComments([...comments, response.data]);
-      setInputComment({ boardNo, commentContent: "" });
-    } catch (error) {
-      console.error("댓글 등록 실패:", error);
-      alert("댓글 등록에 실패했습니다.");
-    }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleAddComment();
     }
   };
 
@@ -266,147 +223,16 @@ const BoardDetail = () => {
         </div>
       </div>
 
-      {/* 댓글 섹션 */}
-      <div className="board-comment-section">
-        <div className="board-comment-header">
-          <h3>댓글 {comments.length}개</h3>
-        </div>
-
-        {/* 댓글 입력 */}
-        <div className="comment-input-section">
-          <input
-            type="text"
-            placeholder="댓글을 입력하세요..."
-            value={inputComment.commentContent}
-            onChange={(e) =>
-              setInputComment({
-                ...inputComment,
-                commentContent: e.target.value,
-              })
-            }
-            onKeyPress={handleKeyPress}
-            className="comment-input"
-          />
-          <button onClick={handleAddComment} className="comment-submit-btn">
-            댓글 작성
-          </button>
-        </div>
-
-        {/* 댓글 목록 */}
-        <div className="board-comment-list">
-          {comments.length > 0 ? (
-            comments
-              .filter((comment) => !comment.parentComment)
-              .map((comment, index) => (
-                <div key={index} className="board-comment-item">
-                  <div className="board-comment-user-info">
-                    <img
-                      src="/src/assets/img/main/icons/admin.jpg"
-                      alt="profile"
-                      className="board-comment-profile-img"
-                    />
-                    <div className="board-comment-info">
-                      <span className="board-comment-nickname">
-                        {comment.user.userNickname}
-                      </span>
-                      <span className="board-comment-date">
-                        {new Date(comment.commentCreateDate).toLocaleString()}
-                      </span>
-                    </div>
-                    <div
-                      className="reply-insert-button"
-                      style={{ marginLeft: "auto" }}
-                    >
-                      답글달기
-                    </div>
-                  </div>
-                  <p className="board-comment-content">
-                    {comment.commentContent}
-                  </p>
-                  <input type="text" placeholder="대댓글을 입력하세요." />
-
-                  {/* 대댓글 */}
-                  {(() => {
-                    // 현재 댓글의 대댓글 개수 계산
-                    const replyCount = comments.filter(
-                      (reply) =>
-                        reply.parentComment &&
-                        reply.parentComment.commentNo === comment.commentNo
-                    ).length;
-
-                    // 대댓글이 없으면 아무것도 표시하지 않음
-                    if (replyCount === 0) return null;
-
-                    return (
-                      <div>
-                        {/* 답글 개수 표시 및 토글 버튼 */}
-                        <div
-                          id="reply-show-button"
-                          onClick={() => toggleReplies(comment.commentNo)}
-                          style={{
-                            color: "#1976d2",
-                            fontSize: "14px",
-                            padding: "8px 0",
-                            userSelect: "none",
-                            cursor: "pointer",
-                          }}
-                        >
-                          {showReplies[comment.commentNo]
-                            ? "답글 닫기"
-                            : `답글 ${replyCount}개`}
-                        </div>
-                        {/* 대댓글 내용 - 조건부 렌더링 */}
-                        {showReplies[comment.commentNo] && (
-                          <div className="replies-container">
-                            {comments
-                              .filter(
-                                (reply) =>
-                                  reply.parentComment &&
-                                  reply.parentComment.commentNo ===
-                                    comment.commentNo
-                              )
-                              .map((reply, replyIndex) => (
-                                <div key={replyIndex} className="reply-item">
-                                  <div className="reply-content">
-                                    <br />
-                                    <div className="board-comment-user-info">
-                                      ↳
-                                      <img
-                                        src="/src/assets/img/main/icons/admin.jpg"
-                                        alt="profile"
-                                        className="board-comment-profile-img small"
-                                      />
-                                      <div className="board-comment-info">
-                                        <span className="board-comment-nickname">
-                                          {reply.user.userNickname}
-                                        </span>
-                                        <span className="board-comment-date">
-                                          {new Date(
-                                            reply.commentCreateDate
-                                          ).toLocaleString()}
-                                        </span>
-                                      </div>
-                                    </div>
-                                    <p className="board-comment-content">
-                                      {reply.commentContent}
-                                    </p>
-                                  </div>
-                                </div>
-                              ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })()}
-                </div>
-              ))
-          ) : (
-            <div className="board-no-comments">
-              <p>첫 번째 댓글을 작성해보세요!</p>
-            </div>
-          )}
-        </div>
-      </div>
+      {/* 댓글 섹션을 별도 컴포넌트로 분리 */}
+      <CommentSection
+        boardNo={boardNo}
+        comments={comments}
+        setComments={setComments}
+      />
+      <br />
+      <br />
+      <br />
+      <br />
     </div>
   );
 };
