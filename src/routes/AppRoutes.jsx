@@ -1,9 +1,10 @@
-import { Route, Routes, createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import Layout from "../layout/Layout.jsx";
-import React, { lazy, Suspense } from "react";
+import React from "react";
+
+// 페이지 컴포넌트
 import HomePage from "../pages/HomePage.jsx";
 import BoardWrite from "../pages/BoardWrite.jsx";
-import LoadingScreen from "../components/Loading/LoadingScreen.jsx";
 import FindPassword from "../pages/FindPassword.jsx";
 import Join from "../pages/Join.jsx";
 import Login from "../pages/Login.jsx";
@@ -14,16 +15,9 @@ import BoardDetail from "../pages/BoardDetail.jsx";
 import MyPage from "../pages/MyPage.jsx";
 import MyBoard from "../pages/MyBoard.jsx";
 import Settings from "../pages/Settings.jsx";
-import RankingsPage from "../pages/RankingsPage.jsx"; // 새로운 페이지 import
+import RankingsPage from "../pages/RankingsPage.jsx";
+import Test from "../pages/Test.jsx"; // ✅ lazy 대신 일반 import
 
-const delayImport = (importFunc, delay = 5000) => {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(importFunc()), delay);
-  });
-};
-
-//로딩 테스트
-const Test = lazy(() => delayImport(() => import("../pages/Test.jsx")));
 const router = createBrowserRouter([
   {
     path: "/",
@@ -31,29 +25,36 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
-      //게시글 작성페이지
+
+      // 게시판 관련
       { path: "board/write", element: <BoardWrite /> },
       { path: "board/edit/:boardNo", element: <BoardWrite isEdit={true} /> },
       { path: "board/list", element: <BoardList /> },
       { path: "board/detail/:boardNo", element: <BoardDetail /> },
+
+      // 테스트 페이지 (동기 import로 변경됨)
       { path: "test", element: <Test /> },
+
+      // 마이페이지
       { path: "mypage/info", element: <MyPage /> },
       { path: "mypage/board", element: <MyBoard /> },
-      //로그인관련페이지
+
+      // 로그인 관련
       { path: "findPassword", element: <FindPassword /> },
       { path: "join", element: <Join /> },
       { path: "login", element: <Login /> },
       { path: "naver/callback", element: <NaverCallback /> },
-      { path: "myPage", element: <MyPage /> },
-      { path: "myBoard", element: <MyBoard /> },
-      //셋팅페이지
-      { path: "settings", element: <Settings /> },
+      { path: "myPage", element: <MyPage /> }, // 중복 경로일 수 있음
+      { path: "myBoard", element: <MyBoard /> }, // 중복 경로일 수 있음
 
-      //랭킹페이지
+      // 설정 & 랭킹
+      { path: "settings", element: <Settings /> },
       { path: "rankings", element: <RankingsPage /> },
-      //404에러
+
+      // 404
       { path: "*", element: <ErrorPage /> },
     ],
   },
 ]);
+
 export default router;

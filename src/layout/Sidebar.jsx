@@ -22,6 +22,9 @@ import seasonRankingCaption from "../assets/img/main/captions/season_ranking_cap
 import settingIcon from "../assets/img/main/icons/setting_icon.png";
 import settingCaption from "../assets/img/main/captions/setting_caption.png";
 
+import shoppingIcon from "../assets/img/main/icons/shopping_icon.png";
+import shoppingCaption from "../assets/img/main/captions/shopping_caption.png";
+
 import { Link } from "react-router-dom";
 
 const Sidebar = () => {
@@ -96,20 +99,16 @@ const Sidebar = () => {
         </div>
         <span className="sidebar_label">프로필</span>
       </Link>
-      <Link to={"/friendManagement"} className="sidebar_item">
+      <Link to={"/shopping"} className="sidebar_item">
         <div className="icon-wrapper">
+          <img src={shoppingIcon} className="sidebar_icons" alt="쇼핑 하기" />
           <img
-            src={friendManagementIcon}
-            className="sidebar_icons"
-            alt="친구 관리"
-          />
-          <img
-            src={friendManagementCaption}
+            src={shoppingCaption}
             className="caption_image"
-            alt="친구 관리 캡션"
+            alt="쇼핑 하기 캡션"
           />
         </div>
-        <span className="sidebar_label">친구관리</span>
+        <span className="sidebar_label">쇼핑 하기</span>
       </Link>
       <Link to={"/webGame"} className="sidebar_item">
         <div className="icon-wrapper">
