@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {
     Box,
     Typography,
@@ -8,24 +8,52 @@ import {
     InputAdornment,
     useMediaQuery,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import {useTheme} from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
+import axios from "axios";
 
-const ChatWindow = ({ onClose }) => {
+const ChatWindow = ({onClose}) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const [messages, setMessages] = useState([
-        { id: 1, text: "안녕하세요!", from: "other" },
+        {id: 1, text: "안녕하세요!", from: "other"},
     ]);
     const [input, setInput] = useState("");
 
-    const handleSend = () => {
+    const handleSend = async () => {
+
+        const token = localStorage.getItem("token");
+        const axiosConfig = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        };
         const trimmed = input.trim();
         if (!trimmed) return;
-        setMessages(prev => [...prev, { id: Date.now(), text: trimmed, from: "me" }]);
+
+        // 사용자가 보낸 메시지 먼저 추가
+        const newMsg = {id: Date.now(), text: trimmed, from: "me"};
+        setMessages(prev => [...prev, newMsg]);
         setInput("");
+
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/chat`, {message: trimmed}, axiosConfig); // ✅ Spring Boot API로 요청
+            const gptMsg = {
+                id: Date.now() + 1,
+                text: res.data,
+                from: "gpt",
+            };
+            setMessages(prev => [...prev, gptMsg]);
+        } catch (err) {
+            console.error("GPT 응답 실패", err);
+            setMessages(prev => [...prev, {
+                id: Date.now() + 2,
+                text: "GPT 응답에 실패했어요. 다시 시도해보세요!",
+                from: "gpt"
+            }]);
+        }
     };
 
     const handleKeyPress = (e) => {
@@ -75,12 +103,12 @@ const ChatWindow = ({ onClose }) => {
                     <Typography variant="subtitle1" fontWeight="bold">
                         AI 채팅
                     </Typography>
-                    <IconButton onClick={onClose} size="small" sx={{ color: "white" }}>
-                        <CloseIcon />
+                    <IconButton onClick={onClose} size="small" sx={{color: "white"}}>
+                        <CloseIcon/>
                     </IconButton>
                 </Box>
 
-                <Divider sx={{ borderColor: "#444" }} />
+                <Divider sx={{borderColor: "#444"}}/>
 
                 {/* 메시지 목록 */}
                 <Box
@@ -120,14 +148,14 @@ const ChatWindow = ({ onClose }) => {
                     ))}
                 </Box>
 
-                <Divider sx={{ borderColor: "#444" }} />
+                <Divider sx={{borderColor: "#444"}}/>
 
                 {/* 입력창 */}
                 <Box
                         sx={{
                             px: 1.5,
                             pt: 1.5,
-                            pb: { xs: 10, sm: 3, md: 2 }, // 반응형 패딩
+                            pb: {xs: 10, sm: 3, md: 2}, // 반응형 패딩
                         }}
                 >
                     <TextField
@@ -139,11 +167,11 @@ const ChatWindow = ({ onClose }) => {
                             onChange={(e) => setInput(e.target.value)}
                             onKeyPress={handleKeyPress}
                             sx={{
-                                input: { color: "#fff" },
+                                input: {color: "#fff"},
                                 bgcolor: "#2a2a2a",
                                 "& .MuiOutlinedInput-root": {
-                                    "& fieldset": { borderColor: "#444" },
-                                    "&:hover fieldset": { borderColor: "#666" },
+                                    "& fieldset": {borderColor: "#444"},
+                                    "&:hover fieldset": {borderColor: "#666"},
                                 },
                             }}
                             InputProps={{
@@ -151,7 +179,7 @@ const ChatWindow = ({ onClose }) => {
                                         <InputAdornment position="end">
                                             <SendIcon
                                                     onClick={handleSend}
-                                                    sx={{ cursor: "pointer", color: "white" }}
+                                                    sx={{cursor: "pointer", color: "white"}}
                                             />
                                         </InputAdornment>
                                 ),
