@@ -28,7 +28,7 @@ const Login = () => {
       const response = await axios.post("/user/login", { userId, pwd });
 
       if (response.data.success) {
-        const { token, userNinkname, userId, userNo } = response.data;
+        const { token, userNickname, userId, userNo } = response.data;
         localStorage.setItem("token", token);
 
         localStorage.setItem("nickname", userNickname);
@@ -37,7 +37,7 @@ const Login = () => {
         dispatch(
           loginSuccess({
             token,
-            userId: loggedInUserId,
+            userId: userId,
             nickname: userNickname,
           })
         );
@@ -67,7 +67,7 @@ const Login = () => {
         const res = await axios.post("/user/oauth/google", { accessToken });
 
         if (res.data.success) {
-          const { token, userId, userNickname } = res.data;
+          const { token, userId, userNickname, userNo } = res.data;
 
           localStorage.setItem("token", token);
           localStorage.setItem("nickname", userNickname);
