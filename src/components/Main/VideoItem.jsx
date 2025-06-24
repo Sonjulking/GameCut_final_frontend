@@ -1,7 +1,7 @@
 // src/components/VideoItem.jsx
 import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
 import CommentSection from "./CommentSection.jsx";
-
+import {Chip, Avatar, Stack, Box} from "@mui/material";
 // 아이콘 파일들을 import 합니다.
 import likeIcon from "../../assets/img/main/icons/like_icon.png";
 import commentIcon from "../../assets/img/main/icons/comment_icon.png";
@@ -158,6 +158,48 @@ const VideoItem = ({board, isLoading}) => {
                             className="video_texts"
                             style={{display: "flex", flexDirection: "column", gap: "6px"}}
                     >
+                        <Box
+                                sx={{
+                                    maxHeight: "100px",
+                                    overflowY: "auto",
+                                    paddingRight: "4px",
+                                }}
+                        >
+                            <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    flexWrap="wrap"
+                                    useFlexGap
+                            >
+                                {video?.tagByVideoList?.map((tagItem, index) => (
+                                        <Chip
+                                                key={index}
+                                                avatar={
+                                                    <Avatar
+                                                            src={import.meta.env.VITE_API_URL + tagItem.tag.fileUrl}
+                                                            alt={tagItem.tag.tagName}
+                                                    />
+                                                }
+                                                label={`#${tagItem.tag.tagName}`}
+                                                variant="outlined"
+                                                sx={{
+                                                    color: "#fff", // 글씨 흰색
+                                                    borderColor: "#444", // 테두리 어두운 회색
+                                                    backgroundColor: "#222", // 바탕 진한 회색
+                                                    "& .MuiChip-avatar": {
+                                                        width: 20,
+                                                        height: 20,
+                                                    },
+                                                    "&:hover": {
+                                                        backgroundColor: "#333",
+                                                    },
+                                                    fontSize: "0.85rem",
+                                                    fontWeight: 500,
+                                                }}
+                                        />
+                                ))}
+                            </Stack>
+                        </Box>
                         {/* 유저 정보 (이미지 + 이름 한 줄) */}
                         <div
                                 className="video_user_profile"
@@ -182,6 +224,7 @@ const VideoItem = ({board, isLoading}) => {
 
                         {/* 내용 한 줄 */}
                         <div className="video_content">내용 : {boardContent}</div>
+
                     </div>
                 </div>
 

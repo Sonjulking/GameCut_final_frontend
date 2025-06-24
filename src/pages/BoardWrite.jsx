@@ -39,7 +39,8 @@ const BoardWrite = ({isEdit = false}) => {
         boardTitle: "",
         boardContent: "",
         boardTypeNo: 1,
-        userNo: 1
+        userNo: 1,
+        videoTags:[],
     });
     //비디오 파일
     const [videoFile, setVideoFile] = useState(null);

@@ -1,10 +1,12 @@
 import React, {useEffect, useRef} from "react";
 import {
+    Autocomplete,
     FormControl,
     InputLabel,
     MenuItem,
     Select,
     TextField,
+    Chip,
 } from "@mui/material";
 import {Editor} from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
@@ -12,11 +14,27 @@ import "../../styles/toast-editor-dark.css";
 import axios from "axios"; // 이미지 업로드에 필요
 
 const FormInputGroup = ({form, handleChange, isEdit}) => {
+
+    const tagSuggestions = ["김치", "김나물", "김밥", "고추장", "갈비찜"]; // 서버 연동도 가능
+    const tagImageMap = {
+        "#김치": "/img/kimchi.png",
+        "#김밥": "/img/kimbap.png",
+        "#갈비찜": "/img/galbijjim.png",
+        // 등등
+    };
     const editorRef = useRef(null);
 
     useEffect(() => {
+        if (form.boardTypeNo === 3 && !isEdit) {
+            handleChange({
+                target: { name: "boardContent", value: "" },
+            });
+        }
+    }, [form.boardTypeNo]);
+
+    useEffect(() => {
         if (!editorRef.current) return;
-        
+
         if (!isEdit) {
             handleChange({
                 target: {name: "boardContent", value: ""},
@@ -40,12 +58,15 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
             }
         }
 
-    }, [form.boardTypeNo, form.boardContent]);
+    }, [form.boardTypeNo]);
 
 
     return (
             <>
-                <FormControl fullWidth sx={{mb: 3}}>
+                <FormControl
+                        fullWidth
+                        sx={{mb: 3}}
+                >
                     <InputLabel sx={{color: "#ccc"}}>게시판 타입</InputLabel>
                     <Select
                             name="boardTypeNo"
@@ -108,24 +129,83 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                 />
 
                 {form.boardTypeNo === 3 ? (
-                        <TextField
-                                name="boardContent"
-                                label="내용"
-                                multiline
-                                rows={4}
-                                value={form.boardContent?.trim() === "<p><br></p>" ? "" : form.boardContent}
-                                onChange={handleChange}
-                                required
-                                InputLabelProps={{style: {color: "#ccc"}}}
-                                sx={{
-                                    textarea: {color: "#fff"},
-                                    "& .MuiOutlinedInput-root": {
-                                        "& fieldset": {borderColor: "#555"},
-                                        "&:hover fieldset": {borderColor: "#999"},
-                                        "&.Mui-focused fieldset": {borderColor: "#1976d2"},
-                                    },
-                                }}
-                        />
+                        <>
+                            <TextField
+                                    name="boardContent"
+                                    label="내용"
+                                    multiline
+                                    rows={4}
+                                    value={form.boardContent?.trim() === "<p><br></p>" ? "" : form.boardContent}
+                                    onChange={handleChange}
+                                    required
+                                    InputLabelProps={{style: {color: "#ccc"}}}
+                                    sx={{
+                                        textarea: {color: "#fff"},
+                                        "& .MuiOutlinedInput-root": {
+                                            "& fieldset": {borderColor: "#555"},
+                                            "&:hover fieldset": {borderColor: "#999"},
+                                            "&.Mui-focused fieldset": {borderColor: "#1976d2"},
+                                        },
+                                    }}
+                            />
+                            <Autocomplete
+                                    multiple
+                                    freeSolo
+                                    options={tagSuggestions}
+                                    value={form.videoTags || []} // form에 boardTags 배열 추가 필요
+                                    onChange={(event, newValue) => {
+                                        const uniqueTags = [...new Set(newValue.map(tag => {
+                                            const cleanTag = tag.replace(/^#/, ""); // # 없애기
+                                            return `#${cleanTag}`; // 항상 # 붙이기
+                                        }))];
+                                        handleChange({
+                                            target: {
+                                                name: "videoTags",
+                                                value: uniqueTags
+                                            }
+                                        });
+                                    }}
+                                    renderTags={(value, getTagProps) =>
+                                            value.map((option, index) => (
+                                                    <Chip
+                                                            avatar={
+                                                                <img
+                                                                        src={tagImageMap[option] || "/img/default-tag.png"} // 없을 경우 기본 이미지
+                                                                        alt=""
+                                                                        style={{ width: 24, height: 24, borderRadius: "50%" }}
+                                                                />
+                                                            }
+                                                            label={option}
+                                                            {...getTagProps({ index })}
+                                                            sx={{
+                                                                color: "#fff",
+                                                                borderColor: "#555",
+                                                                backgroundColor: "#2b2b2b"
+                                                            }}
+                                                    />
+
+                                            ))
+                                    }
+                                    renderInput={(params) => (
+                                            <TextField
+                                                    {...params}
+                                                    variant="outlined"
+                                                    label="태그"
+                                                    placeholder="#태그 입력"
+                                                    InputLabelProps={{style: {color: "#ccc"}}}
+                                                    sx={{
+                                                        input: {color: "#fff"},
+                                                        "& .MuiOutlinedInput-root": {
+                                                            "& fieldset": {borderColor: "#555"},
+                                                            "&:hover fieldset": {borderColor: "#999"},
+                                                            "&.Mui-focused fieldset": {borderColor: "#1976d2"},
+                                                        },
+                                                    }}
+                                            />
+                                    )}
+                                    sx={{mt: 3}}
+                            />
+                        </>
                 ) : (
                         <div style={{marginTop: "24px"}}>
                             <Editor

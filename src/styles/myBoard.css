@@ -260,7 +260,7 @@
   align-items: center;
   margin-bottom: 1.25rem;
   padding-bottom: 1rem;
-  border-bottom: 0.125rem solid #30363d;
+  /*border-bottom: 0.125rem solid #30363d;*/
 }
 
 /* 필터와 글쓰기 버튼 컨테이너 */
