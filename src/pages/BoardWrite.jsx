@@ -19,11 +19,17 @@ const BoardWrite = ({isEdit = false}) => {
             axios.get(`${import.meta.env.VITE_API_URL}/board/${boardNo}`)
                     .then((res) => {
                         const data = res.data;
+
+                        const tagList = data.video?.tagByVideoList?.map(
+                                (tagByVideo) => tagByVideo.tag?.tagName
+                        ) || [];
+                        console.log(tagList);
                         setForm({
                             boardTitle: data.boardTitle,
                             boardContent: data.boardContent,
                             boardTypeNo: data.boardTypeNo,
                             userNo: data.user.userNo,
+                            videoTags: tagList,
                         });
                         setExistingVideo(data.video.attachFile);
                         setExistingPhoto(data.photos[0]?.attachFile);
@@ -40,7 +46,7 @@ const BoardWrite = ({isEdit = false}) => {
         boardContent: "",
         boardTypeNo: 1,
         userNo: 1,
-        videoTags:[],
+        videoTags: [],
     });
     //비디오 파일
     const [videoFile, setVideoFile] = useState(null);
@@ -56,12 +62,12 @@ const BoardWrite = ({isEdit = false}) => {
     const [uploadProgress, setUploadProgress] = useState(0);
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
 
         if (name === "videoTags" && Array.isArray(value)) {
-            setForm((prev) => ({ ...prev, videoTags: value })); // 배열 그대로
+            setForm((prev) => ({...prev, videoTags: value})); // 배열 그대로
         } else {
-            setForm((prev) => ({ ...prev, [name]: value }));
+            setForm((prev) => ({...prev, [name]: value}));
         }
     };
 

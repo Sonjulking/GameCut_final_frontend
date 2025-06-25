@@ -17,18 +17,37 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
     const editorRef = useRef(null);
     // 태그 입력 상태
     const [tagInput, setTagInput] = useState("");
-    const [tags, setTags] = useState(() => {
-        if (Array.isArray(form.videoTags)) return form.videoTags;
-        if (typeof form.videoTags === "string") {
-            return form.videoTags.trim() === "" ? [] : form.videoTags.trim().split(" ");
-        }
-        return [];
-    });
+    const [tags, setTags] = useState([]);
 
-// 태그 변경되면 부모에게 반영
     useEffect(() => {
-        handleChange({ target: { name: "videoTags", value: tags } });
-    }, [tags]);
+        if (Array.isArray(form.videoTags)) {
+            const incoming = form.videoTags;
+            const current = tags;
+
+            // 배열이 같으면 setTags 하지 않음
+            const isSame = incoming.length === current.length &&
+                    incoming.every((tag, i) => tag === current[i]);
+
+            if (!isSame) {
+                setTags(incoming);
+            }
+        } else if (typeof form.videoTags === "string") {
+            const parsed = form.videoTags.trim() === "" ? [] : form.videoTags.trim().split(/\s+/);
+            const isSame = parsed.length === tags.length &&
+                    parsed.every((tag, i) => tag === tags[i]);
+            if (!isSame) {
+                setTags(parsed);
+            }
+        }
+    }, [form.videoTags]);
+
+
+
+    useEffect(() => {
+       console.log(tags);
+    },[])
+
+
 
     const handleTagKeyDown = (e) => {
         // IME 조합 중(isComposing)이면 무시
@@ -43,7 +62,6 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
             e.target.value = "";         // 입력 DOM도 즉시 비워 줌
         }
     };
-
 
 
     const handleDeleteTag = (tagToDelete) => {
@@ -176,21 +194,22 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                             />
                             <TextField
                                     label="태그 입력"
+                                    placeholder="태그 입력 후 Enter를 눌러주세요."
                                     value={tagInput}
                                     onChange={(e) => setTagInput(e.target.value)}
                                     onKeyDown={handleTagKeyDown}
-                                    InputLabelProps={{ style: { color: "#ccc" } }}
+                                    InputLabelProps={{style: {color: "#ccc"}}}
                                     sx={{
-                                        input: { color: "#fff" },
+                                        input: {color: "#fff"},
                                         "& .MuiOutlinedInput-root": {
-                                            "& fieldset": { borderColor: "#555" },
-                                            "&:hover fieldset": { borderColor: "#999" },
-                                            "&.Mui-focused fieldset": { borderColor: "#1976d2" },
+                                            "& fieldset": {borderColor: "#555"},
+                                            "&:hover fieldset": {borderColor: "#999"},
+                                            "&.Mui-focused fieldset": {borderColor: "#1976d2"},
                                         },
                                     }}
                             />
 
-                            <Box sx={{ mt: 1, display: "flex", flexWrap: "wrap", gap: 1 }}>
+                            <Box sx={{mt: 1, display: "flex", flexWrap: "wrap", gap: 1}}>
                                 {tags.map((tag, index) => (
                                         <Chip
                                                 key={index}
@@ -202,7 +221,7 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                                                     border: "1px solid #888",
                                                     "& .MuiChip-deleteIcon": {
                                                         color: "#ccc",
-                                                        "&:hover": { color: "#fff" },
+                                                        "&:hover": {color: "#fff"},
                                                     },
                                                 }}
                                         />
