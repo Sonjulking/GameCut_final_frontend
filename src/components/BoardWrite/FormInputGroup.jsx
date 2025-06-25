@@ -48,6 +48,16 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
     },[])
 
 
+    useEffect(() => {
+        handleChange({
+            target: {
+                name: "videoTags",
+                value: tags,
+            },
+        });
+    }, [tags]);
+
+
 
     const handleTagKeyDown = (e) => {
         // IME 조합 중(isComposing)이면 무시
