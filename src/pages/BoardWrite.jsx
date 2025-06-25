@@ -56,9 +56,15 @@ const BoardWrite = ({isEdit = false}) => {
     const [uploadProgress, setUploadProgress] = useState(0);
 
     const handleChange = (e) => {
-        const {name, value} = e.target;
-        setForm({...form, [name]: value});
+        const { name, value } = e.target;
+
+        if (name === "videoTags" && Array.isArray(value)) {
+            setForm((prev) => ({ ...prev, videoTags: value })); // 배열 그대로
+        } else {
+            setForm((prev) => ({ ...prev, [name]: value }));
+        }
     };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -82,6 +88,8 @@ const BoardWrite = ({isEdit = false}) => {
             } else if (thumbnailMode === "custom" && customThumbnailFile) {
                 formData.append("thumbnail", customThumbnailFile);
             }
+            form.videoTags.forEach((tag) => formData.append("videoTags", tag));
+
         } else { //사진 처리
             photoFiles.forEach((file) => formData.append("file", file));
         }

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
     Autocomplete,
     FormControl,
@@ -6,7 +6,7 @@ import {
     MenuItem,
     Select,
     TextField,
-    Chip,
+    Chip, Box,
 } from "@mui/material";
 import {Editor} from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
@@ -14,20 +14,46 @@ import "../../styles/toast-editor-dark.css";
 import axios from "axios"; // 이미지 업로드에 필요
 
 const FormInputGroup = ({form, handleChange, isEdit}) => {
-
-    const tagSuggestions = ["김치", "김나물", "김밥", "고추장", "갈비찜"]; // 서버 연동도 가능
-    const tagImageMap = {
-        "#김치": "/img/kimchi.png",
-        "#김밥": "/img/kimbap.png",
-        "#갈비찜": "/img/galbijjim.png",
-        // 등등
-    };
     const editorRef = useRef(null);
+    // 태그 입력 상태
+    const [tagInput, setTagInput] = useState("");
+    const [tags, setTags] = useState(() => {
+        if (Array.isArray(form.videoTags)) return form.videoTags;
+        if (typeof form.videoTags === "string") {
+            return form.videoTags.trim() === "" ? [] : form.videoTags.trim().split(" ");
+        }
+        return [];
+    });
+
+// 태그 변경되면 부모에게 반영
+    useEffect(() => {
+        handleChange({ target: { name: "videoTags", value: tags } });
+    }, [tags]);
+
+    const handleTagKeyDown = (e) => {
+        // IME 조합 중(isComposing)이면 무시
+        if ((e.key === "Enter" || e.key === ",") && !e.nativeEvent.isComposing) {
+            e.preventDefault();
+            const raw = e.target.value.trim();
+            if (!raw) return;
+
+            const formatted = raw.startsWith("#") ? raw : `#${raw}`;
+            if (!tags.includes(formatted)) setTags((prev) => [...prev, formatted]);
+            setTagInput("");
+            e.target.value = "";         // 입력 DOM도 즉시 비워 줌
+        }
+    };
+
+
+
+    const handleDeleteTag = (tagToDelete) => {
+        setTags(tags.filter((tag) => tag !== tagToDelete));
+    };
 
     useEffect(() => {
         if (form.boardTypeNo === 3 && !isEdit) {
             handleChange({
-                target: { name: "boardContent", value: "" },
+                target: {name: "boardContent", value: ""},
             });
         }
     }, [form.boardTypeNo]);
@@ -148,63 +174,40 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                                         },
                                     }}
                             />
-                            <Autocomplete
-                                    multiple
-                                    freeSolo
-                                    options={tagSuggestions}
-                                    value={form.videoTags || []} // form에 boardTags 배열 추가 필요
-                                    onChange={(event, newValue) => {
-                                        const uniqueTags = [...new Set(newValue.map(tag => {
-                                            const cleanTag = tag.replace(/^#/, ""); // # 없애기
-                                            return `#${cleanTag}`; // 항상 # 붙이기
-                                        }))];
-                                        handleChange({
-                                            target: {
-                                                name: "videoTags",
-                                                value: uniqueTags
-                                            }
-                                        });
+                            <TextField
+                                    label="태그 입력"
+                                    value={tagInput}
+                                    onChange={(e) => setTagInput(e.target.value)}
+                                    onKeyDown={handleTagKeyDown}
+                                    InputLabelProps={{ style: { color: "#ccc" } }}
+                                    sx={{
+                                        input: { color: "#fff" },
+                                        "& .MuiOutlinedInput-root": {
+                                            "& fieldset": { borderColor: "#555" },
+                                            "&:hover fieldset": { borderColor: "#999" },
+                                            "&.Mui-focused fieldset": { borderColor: "#1976d2" },
+                                        },
                                     }}
-                                    renderTags={(value, getTagProps) =>
-                                            value.map((option, index) => (
-                                                    <Chip
-                                                            avatar={
-                                                                <img
-                                                                        src={tagImageMap[option] || "/img/default-tag.png"} // 없을 경우 기본 이미지
-                                                                        alt=""
-                                                                        style={{ width: 24, height: 24, borderRadius: "50%" }}
-                                                                />
-                                                            }
-                                                            label={option}
-                                                            {...getTagProps({ index })}
-                                                            sx={{
-                                                                color: "#fff",
-                                                                borderColor: "#555",
-                                                                backgroundColor: "#2b2b2b"
-                                                            }}
-                                                    />
-
-                                            ))
-                                    }
-                                    renderInput={(params) => (
-                                            <TextField
-                                                    {...params}
-                                                    variant="outlined"
-                                                    label="태그"
-                                                    placeholder="#태그 입력"
-                                                    InputLabelProps={{style: {color: "#ccc"}}}
-                                                    sx={{
-                                                        input: {color: "#fff"},
-                                                        "& .MuiOutlinedInput-root": {
-                                                            "& fieldset": {borderColor: "#555"},
-                                                            "&:hover fieldset": {borderColor: "#999"},
-                                                            "&.Mui-focused fieldset": {borderColor: "#1976d2"},
-                                                        },
-                                                    }}
-                                            />
-                                    )}
-                                    sx={{mt: 3}}
                             />
+
+                            <Box sx={{ mt: 1, display: "flex", flexWrap: "wrap", gap: 1 }}>
+                                {tags.map((tag, index) => (
+                                        <Chip
+                                                key={index}
+                                                label={tag}
+                                                onDelete={() => setTags((prev) => prev.filter((t) => t !== tag))}
+                                                sx={{
+                                                    bgcolor: "#444",
+                                                    color: "#fff",
+                                                    border: "1px solid #888",
+                                                    "& .MuiChip-deleteIcon": {
+                                                        color: "#ccc",
+                                                        "&:hover": { color: "#fff" },
+                                                    },
+                                                }}
+                                        />
+                                ))}
+                            </Box>
                         </>
                 ) : (
                         <div style={{marginTop: "24px"}}>
