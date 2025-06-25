@@ -19,11 +19,17 @@ const BoardWrite = ({isEdit = false}) => {
             axios.get(`${import.meta.env.VITE_API_URL}/board/${boardNo}`)
                     .then((res) => {
                         const data = res.data;
+
+                        const tagList = data.video?.tagByVideoList?.map(
+                                (tagByVideo) => tagByVideo.tag?.tagName
+                        ) || [];
+                        console.log(tagList);
                         setForm({
                             boardTitle: data.boardTitle,
                             boardContent: data.boardContent,
                             boardTypeNo: data.boardTypeNo,
                             userNo: data.user.userNo,
+                            videoTags: tagList,
                         });
                         setExistingVideo(data.video.attachFile);
                         setExistingPhoto(data.photos[0]?.attachFile);
@@ -39,7 +45,8 @@ const BoardWrite = ({isEdit = false}) => {
         boardTitle: "",
         boardContent: "",
         boardTypeNo: 1,
-        userNo: 1
+        userNo: 1,
+        videoTags: [],
     });
     //비디오 파일
     const [videoFile, setVideoFile] = useState(null);
@@ -56,8 +63,14 @@ const BoardWrite = ({isEdit = false}) => {
 
     const handleChange = (e) => {
         const {name, value} = e.target;
-        setForm({...form, [name]: value});
+
+        if (name === "videoTags" && Array.isArray(value)) {
+            setForm((prev) => ({...prev, videoTags: value})); // 배열 그대로
+        } else {
+            setForm((prev) => ({...prev, [name]: value}));
+        }
     };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -81,6 +94,8 @@ const BoardWrite = ({isEdit = false}) => {
             } else if (thumbnailMode === "custom" && customThumbnailFile) {
                 formData.append("thumbnail", customThumbnailFile);
             }
+            form.videoTags.forEach((tag) => formData.append("videoTags", tag));
+
         } else { //사진 처리
             photoFiles.forEach((file) => formData.append("file", file));
         }

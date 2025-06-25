@@ -1,15 +1,16 @@
 // src/components/CommentSection.jsx
 import React, {useEffect, useRef, useState} from "react";
 import {Button, IconButton} from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
 import axios from "axios";
 import CloseIcon from "@mui/icons-material/Close";
+import {formatRelativeTimeKo} from "../../util/timeFormatUtil.js";
 
 const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComment}) => {
+    const token = localStorage.getItem("token");
+
     const [inputComment, setInputComment] = useState({
         boardNo: boardNo,
         commentContent: "",
@@ -24,7 +25,7 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
     }, [comments]);
 
     const handleAddComment = () => {
-        const token = localStorage.getItem("token");
+
         const axiosConfig = {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -37,6 +38,7 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
                 })
                 .catch(err => {
                     console.error("댓글 등록 실패", err);
+                    alert("댓글작성이 실패했습니다.");
                 });
     };
 
@@ -74,10 +76,14 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
                                             className="comment-profile-img"
                                     />
                                     <div className="comment-info">
-                                        <span className="nickname">{c.user.userNickname}</span>
-                                        <span className="comment_write_date">
-                  {new Date(c.commentCreateDate).toISOString().slice(0, 16)}
-                </span>
+                                        <span className="nickname">{c.user.userNickname}
+                                            <span
+                                                    className="comment_write_date"
+                                            >
+                                             {formatRelativeTimeKo(c.commentCreateDate)}
+                                            </span>
+                                        </span>
+
                                     </div>
                                 </div>
                                 <p className="comment-content">{c.commentContent}</p>
@@ -109,7 +115,7 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
                 <div className="comment-input">
                     <input
                             type="text"
-                            placeholder="댓글쓰기"
+                            placeholder={token ? "댓글 작성" : "로그인 후 댓글이 작성가능합니다."}
                             className="comment-input-field"
                             value={inputComment.commentContent}
                             onChange={(e) => setInputComment({
@@ -117,6 +123,7 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
                                 commentContent: e.target.value,
                             })}
                             onKeyPress={handleKeyPress}
+                            disabled={!token}
                     />
                     {/*<button className="comment-submit-button">⮝</button>*/}
                     <Button

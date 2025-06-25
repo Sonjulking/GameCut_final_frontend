@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import axios from "../lib/axiosInstance"; // ✅ 변경된 경로에 맞게 수정
+import { useGoogleLogin } from "@react-oauth/google";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../store/authSlice";
 
-// === 환경변수 ===
-const GOOGLE_CLIENT_ID =
-  "752741472899-quo69i7p0r9cgi0kh67steu3dtbjkvac.apps.googleusercontent.com";
 const NAVER_CLIENT_ID = "CQbPXwMaS8p6gHpnTpsS";
 const REDIRECT_URI = "http://localhost:5173/naver/callback";
 
@@ -15,26 +14,39 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  // 일반 로그인
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+
+    if (!userId.trim()) return setError("아이디를 입력해주세요.");
+    if (!pwd.trim()) return setError("비밀번호를 입력해주세요.");
+
+    setLoading(true);
     try {
-      const response = await axios.post("http://localhost:8081/user/login", {
-        userId,
-        pwd,
-      });
+      const response = await axios.post("/user/login", { userId, pwd });
+
       if (response.data.success) {
-        const { token, userNinkname, userId } = response.data;
+        const { token, userNickname, userId, userNo } = response.data;
         localStorage.setItem("token", token);
-        localStorage.setItem("nickname", userNinkname);
+
+        localStorage.setItem("nickname", userNickname);
         localStorage.setItem("userId", userId);
-        alert(`${userNinkname}님 환영합니다!`);
+        localStorage.setItem("userNo", userNo);
+        dispatch(
+          loginSuccess({
+            token,
+            userId: userId,
+            nickname: userNickname,
+          })
+        );
+
+        alert(`${userNickname}님 환영합니다!`);
         navigate("/");
       } else {
-        setError("아이디 또는 비밀번호가 틀렸습니다.");
+        // 🔥 백엔드에서 보내준 메시지를 그대로 출력
+        setError(response.data.message || "아이디 또는 비밀번호가 틀렸습니다.");
       }
     } catch (err) {
       console.error(err);
@@ -43,27 +55,41 @@ const Login = () => {
     setLoading(false);
   };
 
-  // 구글 로그인 성공
-  const handleGoogleSuccess = async (credentialResponse) => {
-    const credential = credentialResponse.credential;
-    try {
-      const res = await axios.post("http://localhost:8081/user/oauth/google", {
-        token: credential,
-      });
-      if (res.data.success) {
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("nickname", res.data.userNickname);
-        localStorage.setItem("userId", res.data.userId);
-        alert(`${res.data.userNickname}님 환영합니다!`);
-        navigate("/");
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (response) => {
+      const accessToken = response.access_token;
+      if (!accessToken) {
+        setError("accessToken 없음. flow 설정 확인 필요.");
+        return;
       }
-    } catch (err) {
-      console.error(err);
-      setError("구글 로그인 실패");
-    }
-  };
 
-  // 네이버 로그인
+      try {
+        const res = await axios.post("/user/oauth/google", { accessToken });
+
+        if (res.data.success) {
+          const { token, userId, userNickname, userNo } = res.data;
+
+          localStorage.setItem("token", token);
+          localStorage.setItem("nickname", userNickname);
+          localStorage.setItem("userId", userId);
+          localStorage.setItem("userNo", userNo);
+          dispatch(loginSuccess({ token, userId, nickname: userNickname }));
+
+          alert(`${userNickname}님 환영합니다!`);
+          navigate("/");
+        } else {
+          setError("구글 로그인 실패");
+        }
+      } catch (err) {
+        console.error(err);
+        setError("구글 로그인 실패 (서버)");
+      }
+    },
+    flow: "implicit",
+    scope:
+      "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
+  });
+
   const naverLogin = () => {
     const state = Math.random().toString(36).substring(2);
     const url = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&redirect_uri=${encodeURIComponent(
@@ -73,67 +99,58 @@ const Login = () => {
   };
 
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <div style={styles.container}>
-        <div style={styles.card}>
-          <h2 style={styles.title}>로그인</h2>
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <h2 style={styles.title}>로그인</h2>
 
-          <form onSubmit={handleSubmit} style={styles.form}>
-            <input
-              type="text"
-              name="userId"
-              placeholder="아이디"
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-              style={styles.input}
-            />
-            <input
-              type="password"
-              name="pwd"
-              placeholder="비밀번호"
-              value={pwd}
-              onChange={(e) => setPwd(e.target.value)}
-              style={styles.input}
-            />
-            <button type="submit" style={styles.button} disabled={loading}>
-              {loading ? "로그인 중..." : "로그인"}
-            </button>
-            {error && <p style={styles.error}>{error}</p>}
-          </form>
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <input
+            type="text"
+            name="userId"
+            placeholder="아이디"
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
+            style={styles.input}
+          />
+          <input
+            type="password"
+            name="pwd"
+            placeholder="비밀번호"
+            value={pwd}
+            onChange={(e) => setPwd(e.target.value)}
+            style={styles.input}
+          />
+          <button type="submit" style={styles.button} disabled={loading}>
+            {loading ? "로그인 중..." : "로그인"}
+          </button>
+          {error && <p style={styles.error}>{error}</p>}
+        </form>
 
-          {/* 소셜 로그인 통일 */}
-          <div style={styles.socialWrapper}>
-            <div style={styles.fullWidthSocial}>
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={() => console.log("Google Login Failed")}
-                width="100%"
-              />
-            </div>
-            <button onClick={naverLogin} style={styles.naverButton}>
-              네이버 로그인
-            </button>
-          </div>
+        <div style={styles.socialWrapper}>
+          <button onClick={() => googleLogin()} style={styles.googleButton}>
+            Google 계정으로 로그인
+          </button>
+          <button onClick={naverLogin} style={styles.naverButton}>
+            네이버 로그인
+          </button>
+        </div>
 
-          {/* 회원가입 & 비밀번호 찾기 */}
-          <div style={styles.bottomWrapper}>
-            <button onClick={() => navigate("/join")} style={styles.linkButton}>
-              회원가입
-            </button>
-            <button
-              onClick={() => navigate("/findPassword")}
-              style={styles.linkButton}
-            >
-              비밀번호 찾기
-            </button>
-          </div>
+        <div style={styles.bottomWrapper}>
+          <button onClick={() => navigate("/join")} style={styles.linkButton}>
+            회원가입
+          </button>
+          <button
+            onClick={() => navigate("/findPassword")}
+            style={styles.linkButton}
+          >
+            비밀번호 찾기
+          </button>
         </div>
       </div>
-    </GoogleOAuthProvider>
+    </div>
   );
 };
 
-// === 스타일 ===
 const styles = {
   container: {
     height: "100vh",
@@ -162,13 +179,13 @@ const styles = {
   },
   button: {
     padding: "12px",
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#FF8C00",
     color: "white",
     border: "none",
     borderRadius: "5px",
     cursor: "pointer",
     fontWeight: "bold",
-    marginBottom: "10px",
+    marginBottom: "0px",
     width: "100%",
   },
   error: { color: "#ff4d4f", marginTop: "10px" },
@@ -176,12 +193,17 @@ const styles = {
     marginTop: "20px",
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
+    gap: "15px",
   },
-  fullWidthSocial: {
+  googleButton: {
+    padding: "12px",
+    backgroundColor: "#4285F4",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+    fontWeight: "bold",
     width: "100%",
-    display: "flex",
-    justifyContent: "center",
   },
   naverButton: {
     padding: "12px",
