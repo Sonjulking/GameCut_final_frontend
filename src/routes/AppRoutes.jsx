@@ -17,6 +17,7 @@ import MyBoard from "../pages/MyBoard.jsx";
 import Settings from "../pages/Settings.jsx";
 import RankingsPage from "../pages/RankingsPage.jsx";
 import Test from "../pages/Test.jsx"; // ✅ lazy 대신 일반 import
+import WebGame from "../pages/WebGame.jsx";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,9 @@ const router = createBrowserRouter([
       // 설정 & 랭킹
       { path: "settings", element: <Settings /> },
       { path: "rankings", element: <RankingsPage /> },
+
+      // 웹게임 관련
+      { path: "webGame", element: <WebGame /> },
 
       // 404
       { path: "*", element: <ErrorPage /> },
