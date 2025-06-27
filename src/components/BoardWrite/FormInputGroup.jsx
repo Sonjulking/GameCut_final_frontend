@@ -161,6 +161,11 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
         setTagLoading(false); // 버튼 다시 활성화
         setTagSuggested(false); //버튼 다시활성화
     }, [form.boardTitle, form.boardContent]);
+    const isTagButtonDisabled = () => {
+        const titleEmpty = !form.boardTitle || form.boardTitle.trim() === "";
+        const contentEmpty = !form.boardContent || form.boardContent.trim() === "";
+        return tagLoading || tagSuggested || titleEmpty || contentEmpty;
+    };
     return (
             <>
                 <FormControl
@@ -269,7 +274,7 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                                 <Button
                                         variant="outlined"
                                         onClick={aiTagRecommended}
-                                        disabled={tagLoading || tagSuggested} // 이미 추천했으면 또 못 누르게
+                                        disabled={isTagButtonDisabled()} // 이미 추천했으면 또 못 누르게
                                         sx={{
                                             px: 2,
                                             py: 1,
