@@ -1,10 +1,12 @@
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
+    Autocomplete,
     FormControl,
     InputLabel,
     MenuItem,
     Select,
     TextField,
+    Chip, Box,
 } from "@mui/material";
 import {Editor} from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
@@ -13,10 +15,80 @@ import axios from "axios"; // 이미지 업로드에 필요
 
 const FormInputGroup = ({form, handleChange, isEdit}) => {
     const editorRef = useRef(null);
+    // 태그 입력 상태
+    const [tagInput, setTagInput] = useState("");
+    const [tags, setTags] = useState([]);
+
+    useEffect(() => {
+        if (Array.isArray(form.videoTags)) {
+            const incoming = form.videoTags;
+            const current = tags;
+
+            // 배열이 같으면 setTags 하지 않음
+            const isSame = incoming.length === current.length &&
+                    incoming.every((tag, i) => tag === current[i]);
+
+            if (!isSame) {
+                setTags(incoming);
+            }
+        } else if (typeof form.videoTags === "string") {
+            const parsed = form.videoTags.trim() === "" ? [] : form.videoTags.trim().split(/\s+/);
+            const isSame = parsed.length === tags.length &&
+                    parsed.every((tag, i) => tag === tags[i]);
+            if (!isSame) {
+                setTags(parsed);
+            }
+        }
+    }, [form.videoTags]);
+
+
+
+    useEffect(() => {
+       console.log(tags);
+    },[])
+
+
+    useEffect(() => {
+        handleChange({
+            target: {
+                name: "videoTags",
+                value: tags,
+            },
+        });
+    }, [tags]);
+
+
+
+    const handleTagKeyDown = (e) => {
+        // IME 조합 중(isComposing)이면 무시
+        if ((e.key === "Enter" || e.key === ",") && !e.nativeEvent.isComposing) {
+            e.preventDefault();
+            const raw = e.target.value.trim();
+            if (!raw) return;
+
+            const formatted = raw.startsWith("#") ? raw : `#${raw}`;
+            if (!tags.includes(formatted)) setTags((prev) => [...prev, formatted]);
+            setTagInput("");
+            e.target.value = "";         // 입력 DOM도 즉시 비워 줌
+        }
+    };
+
+
+    const handleDeleteTag = (tagToDelete) => {
+        setTags(tags.filter((tag) => tag !== tagToDelete));
+    };
+
+    useEffect(() => {
+        if (form.boardTypeNo === 3 && !isEdit) {
+            handleChange({
+                target: {name: "boardContent", value: ""},
+            });
+        }
+    }, [form.boardTypeNo]);
 
     useEffect(() => {
         if (!editorRef.current) return;
-        
+
         if (!isEdit) {
             handleChange({
                 target: {name: "boardContent", value: ""},
@@ -40,12 +112,15 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
             }
         }
 
-    }, [form.boardTypeNo, form.boardContent]);
+    }, [form.boardTypeNo]);
 
 
     return (
             <>
-                <FormControl fullWidth sx={{mb: 3}}>
+                <FormControl
+                        fullWidth
+                        sx={{mb: 3}}
+                >
                     <InputLabel sx={{color: "#ccc"}}>게시판 타입</InputLabel>
                     <Select
                             name="boardTypeNo"
@@ -108,24 +183,61 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                 />
 
                 {form.boardTypeNo === 3 ? (
-                        <TextField
-                                name="boardContent"
-                                label="내용"
-                                multiline
-                                rows={4}
-                                value={form.boardContent?.trim() === "<p><br></p>" ? "" : form.boardContent}
-                                onChange={handleChange}
-                                required
-                                InputLabelProps={{style: {color: "#ccc"}}}
-                                sx={{
-                                    textarea: {color: "#fff"},
-                                    "& .MuiOutlinedInput-root": {
-                                        "& fieldset": {borderColor: "#555"},
-                                        "&:hover fieldset": {borderColor: "#999"},
-                                        "&.Mui-focused fieldset": {borderColor: "#1976d2"},
-                                    },
-                                }}
-                        />
+                        <>
+                            <TextField
+                                    name="boardContent"
+                                    label="내용"
+                                    multiline
+                                    rows={4}
+                                    value={form.boardContent?.trim() === "<p><br></p>" ? "" : form.boardContent}
+                                    onChange={handleChange}
+                                    required
+                                    InputLabelProps={{style: {color: "#ccc"}}}
+                                    sx={{
+                                        textarea: {color: "#fff"},
+                                        "& .MuiOutlinedInput-root": {
+                                            "& fieldset": {borderColor: "#555"},
+                                            "&:hover fieldset": {borderColor: "#999"},
+                                            "&.Mui-focused fieldset": {borderColor: "#1976d2"},
+                                        },
+                                    }}
+                            />
+                            <TextField
+                                    label="태그 입력"
+                                    placeholder="태그 입력 후 Enter를 눌러주세요."
+                                    value={tagInput}
+                                    onChange={(e) => setTagInput(e.target.value)}
+                                    onKeyDown={handleTagKeyDown}
+                                    InputLabelProps={{style: {color: "#ccc"}}}
+                                    sx={{
+                                        input: {color: "#fff"},
+                                        "& .MuiOutlinedInput-root": {
+                                            "& fieldset": {borderColor: "#555"},
+                                            "&:hover fieldset": {borderColor: "#999"},
+                                            "&.Mui-focused fieldset": {borderColor: "#1976d2"},
+                                        },
+                                    }}
+                            />
+
+                            <Box sx={{mt: 1, display: "flex", flexWrap: "wrap", gap: 1}}>
+                                {tags.map((tag, index) => (
+                                        <Chip
+                                                key={index}
+                                                label={tag}
+                                                onDelete={() => setTags((prev) => prev.filter((t) => t !== tag))}
+                                                sx={{
+                                                    bgcolor: "#444",
+                                                    color: "#fff",
+                                                    border: "1px solid #888",
+                                                    "& .MuiChip-deleteIcon": {
+                                                        color: "#ccc",
+                                                        "&:hover": {color: "#fff"},
+                                                    },
+                                                }}
+                                        />
+                                ))}
+                            </Box>
+                        </>
                 ) : (
                         <div style={{marginTop: "24px"}}>
                             <Editor
