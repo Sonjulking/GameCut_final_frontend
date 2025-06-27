@@ -19,6 +19,8 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
     const [tagInput, setTagInput] = useState("");
     const [tags, setTags] = useState([]);
     const [tagLoading, setTagLoading] = useState(false);
+    const [tagSuggested, setTagSuggested] = useState(false);
+
     useEffect(() => {
         if (Array.isArray(form.videoTags)) {
             const incoming = form.videoTags;
@@ -142,6 +144,7 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                 );
                 const merged = [...new Set([...tags, ...formatted])];
                 setTags(merged);
+                setTagSuggested(true); //  추천 완료 표시
             } else {
                 alert("추천 결과가 배열 형식이 아닙니다.");
             }
@@ -156,6 +159,7 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
     useEffect(() => {
         setTags([]);        // 태그 초기화
         setTagLoading(false); // 버튼 다시 활성화
+        setTagSuggested(false); //버튼 다시활성화
     }, [form.boardTitle, form.boardContent]);
     return (
             <>
@@ -265,7 +269,7 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                                 <Button
                                         variant="outlined"
                                         onClick={aiTagRecommended}
-                                        disabled={tagLoading}
+                                        disabled={tagLoading || tagSuggested} // 이미 추천했으면 또 못 누르게
                                         sx={{
                                             px: 2,
                                             py: 1,
