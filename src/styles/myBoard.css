@@ -413,8 +413,9 @@
 
 .mypage_board_table th {
   padding: 1rem 0.75rem;
-  text-align: left;
   font-weight: 600;
+  text-align: center; /* 추가 */
+  vertical-align: middle; /* 추가 */
   color: #f0f6fc;
   border-bottom: 0.125rem solid #30363d;
   font-size: 0.875rem;
@@ -423,6 +424,8 @@
 .mypage_board_table td {
   padding: 1rem 0.75rem;
   height: 6rem;
+  text-align: center; /* 추가 */
+  vertical-align: middle; /* 추가 */
   border-bottom: 0.0625rem solid #30363d;
   color: #e6edf3;
   font-size: 0.875rem;

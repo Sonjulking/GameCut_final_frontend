@@ -17,6 +17,7 @@ import MyBoard from "../pages/MyBoard.jsx";
 import Settings from "../pages/Settings.jsx";
 import RankingsPage from "../pages/RankingsPage.jsx";
 import Test from "../pages/Test.jsx"; // ✅ lazy 대신 일반 import
+import MyComment from "../pages/MyComment.jsx";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
       // 마이페이지
       { path: "mypage/info", element: <MyPage /> },
       { path: "mypage/board", element: <MyBoard /> },
+      { path: "mypage/mycomment", element: <MyComment /> },
 
       // 로그인 관련
       { path: "findPassword", element: <FindPassword /> },
