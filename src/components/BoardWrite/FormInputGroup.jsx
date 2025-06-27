@@ -42,10 +42,9 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
     }, [form.videoTags]);
 
 
-
     useEffect(() => {
-       console.log(tags);
-    },[])
+        console.log(tags);
+    }, []);
 
 
     useEffect(() => {
@@ -56,7 +55,6 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
             },
         });
     }, [tags]);
-
 
 
     const handleTagKeyDown = (e) => {
@@ -106,13 +104,15 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
             }
         } else {
             if (form.boardTypeNo !== 3 && editorRef.current) {
-                const instance = editorRef.current.getInstance();
-                instance.setHTML(form.boardContent || ""); // 여기에서 form.boardContent를 확실히 반영
-                instance.changeMode("wysiwyg", true);
+                requestAnimationFrame(() => {
+                    const instance = editorRef.current.getInstance();
+                    instance.setHTML(form.boardContent || ""); // 여기에서 form.boardContent를 확실히 반영
+                    instance.changeMode("wysiwyg", true);
+                });
             }
         }
 
-    }, [form.boardTypeNo]);
+    }, [form.boardTypeNo, isEdit, form.boardContent]);
 
 
     return (

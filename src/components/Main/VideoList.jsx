@@ -7,29 +7,36 @@ const VideoList = () => {
     const [boardList, setBoardList] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isEnd, setIsEnd] = useState(false);
-    const [excludeBoardNos, setExcludeBoardNos] = useState([]); // UI용
+    const [excludeBoardNos, setExcludeBoardNos] = useState([]); //로딩된거는 다시 안뜨게 중복방지용
     const [hasMountedOnce, setHasMountedOnce] = useState(false); // 최초 fetch 완료 여부
 
     const observer = useRef(null);
     const excludeBoardRef = useRef([]); // 실제 exclude 추적용 (즉시 반영됨)
 
     // 게시글을 가져오는 함수
+    //useCallback  : 불필요한 함수가 다시 생성되는 걸 막아줌
     const fetchNextBoard = useCallback(async (isFirst = false) => {
+        //이미 로딩중이거나 끝까지 불러왔으면 바로종료
         if (isLoading || isEnd) return false;
 
+        //로딩상태 true로 설정
         setIsLoading(true);
         try {
+            //UX 연출용 1.5초 딜레이(실제로는 필요없으면 제거가능)
             await new Promise(resolve => setTimeout(resolve, 1500));
 
+            //최초호출이면 제외리스트를 비우고, 이후에 현재 ref 값 사용
             const excludeList = isFirst ? [] : excludeBoardRef.current;
+
             const res = await axios.post(import.meta.env.VITE_API_URL + "/board/one", excludeList);
             const data = res.data;
-
+            // 데이터가 없으면 더 이상 불러올 영상이 없다는 뜻 isEnd 처리
             if (!data || data.length === 0) {
                 setIsEnd(true);
                 return false;
             }
 
+            //새로 받아온 게시글의 boardNo 배열 추출
             const newBoardNos = data.map(item => item.boardNo);
 
             //  exclude 리스트를 useRef로 즉시 반영
