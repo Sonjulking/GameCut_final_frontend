@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../lib/axiosInstance"; // ✅ 변경된 경로에 맞게 수정
+import axios from "../lib/axiosInstance";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../store/authSlice";
@@ -28,16 +28,11 @@ const Login = () => {
       const response = await axios.post("/user/login", { userId, pwd });
 
       if (response.data.success) {
-        const { token, userNickname, userId, userNo } = response.data;
-        localStorage.setItem("token", token);
+        const { userNickname, userId } = response.data;
 
-        localStorage.setItem("nickname", userNickname);
-        localStorage.setItem("userId", userId);
-        localStorage.setItem("userNo", userNo);
         dispatch(
           loginSuccess({
-            token,
-            userId: userId,
+            userId,
             nickname: userNickname,
           })
         );
@@ -45,7 +40,6 @@ const Login = () => {
         alert(`${userNickname}님 환영합니다!`);
         navigate("/");
       } else {
-        // 🔥 백엔드에서 보내준 메시지를 그대로 출력
         setError(response.data.message || "아이디 또는 비밀번호가 틀렸습니다.");
       }
     } catch (err) {
@@ -67,13 +61,9 @@ const Login = () => {
         const res = await axios.post("/user/oauth/google", { accessToken });
 
         if (res.data.success) {
-          const { token, userId, userNickname, userNo } = res.data;
+          const { userId, userNickname } = res.data;
 
-          localStorage.setItem("token", token);
-          localStorage.setItem("nickname", userNickname);
-          localStorage.setItem("userId", userId);
-          localStorage.setItem("userNo", userNo);
-          dispatch(loginSuccess({ token, userId, nickname: userNickname }));
+          dispatch(loginSuccess({ userId, nickname: userNickname }));
 
           alert(`${userNickname}님 환영합니다!`);
           navigate("/");

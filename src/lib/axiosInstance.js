@@ -1,15 +1,16 @@
 import axios from "axios";
-import store from "../store/store"; // ✅ 상위 폴더로 이동
+import Cookies from "js-cookie";
+import store from "../store/store";
 import { loginSuccess, logout } from "../store/authSlice";
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:8081",
-  withCredentials: true, // ⭐ 쿠키 포함 필수
+  withCredentials: true, // ⭐ 쿠키 자동 포함
 });
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = store.getState().auth.token;
+    const token = Cookies.get("accessToken"); // ✅ 쿠키에서 accessToken 읽기
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -22,19 +23,27 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    // access token 만료
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
+
       try {
         const res = await axios.post(
-          "/auth/refresh",
+          "http://localhost:8081/user/refresh", // ✅ 백엔드 토큰 재발급
           {},
           { withCredentials: true }
         );
+
         const { token } = res.data;
+
+        // ✅ accessToken을 쿠키에 저장
+        Cookies.set("accessToken", token, {
+          path: "/",
+          sameSite: "Lax",
+        });
+
         store.dispatch(loginSuccess({ token }));
 
-        // 새 토큰으로 Authorization 헤더 재설정 후 요청 재시도
         originalRequest.headers.Authorization = `Bearer ${token}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
@@ -43,6 +52,7 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
+
     return Promise.reject(error);
   }
 );
