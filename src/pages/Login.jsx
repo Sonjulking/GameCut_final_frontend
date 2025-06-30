@@ -4,6 +4,7 @@ import axios from "../lib/axiosInstance";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../store/authSlice";
+import Cookies from "js-cookie";
 
 const NAVER_CLIENT_ID = "CQbPXwMaS8p6gHpnTpsS";
 const REDIRECT_URI = "http://localhost:5173/naver/callback";
@@ -28,14 +29,15 @@ const Login = () => {
       const response = await axios.post("/user/login", { userId, pwd });
 
       if (response.data.success) {
-        const { userNickname, userId } = response.data;
+        const { token, userId, userNickname } = response.data;
 
-        dispatch(
-          loginSuccess({
-            userId,
-            nickname: userNickname,
-          })
-        );
+        // ✅ 쿠키에 저장
+        Cookies.set("accessToken", token, {
+          path: "/",
+          sameSite: "Lax",
+        });
+
+        dispatch(loginSuccess({ userId, nickname: userNickname }));
 
         alert(`${userNickname}님 환영합니다!`);
         navigate("/");
@@ -61,7 +63,13 @@ const Login = () => {
         const res = await axios.post("/user/oauth/google", { accessToken });
 
         if (res.data.success) {
-          const { userId, userNickname } = res.data;
+          const { token, userId, userNickname } = res.data;
+
+          // ✅ 쿠키 저장
+          Cookies.set("accessToken", token, {
+            path: "/",
+            sameSite: "Lax",
+          });
 
           dispatch(loginSuccess({ userId, nickname: userNickname }));
 

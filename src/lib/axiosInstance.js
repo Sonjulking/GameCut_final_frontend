@@ -40,6 +40,7 @@ axiosInstance.interceptors.response.use(
         Cookies.set("accessToken", token, {
           path: "/",
           sameSite: "Lax",
+          secure: false, // HTTPS 환경에서는 true
         });
 
         store.dispatch(loginSuccess({ token }));
