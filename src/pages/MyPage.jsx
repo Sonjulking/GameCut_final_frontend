@@ -142,7 +142,7 @@ const MyPage = () => {
                 내 정보 수정
               </button>
               <button
-                onClick={() => navigate("/mypage/change-password")}
+                onClick={() => navigate("/mypage/changePassword")}
                 className="mypage-action-btn"
               >
                 비밀번호 변경

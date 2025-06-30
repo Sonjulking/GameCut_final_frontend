@@ -6,7 +6,7 @@ import {
     MenuItem,
     Select,
     TextField,
-    Chip, Box,
+    Chip, Box, Button,
 } from "@mui/material";
 import {Editor} from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
@@ -18,6 +18,8 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
     // 태그 입력 상태
     const [tagInput, setTagInput] = useState("");
     const [tags, setTags] = useState([]);
+    const [tagLoading, setTagLoading] = useState(false);
+    const [tagSuggested, setTagSuggested] = useState(false);
 
     useEffect(() => {
         if (Array.isArray(form.videoTags)) {
@@ -42,10 +44,9 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
     }, [form.videoTags]);
 
 
-
     useEffect(() => {
-       console.log(tags);
-    },[])
+        console.log(tags);
+    }, []);
 
 
     useEffect(() => {
@@ -56,7 +57,6 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
             },
         });
     }, [tags]);
-
 
 
     const handleTagKeyDown = (e) => {
@@ -106,15 +106,66 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
             }
         } else {
             if (form.boardTypeNo !== 3 && editorRef.current) {
-                const instance = editorRef.current.getInstance();
-                instance.setHTML(form.boardContent || ""); // 여기에서 form.boardContent를 확실히 반영
-                instance.changeMode("wysiwyg", true);
+                requestAnimationFrame(() => {
+                    const instance = editorRef.current.getInstance();
+                    instance.setHTML(form.boardContent || ""); // 여기에서 form.boardContent를 확실히 반영
+                    instance.changeMode("wysiwyg", true);
+                });
             }
         }
 
-    }, [form.boardTypeNo]);
+    }, [form.boardTypeNo, isEdit, form.boardContent]);
 
+    const aiTagRecommended = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("로그인이 필요합니다.");
+            return;
+        }
 
+        setTagLoading(true); // 버튼 비활성화
+
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/ai/tag`, null, {
+                params: {
+                    title: form.boardTitle,
+                    content: form.boardContent,
+                },
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+
+            const recommendedTags = res.data;
+
+            if (Array.isArray(recommendedTags)) {
+                const formatted = recommendedTags.map(tag =>
+                        tag.startsWith("#") ? tag : `#${tag}`
+                );
+                const merged = [...new Set([...tags, ...formatted])];
+                setTags(merged);
+                setTagSuggested(true); //  추천 완료 표시
+            } else {
+                alert("추천 결과가 배열 형식이 아닙니다.");
+            }
+        } catch (err) {
+            console.error("태그 추천 실패:", err);
+            alert("태그 추천 요청에 실패했습니다.");
+        } finally {
+            setTagLoading(false); // 완료 후 재활성화
+        }
+    };
+
+    useEffect(() => {
+        setTags([]);        // 태그 초기화
+        setTagLoading(false); // 버튼 다시 활성화
+        setTagSuggested(false); //버튼 다시활성화
+    }, [form.boardTitle, form.boardContent]);
+    const isTagButtonDisabled = () => {
+        const titleEmpty = !form.boardTitle || form.boardTitle.trim() === "";
+        const contentEmpty = !form.boardContent || form.boardContent.trim() === "";
+        return tagLoading || tagSuggested || titleEmpty || contentEmpty;
+    };
     return (
             <>
                 <FormControl
@@ -127,7 +178,7 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                             value={form.boardTypeNo}
                             onChange={handleChange}
                             variant="outlined"
-                            disabled={isEdit} // ← 요거 추가!
+                            disabled={isEdit}
                             sx={{
                                 color: "#fff",
                                 backgroundColor: "#2b2b2b",
@@ -202,22 +253,47 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                                         },
                                     }}
                             />
-                            <TextField
-                                    label="태그 입력"
-                                    placeholder="태그 입력 후 Enter를 눌러주세요."
-                                    value={tagInput}
-                                    onChange={(e) => setTagInput(e.target.value)}
-                                    onKeyDown={handleTagKeyDown}
-                                    InputLabelProps={{style: {color: "#ccc"}}}
-                                    sx={{
-                                        input: {color: "#fff"},
-                                        "& .MuiOutlinedInput-root": {
-                                            "& fieldset": {borderColor: "#555"},
-                                            "&:hover fieldset": {borderColor: "#999"},
-                                            "&.Mui-focused fieldset": {borderColor: "#1976d2"},
-                                        },
-                                    }}
-                            />
+                            <Box sx={{display: "flex", gap: 1, alignItems: "center", mt: 2}}>
+                                <TextField
+                                        label="태그 입력"
+                                        placeholder="태그 입력 후 Enter를 눌러주세요."
+                                        value={tagInput}
+                                        onChange={(e) => setTagInput(e.target.value)}
+                                        onKeyDown={handleTagKeyDown}
+                                        InputLabelProps={{style: {color: "#ccc"}}}
+                                        sx={{
+                                            input: {color: "#fff"},
+                                            "& .MuiOutlinedInput-root": {
+                                                "& fieldset": {borderColor: "#555"},
+                                                "&:hover fieldset": {borderColor: "#999"},
+                                                "&.Mui-focused fieldset": {borderColor: "#1976d2"},
+                                            },
+                                            flex: 1,
+                                        }}
+                                />
+                                <Button
+                                        variant="outlined"
+                                        onClick={aiTagRecommended}
+                                        disabled={isTagButtonDisabled()} // 이미 추천했으면 또 못 누르게
+                                        sx={{
+                                            px: 2,
+                                            py: 1,
+                                            minHeight: "3.25rem",
+                                            fontSize: "0.875rem",
+                                            color: "#fff",
+                                            borderColor: "#888",
+                                            backgroundColor: "#444",
+                                            lineHeight: 1.2,
+                                            "&:hover": {
+                                                backgroundColor: "#555",
+                                                borderColor: "#aaa",
+                                            },
+                                        }}
+                                >
+                                    {tagLoading ? "추천 중..." : "태그 추천"}
+                                </Button>
+                            </Box>
+
 
                             <Box sx={{mt: 1, display: "flex", flexWrap: "wrap", gap: 1}}>
                                 {tags.map((tag, index) => (
