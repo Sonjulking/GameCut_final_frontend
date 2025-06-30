@@ -19,7 +19,6 @@ const MyPage = () => {
 
   // 사용자 정보 로드
   const loadUserInfo = async () => {
-    console.log(localStorage.getItem("userId"));
     try {
       setLoading(true);
       const response = await axios.get(
@@ -64,6 +63,7 @@ const MyPage = () => {
   };
 
   useEffect(() => {
+    console.log("쿠키: " + document.cookie);
     loadUserInfo();
   }, []);
 
