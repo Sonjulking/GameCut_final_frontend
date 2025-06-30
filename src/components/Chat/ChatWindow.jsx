@@ -39,7 +39,7 @@ const ChatWindow = ({onClose}) => {
         setInput("");
 
         try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/chat`, {message: trimmed}, axiosConfig); // ✅ Spring Boot API로 요청
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/ai/chat`, {message: trimmed}, axiosConfig); // ✅ Spring Boot API로 요청
             const gptMsg = {
                 id: Date.now() + 1,
                 text: res.data,
