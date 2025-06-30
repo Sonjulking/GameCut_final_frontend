@@ -171,7 +171,7 @@ const BoardWrite = ({isEdit = false}) => {
                             color="white"
                             fontWeight="bold"
                     >
-                        게시글 작성
+                        {!isEdit ? "게시글 작성" : "게시글 수정"}
                     </Typography>
 
                     <Box
@@ -222,7 +222,7 @@ const BoardWrite = ({isEdit = false}) => {
                                         ":hover": {bgcolor: "#90caf9"}
                                     }}
                             >
-                                등록하기
+                                {!isEdit ? "등록하기" : "수정하기"}
                             </Button>
                         </Stack>
                     </Box>

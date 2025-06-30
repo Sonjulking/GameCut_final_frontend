@@ -1,4 +1,3 @@
-// src/components/VideoList.jsx
 import React, {useEffect, useState, useRef, useCallback} from "react";
 import VideoItem from "./VideoItem.jsx";
 import axios from "axios";
@@ -7,140 +6,132 @@ import LoadingScreen from "../Loading/LoadingScreen.jsx";
 const VideoList = () => {
     const [boardList, setBoardList] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-
-    //마지막 게시글인지
     const [isEnd, setIsEnd] = useState(false);
+    const [excludeBoardNos, setExcludeBoardNos] = useState([]); //로딩된거는 다시 안뜨게 중복방지용
+    const [hasMountedOnce, setHasMountedOnce] = useState(false); // 최초 fetch 완료 여부
 
-    // IntersectionObserver를 저장할 ref (재사용을 위해 메모리에 보관)
     const observer = useRef(null);
+    const excludeBoardRef = useRef([]); // 실제 exclude 추적용 (즉시 반영됨)
 
+    // 게시글을 가져오는 함수
+    //useCallback  : 불필요한 함수가 다시 생성되는 걸 막아줌
+    const fetchNextBoard = useCallback(async (isFirst = false) => {
+        //이미 로딩중이거나 끝까지 불러왔으면 바로종료
+        if (isLoading || isEnd) return false;
 
-    //봤던 영상 제외하려는 state
-    const [excludeBoardNos, setExcludeBoardNos] = useState([]);
-
-    //게시글을 서버에서 가져오는 함수
-    //useCallback을 사용해서 fetchNextBoard 함수가 매번 새로 생성되지 않도록 함
-    //useCallback은 의존성 값이 바뀔 때만 함수를 새로 생성하여, 동일 함수 참조를 유지하게 해주는 Hook
-    const fetchNextBoard = useCallback(async () => {
-        //로딩중이거나 끝났으면 요청 x
-        if (isLoading || isEnd) return;
-        //로딩시작
+        //로딩상태 true로 설정
         setIsLoading(true);
         try {
-            // 1.5초 지연 시간
+            //UX 연출용 1.5초 딜레이(실제로는 필요없으면 제거가능)
             await new Promise(resolve => setTimeout(resolve, 1500));
 
-            //서버에다가 post요청
-            const res = await axios.post(import.meta.env.VITE_API_URL + "/board/one", excludeBoardNos);
-            const data = res.data;
+            //최초호출이면 제외리스트를 비우고, 이후에 현재 ref 값 사용
+            const excludeList = isFirst ? [] : excludeBoardRef.current;
 
-            //받아온 데이터가 없으면 마지막 게시글이라고 표시
+            const res = await axios.post(import.meta.env.VITE_API_URL + "/board/one", excludeList);
+            const data = res.data;
+            // 데이터가 없으면 더 이상 불러올 영상이 없다는 뜻 isEnd 처리
             if (!data || data.length === 0) {
                 setIsEnd(true);
-                return;
+                return false;
             }
 
-            setBoardList(prev => {
-                // 기존 리스트(prev)와 새로 불러온 데이터(data)를 합침
-                const updated = [...prev, ...data];
+            //새로 받아온 게시글의 boardNo 배열 추출
+            const newBoardNos = data.map(item => item.boardNo);
 
-                // 만약 리스트 길이가 10개를 초과하면
-                if (updated.length > 10) {
-                    // 뒤에서부터 10개만 잘라서 리턴 (최신 10개 유지)
-                    return updated.slice(updated.length - 10);
-                } else {
-                    // 10개 이하이면 그대로 리턴
-                    return updated;
-                }
+            //  exclude 리스트를 useRef로 즉시 반영
+            excludeBoardRef.current = [...excludeBoardRef.current, ...newBoardNos];
+            setExcludeBoardNos([...excludeBoardRef.current]); // 상태도 업데이트(UI용)
+
+            setBoardList(prev => {
+                const updated = [...prev, ...data];
+                return updated.length > 10 ? updated.slice(updated.length - 10) : updated;
             });
-            setExcludeBoardNos(prev => [...prev, ...data.map(item => item.boardNo)]);
+
+            return true;
         } catch (err) {
             console.error("게시글 로딩 실패:", err);
+            return false;
         } finally {
             setIsLoading(false);
         }
     }, [isLoading, isEnd]);
 
-
+    // 최초 fetch 한 번만 실행하고 완료되면 observer 연결 허용
     useEffect(() => {
-        fetchNextBoard();
+        const fetchFirst = async () => {
+            const success = await fetchNextBoard(true);
+            if (success) setHasMountedOnce(true);
+        };
+        fetchFirst();
     }, []);
 
-    //마지막 게시글 요소에 ref로 연결되는 콜백함수
-    //이 ref가 화면에 보이면(next), fetchNextBoard를 실행홰서 다음 게시글을 불러옴
+    // 마지막 요소에 ref 연결
     const lastItemRef = useCallback(
             node => {
+                if (isLoading || !hasMountedOnce) return;
 
-                //로딩중이면 observer 연결 안함
-                if (isLoading) {
-                    return;
-                }
-
-                // 기존 observer가 있으면 연결 해제
                 if (observer.current) {
                     observer.current.disconnect();
                 }
 
-                //IntersectionObserver : 어떤 DOM 요소가 스크롤로 인해 화면아에들오는 순간을 감지해주는 도구
                 observer.current = new IntersectionObserver(entries => {
-                    //관찰 대상 요소가 화면에 보이면
                     if (entries[0].isIntersecting) {
-                        //다음거 불러줌
                         fetchNextBoard();
                     }
                 });
-                //실제 DOM 요소가 존재하면 관찰 시작
+
                 if (node) {
                     observer.current.observe(node);
                 }
             },
-            [fetchNextBoard, isLoading]
+            [fetchNextBoard, isLoading, hasMountedOnce]
     );
 
     return (
             <div className="video_wrap">
-                {/* 로딩창은 위에 오버레이로 덮음 */}
-                {/*로딩 넣으면 자꾸 오류나서 일단 제거했습니다.*/}
+                {/* 로딩 오버레이 (필요 시) */}
                 {/*
-                {isLoading && (
-                        <div
-                                style={{
-                                    position: "absolute",
-                                    top: 0,
-                                    left: 0,
-                                    width: "100%",
-                                    height: "100%",
-                                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                }}
-                        >
-                            <LoadingScreen/>
-                        </div>
-                )}*/}
+            {isLoading && (
+                <div
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    <LoadingScreen />
+                </div>
+            )}
+            */}
+
                 {boardList.map((board, idx) => (
                         <div
                                 key={board.boardNo}
-                                //마지막 요소라면 ref장착
                                 ref={idx === boardList.length - 1 ? lastItemRef : null}
                         >
-                            <VideoItem
-                                    board={board}
-                                    isLoading={isLoading}
-                            />
+                            <VideoItem board={board} isLoading={isLoading}/>
                         </div>
                 ))}
 
-
-                {isEnd && <p
-                        style={{
-                            fontSize: "15pt",
-                            textAlign: "center",
-                            color: "#888",
-                            paddingBottom: "10rem"
-                        }}
-                >마지막 영상입니다.</p>}
+                {isEnd && (
+                        <p
+                                style={{
+                                    fontSize: "15pt",
+                                    textAlign: "center",
+                                    color: "#888",
+                                    paddingBottom: "10rem"
+                                }}
+                        >
+                            마지막 영상입니다.
+                        </p>
+                )}
             </div>
     );
 };

@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../store/authSlice";
+import axios from "../lib/axiosInstance"; // ✅ axiosInstance 사용
 import logoImg from "../assets/img/main/logo/gamecut_logo.png";
 import searchIcon from "../assets/img/main/icons/search_icon.png";
 import loginIcon from "../assets/img/main/icons/login_icon.png";
@@ -13,11 +14,21 @@ const Header = () => {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
-  const handleLogout = () => {
-    localStorage.clear();
-    dispatch(logout());
-    alert("로그아웃 성공!");
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      // ✅ 서버에 로그아웃 요청
+      await axios.post("/user/logout");
+
+      // ✅ 상태 초기화
+      dispatch(logout());
+
+      // ✅ 사용자 알림 및 이동
+      alert("로그아웃 성공!");
+      navigate("/");
+    } catch (error) {
+      console.error("로그아웃 실패", error);
+      alert("로그아웃 중 오류가 발생했습니다.");
+    }
   };
 
   return (
@@ -37,7 +48,7 @@ const Header = () => {
             to="/"
             onClick={(e) => {
               e.preventDefault();
-              handleLogout();
+              handleLogout(); // ✅ 함수 변경됨
             }}
           >
             <img src={logoutIcon} className="header_icon" alt="로그아웃" />
