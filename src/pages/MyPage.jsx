@@ -15,11 +15,6 @@ const MyPage = () => {
       setLoading(true);
       const response = await axios.get("/user/myinfo");
       setUser(response.data);
-
-      // ✅ alert로 유저 정보 표시
-      /*alert(
-        `로그인한 유저 정보\nID: ${response.data.userId}\n닉네임: ${response.data.userNickname}`
-      );*/
     } catch (error) {
       console.error("사용자 정보 로드 실패:", error);
       if (error.response?.status === 401) {
