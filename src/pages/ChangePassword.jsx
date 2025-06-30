@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../lib/axiosInstance"; // ✅ axiosInstance 사용
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import "../styles/myBoard.css";
 
@@ -28,23 +28,13 @@ const ChangePassword = () => {
     }
 
     try {
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_URL}/user/change-password`,
-        {
-          userId: localStorage.getItem("userId"),
-          currentPassword: form.currentPassword,
-          newPassword: form.newPassword,
-        },
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
-      );
+      const response = await axios.put("/user/change-password", {
+        currentPassword: form.currentPassword,
+        newPassword: form.newPassword,
+      });
 
       if (response.data.success) {
         alert("비밀번호가 변경되었습니다. 다시 로그인해주세요.");
-        localStorage.clear();
         navigate("/login");
       } else {
         setMessage(response.data.message || "비밀번호 변경 실패");
