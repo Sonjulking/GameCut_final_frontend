@@ -17,6 +17,12 @@ import MyBoard from "../pages/MyBoard.jsx";
 import Settings from "../pages/Settings.jsx";
 import RankingsPage from "../pages/RankingsPage.jsx";
 import Test from "../pages/Test.jsx"; // ✅ lazy 대신 일반 import
+import WebGame from "../pages/WebGame.jsx";
+// 웹게임 관련 컴포넌트 분리
+import WebGameSelector from "../pages/WebGameSelector.jsx";
+import TournamentGame from "../pages/TournamentGame.jsx";
+import GuessTheRankGame from "../pages/GuessTheRankGame.jsx";
+import TournamentRanking from "../pages/TournamentRanking.jsx";
 import MyComment from "../pages/MyComment.jsx";
 import ChangePassword from "../pages/ChangePassword.jsx";
 import MyPointHistory from "../pages/MyPointHistory.jsx";
@@ -56,6 +62,12 @@ const router = createBrowserRouter([
       // 설정 & 랭킹
       { path: "settings", element: <Settings /> },
       { path: "rankings", element: <RankingsPage /> },
+
+      // 웹게임
+      { path: "webgame", element: <WebGameSelector /> },
+      { path: "webgame/tournament", element: <TournamentGame /> },
+      { path: "webgame/guess-rank", element: <GuessTheRankGame /> },
+      { path: "webgame/tournament/ranking", element: <TournamentRanking /> },
 
       // 404
       { path: "*", element: <ErrorPage /> },
