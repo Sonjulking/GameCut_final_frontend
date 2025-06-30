@@ -1,35 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import MyPageSidebar from "../components/MyPage/MyPageSidebar.jsx"; // 새로운 사이드바 import
+import axios from "../lib/axiosInstance"; // ✅ axiosInstance 사용
+import MyPageSidebar from "../components/MyPage/MyPageSidebar.jsx";
 import "../styles/MyPage.css";
 
-// 메인 마이페이지 컴포넌트
 const MyPage = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 시큐리티 통신을 위한 config_get
-  const config_get = {
-    headers: {
-      Authorization: "Bearer " + localStorage.getItem("token"),
-    },
-  };
-
   // 사용자 정보 로드
   const loadUserInfo = async () => {
-    console.log(localStorage.getItem("userId"));
     try {
       setLoading(true);
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/user/myinfo`,
-        config_get
-      );
+      const response = await axios.get("/user/myinfo");
       setUser(response.data);
+
+      // ✅ alert로 유저 정보 표시
+      /*alert(
+        `로그인한 유저 정보\nID: ${response.data.userId}\n닉네임: ${response.data.userNickname}`
+      );*/
     } catch (error) {
       console.error("사용자 정보 로드 실패:", error);
-      // 로그인이 필요한 경우 로그인 페이지로 리다이렉트
       if (error.response?.status === 401) {
         alert("로그인이 필요합니다.");
         navigate("/login");
@@ -39,22 +31,15 @@ const MyPage = () => {
     }
   };
 
-  // 탈퇴 확인
   const confirmDelete = () => {
     if (window.confirm("정말 탈퇴하시겠습니까?")) {
       handleDeleteUser();
     }
   };
 
-  // 회원 탈퇴 처리
   const handleDeleteUser = async () => {
     try {
-      await axios.put(
-        `${import.meta.env.VITE_API_URL}/user/delete/${localStorage.getItem(
-          "userId"
-        )}`,
-        config_get
-      );
+      await axios.put(`/user/delete`);
       alert("회원 탈퇴가 완료되었습니다.");
       navigate("/");
     } catch (error) {
@@ -64,7 +49,6 @@ const MyPage = () => {
   };
 
   useEffect(() => {
-    console.log("쿠키 : " + document.cookie);
     loadUserInfo();
   }, []);
 
@@ -96,15 +80,12 @@ const MyPage = () => {
     <div className="mypage-container">
       <div className="mypage-content">
         <div className="content-wrapper">
-          {/* 새로운 통합 사이드바 사용 */}
           <MyPageSidebar />
 
-          {/* 메인 내용 영역 */}
           <div className="mypage-user-section">
             <h2 className="mypage-section-title">내 정보</h2>
 
             <div className="mypage-profile">
-              {/* 프로필 이미지 */}
               <div className="mypage-img-container">
                 <img
                   className="mypage-user-image"
@@ -117,7 +98,6 @@ const MyPage = () => {
                 />
               </div>
 
-              {/* 사용자 정보 */}
               <div className="mypage-user-details">
                 {user.role === "role_admin" && (
                   <img
@@ -134,7 +114,6 @@ const MyPage = () => {
               </div>
             </div>
 
-            {/* 액션 버튼들 */}
             <div className="mypage-actions">
               <button
                 onClick={() => navigate("/mypage/update")}
