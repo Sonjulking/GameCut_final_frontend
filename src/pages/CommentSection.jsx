@@ -204,6 +204,12 @@ const CommentSection = ({ boardNo, comments, setComments }) => {
                   >
                     {showReplyInput[comment.commentNo] ? "취소" : "답글달기"}
                   </div>
+                  <div
+                    className="bd-reply-insert-button"
+                    onClick={() => deleteCommnet(comment.commentNo)}
+                  >
+                    삭제
+                  </div>
                 </div>
                 <p className="bd-comment-content">{comment.commentContent}</p>
 
