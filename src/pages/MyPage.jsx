@@ -64,6 +64,7 @@ const MyPage = () => {
   };
 
   useEffect(() => {
+    console.log("쿠키 : " + document.cookie);
     loadUserInfo();
   }, []);
 
