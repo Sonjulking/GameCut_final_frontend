@@ -1,0 +1,9 @@
+.itemshop-container {
+  padding: 24px 28px;
+}
+.itemshop-card {
+  transition: box-shadow 0.2s;
+}
+.itemshop-card:hover {
+  box-shadow: 0 0 0 3px #90caf9;
+}

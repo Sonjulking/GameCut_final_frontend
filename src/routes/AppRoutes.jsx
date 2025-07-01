@@ -18,6 +18,8 @@ import Settings from "../pages/Settings.jsx";
 import RankingsPage from "../pages/RankingsPage.jsx";
 import Test from "../pages/Test.jsx"; // ✅ lazy 대신 일반 import
 import WebGame from "../pages/WebGame.jsx";
+import ItemShop from "../pages/ItemShop.jsx";
+
 // 웹게임 관련 컴포넌트 분리
 import WebGameSelector from "../pages/WebGameSelector.jsx";
 import TournamentGame from "../pages/TournamentGame.jsx";
@@ -68,6 +70,9 @@ const router = createBrowserRouter([
       { path: "webgame/tournament", element: <TournamentGame /> },
       { path: "webgame/guess-rank", element: <GuessTheRankGame /> },
       { path: "webgame/tournament/ranking", element: <TournamentRanking /> },
+
+      // 상점페이지
+      { path: "shopping", element: <ItemShop /> },
 
       // 404
       { path: "*", element: <ErrorPage /> },
