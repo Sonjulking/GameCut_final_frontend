@@ -19,13 +19,13 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       await axios.post("/user/logout");
+    } catch (error) {
+      console.error("서버 로그아웃 실패:", error);
+    } finally {
       Cookies.remove("accessToken");
       dispatch(logout());
       alert("로그아웃 성공!");
       navigate("/");
-    } catch (error) {
-      console.error("로그아웃 실패", error);
-      alert("로그아웃 중 오류가 발생했습니다.");
     }
   };
 
