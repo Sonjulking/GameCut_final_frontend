@@ -29,17 +29,16 @@ const Login = () => {
       const response = await axios.post("/user/login", { userId, pwd });
 
       if (response.data.success) {
-        const { token, userId, userNickname } = response.data;
+        const { token } = response.data;
 
-        // ✅ 쿠키에 저장
-        Cookies.set("accessToken", token, {
-          path: "/",
-          sameSite: "Lax",
-        });
+        // ✅ accessToken 쿠키 저장
+        Cookies.set("accessToken", token, { path: "/", sameSite: "Lax" });
 
-        dispatch(loginSuccess({ userId, nickname: userNickname }));
+        // ✅ 유저 정보 조회 후 Redux 저장
+        const infoRes = await axios.get("/user/myinfo");
+        dispatch(loginSuccess(infoRes.data));
 
-        alert(`${userNickname}님 환영합니다!`);
+        alert(`${infoRes.data.userNickname}님 환영합니다!`);
         navigate("/");
       } else {
         setError(response.data.message || "아이디 또는 비밀번호가 틀렸습니다.");
@@ -63,17 +62,16 @@ const Login = () => {
         const res = await axios.post("/user/oauth/google", { accessToken });
 
         if (res.data.success) {
-          const { token, userId, userNickname } = res.data;
+          const { token } = res.data;
 
           // ✅ 쿠키 저장
-          Cookies.set("accessToken", token, {
-            path: "/",
-            sameSite: "Lax",
-          });
+          Cookies.set("accessToken", token, { path: "/", sameSite: "Lax" });
 
-          dispatch(loginSuccess({ userId, nickname: userNickname }));
+          // ✅ 유저 정보 조회 후 Redux 저장
+          const infoRes = await axios.get("/user/myinfo");
+          dispatch(loginSuccess(infoRes.data));
 
-          alert(`${userNickname}님 환영합니다!`);
+          alert(`${infoRes.data.userNickname}님 환영합니다!`);
           navigate("/");
         } else {
           setError("구글 로그인 실패");

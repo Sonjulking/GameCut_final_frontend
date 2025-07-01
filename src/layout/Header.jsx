@@ -1,8 +1,10 @@
 import React from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../store/authSlice";
-import axios from "../lib/axiosInstance"; // ✅ axiosInstance 사용
+import axios from "../lib/axiosInstance";
+import Cookies from "js-cookie";
+
 import logoImg from "../assets/img/main/logo/gamecut_logo.png";
 import searchIcon from "../assets/img/main/icons/search_icon.png";
 import loginIcon from "../assets/img/main/icons/login_icon.png";
@@ -16,13 +18,9 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      // ✅ 서버에 로그아웃 요청
       await axios.post("/user/logout");
-
-      // ✅ 상태 초기화
+      Cookies.remove("accessToken");
       dispatch(logout());
-
-      // ✅ 사용자 알림 및 이동
       alert("로그아웃 성공!");
       navigate("/");
     } catch (error) {
@@ -38,6 +36,7 @@ const Header = () => {
           <img src={logoImg} alt="Gamecut Logo" id="gamecut_logo" />
         </Link>
       </div>
+
       <div className="header-right">
         <Link to={"/search"}>
           <img src={searchIcon} className="header_icon" alt="검색" />
@@ -47,8 +46,8 @@ const Header = () => {
           <Link
             to="/"
             onClick={(e) => {
-              e.preventDefault();
-              handleLogout(); // ✅ 함수 변경됨
+              e.preventDefault(); // 기본 이동 방지
+              handleLogout(); // 로그아웃 로직 실행
             }}
           >
             <img src={logoutIcon} className="header_icon" alt="로그아웃" />
