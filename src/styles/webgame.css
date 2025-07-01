@@ -1,0 +1,300 @@
+/* 전체 웹게임 페이지 공통 컨테이너 */
+.webgame-container {
+  padding: 1.5rem;
+  color: #ecf0f1;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 토너먼트 게임                            */
+
+/* 브라켓 선택 화면 */
+.bracket-select {
+  margin-top: 2rem;
+  text-align: center;
+}
+.bracket-select p {
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
+}
+.bracket-select select,
+.tournament-select {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 1px solid #444;
+  border-radius: 0.375rem;
+  background: #1f2730;
+  color: #ecf0f1;
+  cursor: pointer;
+  appearance: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+.bracket-select button,
+.tournament-button {
+  margin-left: 1rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.375rem;
+  background: #10b981;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+.bracket-select button:hover:not(:disabled),
+.tournament-button:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+.bracket-select button:disabled {
+  background: #4ade80;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 토너먼트 진행 중 비디오 & 버튼 배치 */
+.tournament-grid {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+.tournament-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.tournament-video {
+  width: 640px;
+  height: 360px;
+  background: #000;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+.tournament-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* 챔피언 확정 화면 비디오 */
+.champion-video {
+  width: 480px;
+  height: 270px;
+  background: #000;
+  overflow: hidden;
+  margin: 1rem auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
+}
+.champion-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* 누적 랭킹 테이블                         */
+
+.ranking-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+.ranking-table th,
+.ranking-table td {
+  border: 1px solid #444;
+  padding: 0.5rem;
+  text-align: center;
+  vertical-align: middle;
+}
+.ranking-table thead {
+  background: #2c3e50;
+  color: #ecf0f1;
+}
+.ranking-table tbody tr:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* 컬럼 너비 (colgroup 순서와 일치) */
+.ranking-table col:nth-child(1) {
+  width: 60px;
+} /* 순위 */
+.ranking-table col:nth-child(2) {
+  width: 260px;
+} /* 영상 */
+.ranking-table col:nth-child(3) {
+  width: 100px;
+} /* 우승 횟수 */
+.ranking-table col:nth-child(4) {
+  width: 120px;
+} /* 우승 비율 */
+
+/* 영상 컬럼: 16:9 비율 260×146px */
+.ranking-video-lg {
+  width: 260px;
+  height: 146px;
+  background: #000;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 0.25rem;
+}
+.ranking-video-lg video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* 우승 비율 막대그래프 */
+.win-bar {
+  position: relative;
+  width: 50%; /* 길이를 절반으로 */
+  height: 12px; /* 두껍게 */
+  background: #34495e;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 0.25rem auto;
+}
+.win-progress {
+  height: 100%;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #e74c3c 0,
+    #e74c3c 6px,
+    #2c3e50 6px,
+    #2c3e50 12px
+  );
+}
+.win-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  color: #ecf0f1;
+  white-space: nowrap;
+}
+
+/* 웹게임 선택 화면                         */
+
+.selector-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 4rem);
+  gap: 2rem;
+}
+.selector-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ecf0f1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+.selector-buttons {
+  display: flex;
+  gap: 2rem;
+}
+.selector-button {
+  padding: 0.75rem 2rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+.selector-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+}
+.selector-button--green {
+  background: #10b981;
+  color: #fff;
+}
+.selector-button--green:hover {
+  background: #059669;
+}
+.selector-button--blue {
+  background: #3b82f6;
+  color: #fff;
+}
+.selector-button--blue:hover {
+  background: #2563eb;
+}
+
+/* 작은 화면 대응 */
+@media (max-width: 640px) {
+  .selector-buttons {
+    flex-direction: column;
+    width: 100%;
+    max-width: 320px;
+  }
+  .selector-button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* 공통 버튼 스타일                         */
+
+.webgame-btn {
+  margin: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s, background 0.2s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+.webgame-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+.webgame-btn--primary {
+  background: #3b82f6;
+  color: #fff;
+}
+.webgame-btn--secondary {
+  background: #6b7280;
+  color: #fff;
+}
+.webgame-btn--warning {
+  background: #f59e0b;
+  color: #fff;
+}
+
+/* “돌아가기” 전용 빨간 버튼 */
+.btn-back {
+  background: #e74c3c !important;
+}
+.btn-back:hover {
+  background: #c0392b !important;
+}
+
+/* ────────── 승률(초록) 막대그래프 ────────── */
+.win-bar-green {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  background: #1e3a2b; /* 짙은 초록 계열 배경 */
+  border-radius: 6px;
+  overflow: hidden;
+}
+.win-progress-green {
+  height: 100%;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #10b981 0,
+    #10b981 6px,
+    #1e3a2b 6px,
+    #1e3a2b 12px
+  );
+}

@@ -1,7 +1,7 @@
-// src/pages/TournamentGame.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../styles/webgame.css";
 
 const VITE_API_URL = import.meta.env.VITE_API_URL;
 
@@ -15,8 +15,6 @@ export default function TournamentGame() {
   const [roundSize, setRoundSize] = useState(0);
   const [finished, setFinished] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
-
-  // 저장된 결과(worldCupNo)를 담을 상태
   const [savedResult, setSavedResult] = useState(null);
 
   const navigate = useNavigate();
@@ -39,9 +37,10 @@ export default function TournamentGame() {
           .map((b) => {
             const rp = b.video.attachFile.realPath;
             const match = rp.match(/upload[\\/].*/);
-            const rel = match ? `/${match[0]}` : rp;
+            // encode any spaces, #, (), etc.
+            const relUnencoded = match ? `/${match[0]}` : rp;
+            const rel = encodeURI(relUnencoded);
             return {
-              boardNo: b.boardNo,
               videoNo: b.video.videoNo,
               url: `${VITE_API_URL}${rel}`,
             };
@@ -56,7 +55,6 @@ export default function TournamentGame() {
     fetchBoards();
   }, []);
 
-  // 2의 제곱수 브라켓 옵션
   const getBracketOptions = () => {
     const n = videos.length;
     if (n < 2) return [];
@@ -82,7 +80,6 @@ export default function TournamentGame() {
       if (i + 1 < idxs.length) newPairs.push([idxs[i], idxs[i + 1]]);
       else auto.push(idxs[i]);
     }
-
     setPairs(newPairs);
     setWinners(auto);
     setRoundSize(idxs.length);
@@ -93,12 +90,10 @@ export default function TournamentGame() {
 
   const selectWinner = (videoIdx) => {
     const next = [...winners, videoIdx];
-
     if (roundIndex + 1 < pairs.length) {
       setWinners(next);
       setRoundIndex(roundIndex + 1);
     } else if (next.length > 1) {
-      // 다음 라운드 준비
       const nextPairs = [];
       const carry = [];
       for (let i = 0; i < next.length; i += 2) {
@@ -110,47 +105,37 @@ export default function TournamentGame() {
       setRoundSize(next.length);
       setRoundIndex(0);
     } else {
-      // 챔피언 확정
       setWinners(next);
       setFinished(true);
-
-      // 챔피언 저장 API 호출
       const champIdx = next[0];
       const videoNo = videos[champIdx].videoNo;
       axios
         .post(
           `${VITE_API_URL}/api/worldcup/result`,
           {},
-          { params: { userNo: 1, videoNo } } // TODO: userNo는 로그인 정보에서
+          { params: { userNo: 1, videoNo } }
         )
-        .then((res) => {
-          setSavedResult(res.data);
-        })
-        .catch((e) => {
-          console.error("챔피언 저장 실패:", e);
-        });
+        .then((res) => setSavedResult(res.data))
+        .catch((e) => console.error("챔피언 저장 실패:", e));
     }
   };
 
-  if (loading) {
-    return <div className="text-center p-6 text-white">로딩 중…</div>;
-  }
+  if (loading) return <div className="text-center p-6">로딩 중…</div>;
 
   return (
-    <div className="p-6 text-white">
-      <h1 className="text-3xl font-bold mb-6 text-center">이상형 월드컵</h1>
+    <div className="webgame-container">
+      <h1 className="text-3xl font-bold mb-4 text-center">이상형 월드컵</h1>
 
-      {/* 브라켓 선택 */}
       {!gameStarted && (
-        <div className="text-center">
+        <div className="bracket-select">
           <p>총 {videos.length}개의 영상 중 사용할 영상을 선택하세요</p>
           <select
-            className="mt-2 p-2 rounded text-black"
-            value={bracketSize}
             onChange={(e) => setBracketSize(Number(e.target.value))}
+            value={bracketSize}
+            className="tournament-select"
           >
             <option value={0} disabled>
-              강을 선택
+              선택
             </option>
             {getBracketOptions().map((size) => (
               <option key={size} value={size}>
@@ -159,35 +144,33 @@ export default function TournamentGame() {
             ))}
           </select>
           <button
-            className="ml-4 px-4 py-2 bg-green-600 hover:bg-green-700 rounded disabled:opacity-50"
             disabled={!bracketSize}
             onClick={startTournament}
+            className="tournament-button"
           >
             시작하기
           </button>
         </div>
       )}
 
-      {/* 토너먼트 진행 */}
       {gameStarted && !finished && pairs.length > 0 && (
         <>
           <h2 className="text-2xl font-semibold mb-4 text-center">
             {roundSize}강
           </h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="tournament-grid">
             {pairs[roundIndex].map((idx) => (
-              <div
-                key={idx}
-                className="bg-white text-black p-3 rounded shadow flex flex-col items-center"
-              >
-                <video
-                  src={videos[idx].url}
-                  controls
-                  className="w-full h-40 object-contain mb-3"
-                />
+              <div key={idx} className="tournament-item">
+                <div className="tournament-video">
+                  <video
+                    src={videos[idx].url}
+                    controls
+                    className="w-full h-full object-contain"
+                  />
+                </div>
                 <button
-                  className="w-full py-2 bg-green-500 hover:bg-green-600 text-white rounded"
                   onClick={() => selectWinner(idx)}
+                  className="tournament-button"
                 >
                   선택
                 </button>
@@ -197,32 +180,26 @@ export default function TournamentGame() {
         </>
       )}
 
-      {/* 챔피언 & 버튼 */}
       {finished && (
         <div className="text-center">
           <h2 className="text-4xl font-bold mb-4">🏆 챔피언 🏆</h2>
-          <video
-            src={videos[winners[0]].url}
-            controls
-            className="mx-auto w-2/3 h-auto object-contain mb-6"
-          />
-
+          <div className="champion-video">
+            <video
+              src={videos[winners[0]].url}
+              controls
+              className="w-full h-full object-contain"
+            />
+          </div>
           <button
-            className="mr-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded"
             onClick={() => navigate("/webgame")}
+            className="tournament-button btn-back"
           >
             돌아가기
           </button>
-
-          {/* 저장된 worldCupNo가 있을 때만 보여줌 */}
           {savedResult?.worldCupNo && (
             <button
-              className="px-6 py-2 bg-yellow-500 hover:bg-yellow-600 rounded"
-              onClick={() =>
-                navigate(
-                  `/webgame/tournament/ranking?worldCupNo=${savedResult.worldCupNo}`
-                )
-              }
+              onClick={() => navigate("/webgame/tournament/ranking")}
+              className="tournament-button tournament-button--secondary"
             >
               랭킹 보기
             </button>
