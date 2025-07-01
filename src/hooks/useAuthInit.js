@@ -10,10 +10,9 @@ const useAuthInit = () => {
   useEffect(() => {
     const restoreUser = async () => {
       try {
-        const res = await axios.get("/user/myinfo"); // ✅ accessToken 쿠키 기반으로 요청
-        const { userId, userNickname, userNo } = res.data;
-        dispatch(loginSuccess({ userId, nickname: userNickname }));
-        console.log("✅ 로그인 상태 복원됨:", userId, userNickname, userNo);
+        const res = await axios.get("/user/myinfo"); // ✅ accessToken 쿠키 기반 요청
+        dispatch(loginSuccess(res.data)); // ✅ 유저 전체 정보 저장
+        console.log("✅ 로그인 상태 복원됨:", res.data);
       } catch (err) {
         console.log("❌ 로그인 복원 실패:", err.response?.status);
         dispatch(logout());

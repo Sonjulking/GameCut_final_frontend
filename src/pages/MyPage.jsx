@@ -3,12 +3,20 @@ import { useNavigate } from "react-router-dom";
 import axios from "../lib/axiosInstance"; // ✅ axiosInstance 사용
 import MyPageSidebar from "../components/MyPage/MyPageSidebar.jsx";
 import "../styles/MyPage.css";
+import { useSelector } from "react-redux";
 
 const MyPage = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  //전역변수 추가된부분
+  const user2 = useSelector((state) => state.auth.user);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  console.log("로그인한 사용자의 정보 : ", user2);
+
+  // console.log(isLoggedIn);
   // 사용자 정보 로드
   const loadUserInfo = async () => {
     try {

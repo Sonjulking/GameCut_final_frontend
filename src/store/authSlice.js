@@ -3,8 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isLoggedIn: false,
-  userId: null,
-  nickname: null,
+  user: null, // 전체 유저 정보 저장
 };
 
 const authSlice = createSlice({
@@ -12,15 +11,12 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     loginSuccess(state, action) {
-      const { userId, nickname } = action.payload;
       state.isLoggedIn = true;
-      state.userId = userId;
-      state.nickname = nickname;
+      state.user = action.payload; // ex: { userId, userName, nickname, email, ... }
     },
     logout(state) {
       state.isLoggedIn = false;
-      state.userId = null;
-      state.nickname = null;
+      state.user = null;
     },
   },
 });
