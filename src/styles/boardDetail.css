@@ -399,8 +399,22 @@
 .bd-comment-user-info {
   display: flex;
   align-items: center;
+  justify-content: space-between; /* 🔥 양쪽 끝으로 배치 */
   gap: 0.75rem;
   margin-bottom: 0.5rem;
+}
+
+/* 왼쪽 프로필+정보 그룹 */
+.bd-user-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* 오른쪽 버튼 그룹 */
+.bd-actions-right {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .bd-comment-profile-img {
@@ -446,7 +460,9 @@
 }
 
 /* 답글달기 버튼 */
-.bd-reply-insert-button {
+.bd-reply-insert-button,
+.bd-reply-delete-button,
+.bd-reply-delete-button {
   color: #7d8590;
   font-size: 0.8125rem;
   cursor: pointer;
@@ -454,7 +470,6 @@
   border-radius: 0.25rem;
   transition: all 0.2s ease;
   user-select: none;
-  margin-left: auto;
 }
 
 .bd-reply-insert-button:hover {
@@ -519,12 +534,59 @@
   margin-right: 0.5rem;
 }
 
+.board-delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem; /* 4px → 0.25rem */
+  padding: 0.5rem 0.75rem; /* 8px 12px → 0.5rem 0.75rem */
+  background-color: #dc3545; /* 빨간색 */
+  color: white;
+  border: none;
+  border-radius: 0.25rem; /* 4px → 0.25rem */
+  cursor: pointer;
+  font-size: 0.8125rem;
+  transition: background-color 0.2s;
+}
+
+.board-delete-btn:hover {
+  background-color: #c82333; /* 더 진한 빨간색 */
+}
+
+.board-delete-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
 /* 댓글 없음 상태 */
 .bd-no-comments {
   padding: 2.5rem 1.5rem;
   text-align: center;
   color: #7d8590;
   font-style: italic;
+}
+
+/* 삭제된 댓글 css */
+.deleted-comment {
+  color: #7d8590;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.bd-comment-edit-area {
+  margin-top: 8px;
+}
+
+.bd-comment-edit-input {
+  width: 100%;
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background-color: #21262d;
+  border: 0.0625rem solid #30363d;
+  border-radius: 0.5rem;
+  color: #e6edf3;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s ease;
 }
 
 /* 반응형 디자인 */

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import "../styles/MyBoard.css";
+import axiosInstance from "../lib/axiosInstance";
 
 const MyBoard = () => {
   const navigate = useNavigate();
@@ -118,9 +119,8 @@ const MyBoard = () => {
   // 사용자 정보 로드
   const loadUserInfo = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/user/${localStorage.getItem("userNo")}`
-      );
+      const response = await axiosInstance.get("/user/myinfo");
+      console.log("user : ", response.data);
       setUser(response.data);
       return response.data;
     } catch (error) {
@@ -135,7 +135,6 @@ const MyBoard = () => {
 
   // 내 게시글 로드
   const loadMyBoards = async (userInfo) => {
-    console.log(localStorage.getItem("userNo"));
     try {
       setLoading(true);
 
@@ -147,7 +146,6 @@ const MyBoard = () => {
       const userBoards = response.data.content.filter(
         (board) => board.user.userNo == localStorage.getItem("userNo")
       );
-      console.log(response.data);
       setMyBoards(userBoards);
       setFilteredList(userBoards);
     } catch (error) {
@@ -182,7 +180,7 @@ const MyBoard = () => {
   // 게시글 수정하기
   const handleEditClick = (e, boardNo) => {
     e.stopPropagation(); // 이벤트 버블링 방지
-    navigate(`/boardEdit/${boardNo}`);
+    navigate(`/board/edit/${boardNo}`);
   };
 
   // 게시글 삭제하기
