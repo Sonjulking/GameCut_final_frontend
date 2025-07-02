@@ -5,11 +5,12 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import ThumbDownAltOutlinedIcon from "@mui/icons-material/ThumbDownAltOutlined";
 import axios from "axios";
+import Cookies from "js-cookie";
 import CloseIcon from "@mui/icons-material/Close";
 import {formatRelativeTimeKo} from "../../util/timeFormatUtil.js";
 
 const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComment}) => {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get("accessToken");
 
     const [inputComment, setInputComment] = useState({
         boardNo: boardNo,
