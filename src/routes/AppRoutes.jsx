@@ -49,7 +49,7 @@ const router = createBrowserRouter([
       // 마이페이지
       { path: "mypage/info", element: <MyPage /> },
       { path: "mypage/board", element: <MyBoard /> },
-      { path: "mypage/mycomment", element: <MyComment /> },
+      { path: "mypage/comment", element: <MyComment /> },
       { path: "mypage/changePassword", element: <ChangePassword /> },
       { path: "/mypage/point", element: <MyPointHistory /> },
 

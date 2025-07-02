@@ -3,7 +3,8 @@ import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
 import { Provider } from "react-redux";
-import store from "./store/store.js";
+import store, { persistor } from "./store/store.js";
+import { PersistGate } from "redux-persist/integration/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
@@ -16,8 +17,12 @@ createRoot(document.getElementById("root")).render(
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
-          <App />{" "}
-          {/* BrowserRouter는 AppRoutes가 알아서 RouterProvider로 처리중 */}
+          <PersistGate
+            loading={<div>앱을 불러오는 중...</div>}
+            persistor={persistor}
+          >
+            <App />
+          </PersistGate>
         </Provider>
       </QueryClientProvider>
     </GoogleOAuthProvider>

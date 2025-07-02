@@ -3,29 +3,14 @@ import { useNavigate } from "react-router-dom";
 import axios from "../lib/axiosInstance"; // ✅ axiosInstance 사용
 import MyPageSidebar from "../components/MyPage/MyPageSidebar.jsx";
 import "../styles/MyPage.css";
+import { useSelector } from "react-redux";
+import Cookie from "js-cookie";
 
 const MyPage = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  // 사용자 정보 로드
-  const loadUserInfo = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get("/user/myinfo");
-      setUser(response.data);
-    } catch (error) {
-      console.error("사용자 정보 로드 실패:", error);
-      if (error.response?.status === 401) {
-        alert("로그인이 필요합니다.");
-        navigate("/login");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  //전역변수 추가된부분
+  const user = useSelector((state) => state.auth.user);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const confirmDelete = () => {
     if (window.confirm("정말 탈퇴하시겠습니까?")) {
       handleDeleteUser();
@@ -43,20 +28,16 @@ const MyPage = () => {
     }
   };
 
-  useEffect(() => {
-    loadUserInfo();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="mypage-container">
-        <div className="loading-spinner">
-          <div className="spinner"></div>
-          <p>사용자 정보를 불러오는 중...</p>
-        </div>
-      </div>
-    );
-  }
+  // if (user) {
+  //   return (
+  //     <div className="mypage-container">
+  //       <div className="loading-spinner">
+  //         <div className="spinner"></div>
+  //         <p>사용자 정보를 불러오는 중...</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   if (!user) {
     return (

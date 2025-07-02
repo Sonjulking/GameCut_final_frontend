@@ -25,7 +25,7 @@ const MyPageSidebar = () => {
     {
       id: "comment",
       name: "내 댓글",
-      path: "/mypage/mycomment",
+      path: "/mypage/comment",
     },
     {
       id: "video",
