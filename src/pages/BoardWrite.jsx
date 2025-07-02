@@ -138,7 +138,7 @@ const BoardWrite = ({ isEdit = false }) => {
     try {
       // 임시 디버깅: 기존 방식도 시도해보기
       const localStorage_token = localStorage.getItem("token");
-      console.log('🔍 localStorage 토큰:', localStorage_token);
+      console.log('localStorage 토큰:', localStorage_token);
       
       if (isEdit) {
         await axiosInstance.put(`/board/${boardNo}`, formData, {
