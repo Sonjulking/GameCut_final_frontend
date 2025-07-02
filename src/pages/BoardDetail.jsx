@@ -59,9 +59,7 @@ const BoardDetail = () => {
   // 좋아요 토글
   const toggleLike = async () => {
     try {
-      const response = await axios.post(
-        `http://localhost:8081/board/like/${boardNo}`
-      );
+      const response = await axiosInstance.post(`/board/like/${boardNo}`);
       setIsLiked(!isLiked);
       setBoard((prev) => ({
         ...prev,
