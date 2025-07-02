@@ -28,6 +28,22 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
         });
     }, []);
 
+    // 태그 데이터를 부모 컴포넌트로 전달 (영상 게시판일 때만)
+    useEffect(() => {
+        if (form.boardTypeNo === 3) {
+            // 현재 form.videoTags와 tags가 다를 때만 업데이트
+            const currentTags = Array.isArray(form.videoTags) ? form.videoTags : [];
+            const tagsChanged = currentTags.length !== tags.length || 
+                               !currentTags.every((tag, i) => tag === tags[i]);
+            
+            if (tagsChanged) {
+                handleChange({
+                    target: { name: "videoTags", value: tags },
+                });
+            }
+        }
+    }, [tags, form.boardTypeNo]);
+
     useEffect(() => {
         if (Array.isArray(form.videoTags)) {
             const incoming = form.videoTags;
@@ -69,6 +85,22 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
         setTags(tags.filter((tag) => tag !== tagToDelete));
     };
 
+    // 태그 데이터를 부모 컴포넌트로 전달 (영상 게시판일 때만)
+    useEffect(() => {
+        if (form.boardTypeNo === 3) {
+            // 현재 form.videoTags와 tags가 다를 때만 업데이트
+            const currentTags = Array.isArray(form.videoTags) ? form.videoTags : [];
+            const tagsChanged = currentTags.length !== tags.length || 
+                               !currentTags.every((tag, i) => tag === tags[i]);
+            
+            if (tagsChanged) {
+                handleChange({
+                    target: { name: "videoTags", value: tags },
+                });
+            }
+        }
+    }, [tags, form.boardTypeNo]);
+
     useEffect(() => {
         if (form.boardTypeNo === 3 && !isEdit) {
             handleChange({
@@ -91,6 +123,22 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
     };
 
     // 에디터 초기화를 위한 별도 useEffect
+    // 태그 데이터를 부모 컴포넌트로 전달 (영상 게시판일 때만)
+    useEffect(() => {
+        if (form.boardTypeNo === 3) {
+            // 현재 form.videoTags와 tags가 다를 때만 업데이트
+            const currentTags = Array.isArray(form.videoTags) ? form.videoTags : [];
+            const tagsChanged = currentTags.length !== tags.length || 
+                               !currentTags.every((tag, i) => tag === tags[i]);
+            
+            if (tagsChanged) {
+                handleChange({
+                    target: { name: "videoTags", value: tags },
+                });
+            }
+        }
+    }, [tags, form.boardTypeNo]);
+
     useEffect(() => {
         if (!editorRef.current || form.boardTypeNo === 3) return;
 
@@ -104,6 +152,22 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
     }, [isEdit, form.boardContent]); // 수정 모드에서만 boardContent 의존성 적용
 
     // 게시판 타입 변경을 위한 별도 useEffect  
+    // 태그 데이터를 부모 컴포넌트로 전달 (영상 게시판일 때만)
+    useEffect(() => {
+        if (form.boardTypeNo === 3) {
+            // 현재 form.videoTags와 tags가 다를 때만 업데이트
+            const currentTags = Array.isArray(form.videoTags) ? form.videoTags : [];
+            const tagsChanged = currentTags.length !== tags.length || 
+                               !currentTags.every((tag, i) => tag === tags[i]);
+            
+            if (tagsChanged) {
+                handleChange({
+                    target: { name: "videoTags", value: tags },
+                });
+            }
+        }
+    }, [tags, form.boardTypeNo]);
+
     useEffect(() => {
         if (!editorRef.current || form.boardTypeNo === 3) return;
 
@@ -156,6 +220,22 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
             setTagLoading(false); // 완료 후 재활성화
         }
     };
+
+    // 태그 데이터를 부모 컴포넌트로 전달 (영상 게시판일 때만)
+    useEffect(() => {
+        if (form.boardTypeNo === 3) {
+            // 현재 form.videoTags와 tags가 다를 때만 업데이트
+            const currentTags = Array.isArray(form.videoTags) ? form.videoTags : [];
+            const tagsChanged = currentTags.length !== tags.length || 
+                               !currentTags.every((tag, i) => tag === tags[i]);
+            
+            if (tagsChanged) {
+                handleChange({
+                    target: { name: "videoTags", value: tags },
+                });
+            }
+        }
+    }, [tags, form.boardTypeNo]);
 
     useEffect(() => {
         setTags([]);        // 태그 초기화
@@ -280,7 +360,7 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
                                         <Chip
                                                 key={index}
                                                 label={tag}
-                                                onDelete={() => setTags((prev) => prev.filter((t) => t !== tag))}
+                                                onDelete={() => handleDeleteTag(tag)}
                                                 sx={{
                                                     bgcolor: "#444",
                                                     color: "#fff",
