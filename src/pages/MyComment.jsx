@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "../lib/axiosInstance";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux"; // ✅ 로그인 여부 확인
+import { useSelector } from "react-redux";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import "../styles/MyBoard.css";
 
@@ -11,15 +11,15 @@ const MyComments = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn); // ✅ Redux에서 로그인 여부 확인
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   useEffect(() => {
-    if (!isLoggedIn) return; // ✅ 로그인 되어 있을 때만 요청 보내기
+    if (!isLoggedIn) return;
 
     const fetchComments = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("/comment/my"); // accessToken 포함된 요청
+        const res = await axios.get("/comment/my");
         setComments(res.data);
         setError(null);
       } catch (err) {
@@ -36,14 +36,31 @@ const MyComments = () => {
     };
 
     fetchComments();
-  }, [isLoggedIn, navigate]); // ✅ isLoggedIn 변화 감지
+  }, [isLoggedIn, navigate]);
+
+  // 로그인하지 않은 경우
+  if (!isLoggedIn) {
+    return (
+      <div className="mypage-container">
+        <div className="mypage-content">
+          <div className="content-wrapper">
+            <MyPageSidebar />
+            <div className="mypage-user-section">
+              <div className="board-container">
+                <p className="error-text">로그인이 필요합니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mypage-container">
       <div className="mypage-content">
         <div className="content-wrapper">
           <MyPageSidebar />
-
           <div className="mypage-user-section">
             <div className="board-container">
               <div className="board-header">
@@ -62,7 +79,7 @@ const MyComments = () => {
                     <thead>
                       <tr>
                         <th>댓글 내용</th>
-                        <th width="150">작성일</th>
+                        <th width="200">작성일</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -77,8 +94,15 @@ const MyComments = () => {
                           >
                             <td>{c.commentContent}</td>
                             <td>
-                              {new Date(c.commentCreateDate).toLocaleDateString(
-                                "ko-KR"
+                              {new Date(c.commentCreateDate).toLocaleString(
+                                "ko-KR",
+                                {
+                                  year: "numeric",
+                                  month: "2-digit",
+                                  day: "2-digit",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }
                               )}
                             </td>
                           </tr>
