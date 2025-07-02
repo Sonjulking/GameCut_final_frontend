@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Avatar, Box, Button, Chip, IconButton, Stack } from "@mui/material";
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import CommentSection from "./CommentSection.jsx";
-import UserProfilePopup from "../pages/UserProfilePopup.jsx"; // ✅ 추가
+import UserProfilePopup from "../pages/UserProfilePopup.jsx";
 import "../styles/boardDetail.css";
 import axiosInstance from "../lib/axiosInstance.js";
+import ReportModal from "./ReportModal.jsx"; // ✅ 신고 모달 import
 
 const BoardDetail = () => {
   const navigate = useNavigate();
@@ -15,8 +15,10 @@ const BoardDetail = () => {
   const [board, setBoard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
-
   const [comments, setComments] = useState([]);
+
+  // ✅ 신고 모달 상태
+  const [isReportOpen, setIsReportOpen] = useState(false);
 
   // ✅ 프로필 팝업 상태
   const [profileOpen, setProfileOpen] = useState(false);
@@ -104,7 +106,31 @@ const BoardDetail = () => {
     navigate("/board/list");
   };
 
-  // ✅ 유저 닉네임 클릭 시 유저 정보 가져와 팝업 오픈
+  // ✅ 신고 버튼 클릭 → 모달 열기
+  const handleReport = () => {
+    setIsReportOpen(true);
+  };
+
+  // ✅ 신고 제출
+  const handleReportSubmit = async (content) => {
+    try {
+      const res = await axiosInstance.post("/report", {
+        boardNo: board.boardNo,
+        reportContent: content,
+        reportType: "게시글",
+      });
+
+      if (res.data.success) {
+        alert("신고가 접수되었습니다.");
+      } else {
+        alert("신고 실패: " + res.data.message);
+      }
+    } catch (err) {
+      console.error("신고 실패", err);
+      alert("신고 처리 중 오류가 발생했습니다.");
+    }
+  };
+
   const handleProfileClick = async () => {
     try {
       const res = await axiosInstance.get(`/user/${board.user.userNo}`);
@@ -165,6 +191,9 @@ const BoardDetail = () => {
           <button onClick={handleDelete} className="board-delete-btn">
             삭제
           </button>
+          <button onClick={handleReport} className="board-report-btn">
+            신고
+          </button>
         </div>
       </div>
 
@@ -179,7 +208,6 @@ const BoardDetail = () => {
           </div>
           <div className="meta-right">
             <div className="author-info">
-              {/* ✅ 닉네임 클릭 시 프로필 팝업 */}
               <span
                 className="author-name"
                 onClick={handleProfileClick}
@@ -205,10 +233,9 @@ const BoardDetail = () => {
           {board.boardTypeNo === 3 && board.video?.attachFile && (
             <>
               <video
-                src={
-                  `${import.meta.env.VITE_API_URL}` +
+                src={`${import.meta.env.VITE_API_URL}${
                   board.video.attachFile.fileUrl
-                }
+                }`}
                 style={{ width: "100%" }}
                 controls
               />
@@ -269,7 +296,7 @@ const BoardDetail = () => {
         </div>
       </div>
 
-      {/* 댓글 섹션 */}
+      {/* 댓글 */}
       <CommentSection
         boardNo={boardNo}
         comments={comments}
@@ -277,11 +304,18 @@ const BoardDetail = () => {
         onRefresh={loadBoardDetail}
       />
 
-      {/* ✅ 유저 프로필 팝업 */}
+      {/* 유저 프로필 팝업 */}
       <UserProfilePopup
         open={profileOpen}
         onClose={() => setProfileOpen(false)}
         user={selectedUser}
+      />
+
+      {/* 신고 모달 */}
+      <ReportModal
+        open={isReportOpen}
+        onClose={() => setIsReportOpen(false)}
+        onSubmit={handleReportSubmit}
       />
     </div>
   );
