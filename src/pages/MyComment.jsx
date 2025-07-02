@@ -14,7 +14,9 @@ const MyComments = () => {
       .then((res) => setComments(res.data))
       .catch((err) => console.error("댓글 목록 조회 실패", err));
   }, []);
-
+  useEffect(() => {
+    console.log(comments);
+  });
   return (
     <div className="mypage-container">
       <div className="mypage-content">
