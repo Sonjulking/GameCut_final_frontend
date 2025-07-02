@@ -2,10 +2,13 @@ import axios from "axios";
 import React, { useState } from "react";
 import Cookie from "js-cookie";
 import axiosInstance from "../lib/axiosInstance";
+import UserProfilePopup from "../pages/UserProfilePopup";
 
 const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
   const [showReplies, setShowReplies] = useState({});
   const [showReplyInput, setShowReplyInput] = useState({}); // 대댓글 입력창 표시 상태
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   // 수정 모드 상태 관리
   const [editMode, setEditMode] = useState({}); // 어떤 댓글이 수정 모드인지
@@ -30,6 +33,18 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
       ...prev,
       [commentNo]: !prev[commentNo],
     }));
+  };
+
+  //닉네임클릭핸들러
+  const handleProfileClick = async (userNo) => {
+    try {
+      const res = await axiosInstance.get(`/user/${userNo}`);
+      setSelectedUser(res.data);
+      setProfileOpen(true);
+    } catch (err) {
+      console.error("유저 정보 불러오기 실패", err);
+      alert("유저 정보를 불러올 수 없습니다.");
+    }
   };
 
   // 대댓글 입력창 토글
@@ -293,7 +308,14 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
                       />
                     )}
                     <div className="bd-comment-info">
-                      <span className="bd-comment-nickname">
+                      <span
+                        className="bd-comment-nickname"
+                        onClick={() => handleProfileClick(comment.user.userNo)}
+                        style={{
+                          cursor: "pointer",
+                          textDecoration: "underline",
+                        }}
+                      >
                         {/* 🔥 삭제된 댓글인지 확인 */}
                         {comment.commentDeleteDate
                           ? ""
@@ -451,7 +473,18 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
                                         />
                                       )}
                                       <div className="bd-comment-info">
-                                        <span className="bd-comment-nickname">
+                                        <span
+                                          className="bd-comment-nickname"
+                                          onClick={() =>
+                                            handleProfileClick(
+                                              reply.user.userNo
+                                            )
+                                          }
+                                          style={{
+                                            cursor: "pointer",
+                                            textDecoration: "underline",
+                                          }}
+                                        >
                                           {/* 🔥 대댓글도 동일하게 */}
                                           {reply.commentDeleteDate
                                             ? ""
@@ -548,6 +581,13 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
           </div>
         )}
       </div>
+
+      {/* ✅ 유저 프로필 팝업 추가 */}
+      <UserProfilePopup
+        open={profileOpen}
+        onClose={() => setProfileOpen(false)}
+        user={selectedUser}
+      />
     </div>
   );
 };
