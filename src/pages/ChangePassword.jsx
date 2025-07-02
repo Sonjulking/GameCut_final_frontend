@@ -49,8 +49,6 @@ const ChangePassword = () => {
     <div className="mypage-container">
       <div className="mypage-content">
         <div className="content-wrapper">
-          <MyPageSidebar />
-
           <div className="mypage-user-section">
             <h2 className="mypage-section-title">비밀번호 변경</h2>
 
@@ -91,6 +89,7 @@ const ChangePassword = () => {
               {message && <p className="mypage-error-message">{message}</p>}
             </form>
           </div>
+          <MyPageSidebar />
         </div>
       </div>
     </div>
