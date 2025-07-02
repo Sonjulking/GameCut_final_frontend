@@ -15,25 +15,31 @@ import axiosInstance from "../lib/axiosInstance";
 
 const UserProfilePopup = ({ open, onClose, user }) => {
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false); // 🔸 추가
   const [messageContent, setMessageContent] = useState("");
 
   useEffect(() => {
-    const checkFollowStatus = async () => {
-      if (user && user.userNo) {
+    const checkStatuses = async () => {
+      if (user?.userNo) {
         try {
-          const res = await axiosInstance.get(
+          const followRes = await axiosInstance.get(
             `/follow/check?toUserNo=${user.userNo}`
           );
-          setIsFollowing(res.data.isFollowing);
+          setIsFollowing(followRes.data.isFollowing);
+
+          const blockRes = await axiosInstance.get(
+            `/block/check?blockedUserNo=${user.userNo}`
+          );
+          setIsBlocked(blockRes.data.isBlocked); // 🔸 차단 상태도 확인
         } catch (err) {
-          console.error("팔로우 상태 확인 실패", err);
+          console.error("상태 확인 실패", err);
         }
       }
     };
 
     if (open) {
-      checkFollowStatus();
-      setMessageContent(""); // 새로 열 때 내용 초기화
+      checkStatuses();
+      setMessageContent("");
     }
   }, [user, open]);
 
@@ -52,6 +58,27 @@ const UserProfilePopup = ({ open, onClose, user }) => {
     }
   };
 
+  const handleBlockToggle = async () => {
+    try {
+      if (isBlocked) {
+        await axiosInstance.delete(`/block`, {
+          data: { blockedUserNo: user.userNo },
+        });
+        alert("차단을 해제했습니다.");
+        setIsBlocked(false);
+      } else {
+        await axiosInstance.post(`/block`, {
+          blockedUserNo: user.userNo,
+        });
+        alert("사용자를 차단했습니다.");
+        setIsBlocked(true);
+      }
+    } catch (err) {
+      console.error("차단 처리 실패", err);
+      alert("차단 처리 중 오류가 발생했습니다.");
+    }
+  };
+
   const handleSendMessage = async () => {
     if (!messageContent.trim()) {
       alert("쪽지 내용을 입력해주세요.");
@@ -66,7 +93,7 @@ const UserProfilePopup = ({ open, onClose, user }) => {
 
       if (res.data.success) {
         alert("쪽지를 보냈습니다!");
-        setMessageContent(""); // 입력값 초기화
+        setMessageContent("");
       } else {
         alert("쪽지 전송 실패: " + res.data.message);
       }
@@ -119,7 +146,6 @@ const UserProfilePopup = ({ open, onClose, user }) => {
           <Typography>ID: {user.userId}</Typography>
           <Typography>닉네임: {user.userNickname}</Typography>
 
-          {/* ✅ 쪽지 입력칸 추가 */}
           <TextField
             label="쪽지 내용"
             multiline
@@ -132,7 +158,6 @@ const UserProfilePopup = ({ open, onClose, user }) => {
             InputLabelProps={{ style: { color: "#aaa" } }}
           />
 
-          {/* 버튼들 */}
           <Stack direction="row" spacing={2} sx={{ marginTop: 2 }}>
             <Button
               variant="contained"
@@ -147,6 +172,14 @@ const UserProfilePopup = ({ open, onClose, user }) => {
               sx={{ color: "#fff", borderColor: "#777" }}
             >
               {isFollowing ? "팔로우 취소" : "팔로우"}
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={handleBlockToggle}
+              sx={{ borderColor: "#f44336", color: "#f44336" }}
+            >
+              {isBlocked ? "차단 해제" : "차단"}
             </Button>
           </Stack>
         </Stack>
