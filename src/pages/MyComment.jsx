@@ -14,6 +14,7 @@ const MyComments = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   useEffect(() => {
+<<<<<<< HEAD
     if (!isLoggedIn) return;
 
     const fetchComments = async () => {
@@ -56,6 +57,16 @@ const MyComments = () => {
     );
   }
 
+=======
+    axios
+      .get("/comment/my")
+      .then((res) => setComments(res.data))
+      .catch((err) => console.error("댓글 목록 조회 실패", err));
+  }, []);
+  useEffect(() => {
+    console.log(comments);
+  });
+>>>>>>> origin/dev
   return (
     <div className="mypage-container">
       <div className="mypage-content">

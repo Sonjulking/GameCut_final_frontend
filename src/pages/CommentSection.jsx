@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import Cookie from "js-cookie";
 import axiosInstance from "../lib/axiosInstance";
 
 const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
@@ -86,17 +87,7 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
       return;
     }
     try {
-      const token = localStorage.getItem("token");
-      const axiosConfig = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/comment`,
-        inputComment,
-        axiosConfig
-      );
+      const response = await axiosInstance.post(`/comment`, inputComment);
       setComments([...comments, response.data]);
       setInputComment({ boardNo, commentContent: "" });
     } catch (error) {
@@ -115,18 +106,16 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
     }
 
     try {
-      const token = localStorage.getItem("token");
+      const token = Cookie.get("accessToken");
       const axiosConfig = {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       };
 
-      const response = await axiosInstance.put(
-        `${import.meta.env.VITE_API_URL}/comment/${commentNo}`,
-        { commentContent: newContent },
-        axiosConfig
-      );
+      const response = await axiosInstance.put(`/comment/${commentNo}`, {
+        commentContent: newContent,
+      });
 
       // 성공 시 댓글 목록 업데이트
       const updatedComments = comments.map((comment) =>
@@ -159,7 +148,7 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
     }
 
     try {
-      const token = localStorage.getItem("token");
+      const token = Cookie.get("accessToken");
       const axiosConfig = {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -187,11 +176,7 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
 
       console.log("대댓글 요청 데이터:", requestData);
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/comment`,
-        requestData,
-        axiosConfig
-      );
+      const response = await axiosInstance.post(`/comment`, requestData);
 
       setComments([...comments, response.data]);
 
@@ -232,9 +217,7 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
   const deleteComment = async (commentNo) => {
     if (window.confirm("댓글을 정말 삭제하시겠습니까?")) {
       try {
-        await axiosInstance.delete(
-          `${import.meta.env.VITE_API_URL}/comment/${commentNo}`
-        );
+        await axiosInstance.delete(`/comment/${commentNo}`);
         alert("댓글이 삭제되었습니다.");
 
         // 🔥 부모 컴포넌트의 새로고침 함수 호출
@@ -252,9 +235,7 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
   // 댓글 목록 새로고침 함수
   const refreshComments = async () => {
     try {
-      const response = await axiosInstance.get(
-        `${import.meta.env.VITE_API_URL}/comment/board/${boardNo}`
-      );
+      const response = await axiosInstance.get(`/comment/board/${boardNo}`);
       setComments(response.data);
     } catch (error) {
       console.error("댓글 목록 새로고침 실패:", error);
