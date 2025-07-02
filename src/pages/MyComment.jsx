@@ -48,7 +48,6 @@ const MyComments = () => {
       <div className="mypage-container">
         <div className="mypage-content">
           <div className="content-wrapper">
-            <MyPageSidebar />
             <div className="mypage-user-section">
               <div className="board-container">
                 <p className="error-text">로그인이 필요합니다.</p>
@@ -64,7 +63,6 @@ const MyComments = () => {
     <div className="mypage-container">
       <div className="mypage-content">
         <div className="content-wrapper">
-          <MyPageSidebar />
           <div className="mypage-user-section">
             <div className="board-container">
               <div className="board-header">
@@ -122,6 +120,7 @@ const MyComments = () => {
               </div>
             </div>
           </div>
+          <MyPageSidebar />
         </div>
       </div>
     </div>
