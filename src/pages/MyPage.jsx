@@ -56,8 +56,6 @@ const MyPage = () => {
     <div className="mypage-container">
       <div className="mypage-content">
         <div className="content-wrapper">
-          <MyPageSidebar />
-
           <div className="mypage-user-section">
             <h2 className="mypage-section-title">내 정보</h2>
 
@@ -111,6 +109,7 @@ const MyPage = () => {
               </button>
             </div>
           </div>
+          <MyPageSidebar />
         </div>
       </div>
     </div>
