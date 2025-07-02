@@ -11,7 +11,8 @@ import {
 import {Editor} from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import "../../styles/toast-editor-dark.css";
-import axios from "axios"; // 이미지 업로드에 필요
+import axios from "axios";
+import axiosInstance from "../../lib/axiosInstance.js"; // 이미지 업로드에 필요
 
 const FormInputGroup = ({form, handleChange, isEdit}) => {
     const editorRef = useRef(null);
@@ -86,10 +87,15 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
         }
     }, [form.boardTypeNo]);
 
+    // ① 에디터 초기화용 플래그
+    const initializedRef = useRef(false);
+
     useEffect(() => {
         if (!editorRef.current) return;
+        if (initializedRef.current) return; // ← 이렇게 써야 함
 
         if (!isEdit) {
+            initializedRef.current = true;
             handleChange({
                 target: {name: "boardContent", value: ""},
             });
@@ -116,25 +122,25 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
 
     }, [form.boardTypeNo, isEdit, form.boardContent]);
 
+
+
     const aiTagRecommended = async () => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("로그인이 필요합니다.");
-            return;
-        }
 
         setTagLoading(true); // 버튼 비활성화
 
         try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/ai/tag`, null, {
-                params: {
-                    title: form.boardTitle,
-                    content: form.boardContent,
-                },
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            });
+            const res = await axiosInstance.post(
+                    "/ai/tag",
+                    {},
+                    {
+                        params: {
+                            title: form.boardTitle,
+                            content: form.boardContent,
+                        },
+
+                    }
+            );
+
 
             const recommendedTags = res.data;
 
@@ -165,6 +171,20 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
         const titleEmpty = !form.boardTitle || form.boardTitle.trim() === "";
         const contentEmpty = !form.boardContent || form.boardContent.trim() === "";
         return tagLoading || tagSuggested || titleEmpty || contentEmpty;
+    };
+
+    const lastContentRef = useRef("");
+    const handleEditorBlur = () => {
+        const instance = editorRef.current.getInstance();
+        const html = instance.getHTML();
+
+        // 이전 값과 다를 때만 handleChange 호출
+        if (html !== lastContentRef.current) {
+            lastContentRef.current = html;
+            handleChange({
+                target: { name: "boardContent", value: html },
+            });
+        }
     };
     return (
             <>
@@ -317,16 +337,12 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                 ) : (
                         <div style={{marginTop: "24px"}}>
                             <Editor
-                                    key={form.boardTypeNo}
                                     ref={editorRef}
                                     previewStyle="vertical"
                                     hideModeSwitch={true}
                                     initialEditType="wysiwyg"
                                     useCommandShortcut={true}
-                                    onChange={() => {
-                                        const data = editorRef.current.getInstance().getHTML();
-                                        handleChange({target: {name: "boardContent", value: data}});
-                                    }}
+                                    onBlur={handleEditorBlur}
                                     theme="dark"
                                     style={{
                                         backgroundColor: "#2b2b2b",
@@ -349,13 +365,11 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                                             formData.append("image", blob);
 
                                             try {
-                                                const res = await axios.post(
+                                                const res = await  axiosInstance.post(
                                                         `${import.meta.env.VITE_API_URL}/board/img`,
                                                         formData,
                                                         {
-                                                            headers: {
-                                                                Authorization: `Bearer ${token}`,
-                                                            },
+                                                            headers: { Authorization: `Bearer ${token}` },
                                                         }
                                                 );
                                                 const imageUrl = `${import.meta.env.VITE_API_URL}${res.data.imageUrl}`;
@@ -367,6 +381,7 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                                         },
                                     }}
                             />
+
 
                         </div>
                 )}
