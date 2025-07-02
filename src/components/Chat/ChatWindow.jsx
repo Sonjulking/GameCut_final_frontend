@@ -13,10 +13,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 import axiosInstance from "../../lib/axiosInstance.js";
+import Cookies from "js-cookie";
 
 const ChatWindow = ({onClose}) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+    const hasToken = !!Cookies.get("accessToken");
+
 
     const [messages, setMessages] = useState([
         {id: 1, text: "안녕하세요!", from: "other"},
@@ -24,13 +28,7 @@ const ChatWindow = ({onClose}) => {
     const [input, setInput] = useState("");
 
     const handleSend = async () => {
-
-        const token = localStorage.getItem("token");
-        const axiosConfig = {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        };
+        if (!hasToken) return;
         const trimmed = input.trim();
         if (!trimmed) return;
 
@@ -40,7 +38,7 @@ const ChatWindow = ({onClose}) => {
         setInput("");
 
         try {
-            const res = await axiosInstance.post(`/ai/chat`, {message: trimmed}, axiosConfig); // ✅ Spring Boot API로 요청
+            const res = await axiosInstance.post(`/ai/chat`, {message: trimmed}); // ✅ Spring Boot API로 요청
             const gptMsg = {
                 id: Date.now() + 1,
                 text: res.data,
@@ -101,10 +99,17 @@ const ChatWindow = ({onClose}) => {
                             borderTopRightRadius: isMobile ? 0 : "0.75rem",
                         }}
                 >
-                    <Typography variant="subtitle1" fontWeight="bold">
+                    <Typography
+                            variant="subtitle1"
+                            fontWeight="bold"
+                    >
                         AI 채팅
                     </Typography>
-                    <IconButton onClick={onClose} size="small" sx={{color: "white"}}>
+                    <IconButton
+                            onClick={onClose}
+                            size="small"
+                            sx={{color: "white"}}
+                    >
                         <CloseIcon/>
                     </IconButton>
                 </Box>
@@ -150,6 +155,11 @@ const ChatWindow = ({onClose}) => {
                 </Box>
 
                 <Divider sx={{borderColor: "#444"}}/>
+                {!hasToken && (
+                        <Typography sx={{p: 2, color: "grey.400", textAlign: "center"}}>
+                            채팅 기능은 로그인 후 이용할 수 있습니다.
+                        </Typography>
+                )}
 
                 {/* 입력창 */}
                 <Box
@@ -160,6 +170,7 @@ const ChatWindow = ({onClose}) => {
                         }}
                 >
                     <TextField
+                            disabled={!hasToken}
                             fullWidth
                             placeholder="메시지 입력..."
                             variant="outlined"

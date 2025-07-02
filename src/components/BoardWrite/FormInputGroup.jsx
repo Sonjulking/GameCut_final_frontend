@@ -1,6 +1,6 @@
+// 2025-07-02 생성됨
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
-    Autocomplete,
     FormControl,
     InputLabel,
     MenuItem,
@@ -11,7 +11,7 @@ import {
 import { Editor } from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import "../../styles/toast-editor-dark.css";
-import axiosInstance from "../../lib/axiosInstance.js"; // 이미지 업로드에 필요
+import axiosInstance from "../../lib/axiosInstance.js";
 
 const FormInputGroup = ({ form, handleChange, isEdit }) => {
     const editorRef = useRef(null);
@@ -31,11 +31,10 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
     // 태그 데이터를 부모 컴포넌트로 전달 (영상 게시판일 때만)
     useEffect(() => {
         if (form.boardTypeNo === 3) {
-            // 현재 form.videoTags와 tags가 다를 때만 업데이트
             const currentTags = Array.isArray(form.videoTags) ? form.videoTags : [];
-            const tagsChanged = currentTags.length !== tags.length || 
-                               !currentTags.every((tag, i) => tag === tags[i]);
-            
+            const tagsChanged = currentTags.length !== tags.length ||
+                    !currentTags.every((tag, i) => tag === tags[i]);
+
             if (tagsChanged) {
                 handleChange({
                     target: { name: "videoTags", value: tags },
@@ -44,12 +43,12 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
         }
     }, [tags, form.boardTypeNo]);
 
+    // form.videoTags에서 tags로 동기화
     useEffect(() => {
         if (Array.isArray(form.videoTags)) {
             const incoming = form.videoTags;
             const current = tags;
 
-            // 배열이 같으면 setTags 하지 않음
             const isSame = incoming.length === current.length &&
                     incoming.every((tag, i) => tag === current[i]);
 
@@ -64,7 +63,7 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
                 updateTags(parsed);
             }
         }
-    }, [form.videoTags, updateTags]); // tags 의존성 제거
+    }, [form.videoTags, updateTags]);
 
     const handleTagKeyDown = (e) => {
         if ((e.key === "Enter" || e.key === ",") && !e.nativeEvent.isComposing) {
@@ -77,7 +76,7 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
                 updateTags([formatted]);
             }
             setTagInput("");
-            e.target.value = "";  // 입력 DOM도 즉시 비워 줌
+            e.target.value = "";
         }
     };
 
@@ -85,22 +84,7 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
         setTags(tags.filter((tag) => tag !== tagToDelete));
     };
 
-    // 태그 데이터를 부모 컴포넌트로 전달 (영상 게시판일 때만)
-    useEffect(() => {
-        if (form.boardTypeNo === 3) {
-            // 현재 form.videoTags와 tags가 다를 때만 업데이트
-            const currentTags = Array.isArray(form.videoTags) ? form.videoTags : [];
-            const tagsChanged = currentTags.length !== tags.length || 
-                               !currentTags.every((tag, i) => tag === tags[i]);
-            
-            if (tagsChanged) {
-                handleChange({
-                    target: { name: "videoTags", value: tags },
-                });
-            }
-        }
-    }, [tags, form.boardTypeNo]);
-
+    // 게시판 타입 변경 시 초기화
     useEffect(() => {
         if (form.boardTypeNo === 3 && !isEdit) {
             handleChange({
@@ -114,7 +98,6 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
         const instance = editorRef.current.getInstance();
         const html = instance.getHTML();
 
-        // 부모 컴포넌트로 content 업데이트
         if (html !== form.boardContent) {
             handleChange({
                 target: { name: "boardContent", value: html },
@@ -122,61 +105,27 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
         }
     };
 
-    // 에디터 초기화를 위한 별도 useEffect
-    // 태그 데이터를 부모 컴포넌트로 전달 (영상 게시판일 때만)
-    useEffect(() => {
-        if (form.boardTypeNo === 3) {
-            // 현재 form.videoTags와 tags가 다를 때만 업데이트
-            const currentTags = Array.isArray(form.videoTags) ? form.videoTags : [];
-            const tagsChanged = currentTags.length !== tags.length || 
-                               !currentTags.every((tag, i) => tag === tags[i]);
-            
-            if (tagsChanged) {
-                handleChange({
-                    target: { name: "videoTags", value: tags },
-                });
-            }
-        }
-    }, [tags, form.boardTypeNo]);
-
+    // 에디터 초기화 (수정 모드)
     useEffect(() => {
         if (!editorRef.current || form.boardTypeNo === 3) return;
 
         const instance = editorRef.current.getInstance();
-        
+
         if (isEdit) {
-            // 수정 모드일 때만 form.boardContent가 변경되면 업데이트
             instance.setHTML(form.boardContent || "");
             instance.changeMode("wysiwyg", true);
         }
-    }, [isEdit, form.boardContent]); // 수정 모드에서만 boardContent 의존성 적용
+    }, [isEdit, form.boardContent]);
 
-    // 게시판 타입 변경을 위한 별도 useEffect  
-    // 태그 데이터를 부모 컴포넌트로 전달 (영상 게시판일 때만)
-    useEffect(() => {
-        if (form.boardTypeNo === 3) {
-            // 현재 form.videoTags와 tags가 다를 때만 업데이트
-            const currentTags = Array.isArray(form.videoTags) ? form.videoTags : [];
-            const tagsChanged = currentTags.length !== tags.length || 
-                               !currentTags.every((tag, i) => tag === tags[i]);
-            
-            if (tagsChanged) {
-                handleChange({
-                    target: { name: "videoTags", value: tags },
-                });
-            }
-        }
-    }, [tags, form.boardTypeNo]);
-
+    // 게시판 타입 변경 시 에디터 초기화 (새 글 작성 모드)
     useEffect(() => {
         if (!editorRef.current || form.boardTypeNo === 3) return;
 
         if (!isEdit) {
-            // 새 글 작성 시 게시판 타입이 변경되면 초기화
             handleChange({
-                target: {name: "boardContent", value: ""},
+                target: { name: "boardContent", value: "" },
             });
-            
+
             requestAnimationFrame(() => {
                 if (editorRef.current) {
                     const instance = editorRef.current.getInstance();
@@ -185,7 +134,7 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
                 }
             });
         }
-    }, [form.boardTypeNo]); // 게시판 타입 변경시만
+    }, [form.boardTypeNo]);
 
     const aiTagRecommended = async () => {
         setTagLoading(true);
@@ -217,30 +166,15 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
             console.error("태그 추천 실패:", err);
             alert("태그 추천 요청에 실패했습니다.");
         } finally {
-            setTagLoading(false); // 완료 후 재활성화
+            setTagLoading(false);
         }
     };
 
-    // 태그 데이터를 부모 컴포넌트로 전달 (영상 게시판일 때만)
+    // 제목/내용 변경 시 태그 관련 상태 초기화
     useEffect(() => {
-        if (form.boardTypeNo === 3) {
-            // 현재 form.videoTags와 tags가 다를 때만 업데이트
-            const currentTags = Array.isArray(form.videoTags) ? form.videoTags : [];
-            const tagsChanged = currentTags.length !== tags.length || 
-                               !currentTags.every((tag, i) => tag === tags[i]);
-            
-            if (tagsChanged) {
-                handleChange({
-                    target: { name: "videoTags", value: tags },
-                });
-            }
-        }
-    }, [tags, form.boardTypeNo]);
-
-    useEffect(() => {
-        setTags([]);        // 태그 초기화
-        setTagLoading(false); // 버튼 다시 활성화
-        setTagSuggested(false); // 버튼 다시활성화
+        setTags([]);
+        setTagLoading(false);
+        setTagSuggested(false);
     }, [form.boardTitle, form.boardContent]);
 
     const isTagButtonDisabled = () => {
@@ -304,8 +238,9 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
                                     value={form.boardContent?.trim() === "<p><br></p>" ? "" : form.boardContent}
                                     onChange={handleChange}
                                     required
-                                    InputLabelProps={{ style: { color: "#ccc" } }}
+                                    fullWidth
                                     sx={{
+                                        mb: 2,
                                         textarea: { color: "#fff" },
                                         "& .MuiOutlinedInput-root": {
                                             "& fieldset": { borderColor: "#555" },
@@ -313,6 +248,7 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
                                             "&.Mui-focused fieldset": { borderColor: "#1976d2" },
                                         },
                                     }}
+                                    InputLabelProps={{ style: { color: "#ccc" } }}
                             />
                             <Box sx={{ display: "flex", gap: 1, alignItems: "center", mt: 2 }}>
                                 <TextField
@@ -382,7 +318,7 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
                                     hideModeSwitch={true}
                                     initialEditType="wysiwyg"
                                     useCommandShortcut={true}
-                                    onBlur={handleEditorBlur} // 에디터 내용 변경 후 onBlur 이벤트로 부모로 전달
+                                    onBlur={handleEditorBlur}
                                     theme="dark"
                                     style={{
                                         backgroundColor: "#2b2b2b",
@@ -391,7 +327,7 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
                                         border: "1px solid #555",
                                         padding: "8px",
                                     }}
-                                    initialValue={form.boardContent || ""} // 초기 내용 설정
+                                    initialValue={form.boardContent || ""}
                                     toolbarItems={[
                                         ["heading", "bold", "italic", "strike"],
                                         ["hr", "quote"],
@@ -401,17 +337,14 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
                                     ]}
                                     hooks={{
                                         addImageBlobHook: async (blob, callback) => {
-                                            const token = localStorage.getItem("token");
                                             const formData = new FormData();
                                             formData.append("image", blob);
 
                                             try {
                                                 const res = await axiosInstance.post(
-                                                        `${import.meta.env.VITE_API_URL}/board/img`,
-                                                        formData,
-                                                        {
-                                                            headers: { Authorization: `Bearer ${token}` },
-                                                        }
+                                                        "/board/img", // baseURL이 설정되어 있으므로 상대 경로만 사용
+                                                        formData
+                                                        // Authorization 헤더는 인터셉터에서 자동 추가됨
                                                 );
                                                 const imageUrl = `${import.meta.env.VITE_API_URL}${res.data.imageUrl}`;
                                                 callback(imageUrl);
