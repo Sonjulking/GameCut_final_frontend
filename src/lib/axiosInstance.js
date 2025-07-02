@@ -5,7 +5,7 @@ import store from "../store/store";
 import { logout } from "../store/authSlice";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8081",
+  baseURL: `${import.meta.env.VITE_API_URL}`,
   withCredentials: true, // ⭐ 쿠키 자동 포함
 });
 
@@ -13,8 +13,12 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = Cookies.get("accessToken");
+    console.log(' 토큰 확인:', token); // 디버깅용
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log(' Authorization 헤더 설정:', config.headers.Authorization); // 디버깅용
+    } else {
+      console.log('토큰이 없음!'); // 디버깅용
     }
     return config;
   },

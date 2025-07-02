@@ -12,6 +12,7 @@ import {useTheme} from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
+import axiosInstance from "../../lib/axiosInstance.js";
 
 const ChatWindow = ({onClose}) => {
     const theme = useTheme();
@@ -39,7 +40,7 @@ const ChatWindow = ({onClose}) => {
         setInput("");
 
         try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/ai/chat`, {message: trimmed}, axiosConfig); // ✅ Spring Boot API로 요청
+            const res = await axiosInstance.post(`/ai/chat`, {message: trimmed}, axiosConfig); // ✅ Spring Boot API로 요청
             const gptMsg = {
                 id: Date.now() + 1,
                 text: res.data,

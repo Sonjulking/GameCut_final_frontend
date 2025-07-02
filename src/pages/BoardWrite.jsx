@@ -11,7 +11,7 @@ import {
 import FormInputGroup from "../components/BoardWrite/FormInputGroup.jsx";
 import VideoUploader from "../components/BoardWrite/VideoUploader";
 import PhotoUploader from "../components/BoardWrite/PhotoUploader";
-import axios from "axios";
+import axiosInstance from "../lib/axiosInstance.js";
 import { useNavigate, useParams } from "react-router-dom";
 
 const BoardWrite = ({ isEdit = false }) => {
@@ -23,8 +23,8 @@ const BoardWrite = ({ isEdit = false }) => {
   const [existingVideoNo, setExistingVideoNo] = useState({});
   useEffect(() => {
     if (isEdit && boardNo) {
-      axios
-        .get(`${import.meta.env.VITE_API_URL}/board/${boardNo}`)
+      axiosInstance
+        .get(`/board/${boardNo}`)
         .then((res) => {
           const data = res.data;
 
@@ -71,6 +71,8 @@ const BoardWrite = ({ isEdit = false }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
+    console.log('🔄 handleChange 호출:', { name, value }); // 디버깅 로그 추가
 
     if (name === "videoTags" && Array.isArray(value)) {
       setForm((prev) => ({ ...prev, videoTags: value })); // 배열 그대로
@@ -81,9 +83,36 @@ const BoardWrite = ({ isEdit = false }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // 디버깅: 전송되는 데이터 확인
+    console.log('🔍 전송할 폼 데이터:', form);
+    console.log('🔍 boardContent:', form.boardContent);
+    console.log('🔍 boardContent 타입:', typeof form.boardContent);
+    console.log('🔍 boardContent 길이:', form.boardContent?.length);
+    
+    // boardContent 검증 및 기본값 설정
+    let contentToSend = form.boardContent;
+    
+    // 빈 값이거나 Toast UI Editor의 기본 빈 값인 경우 처리
+    if (!contentToSend || 
+        contentToSend.trim() === '' || 
+        contentToSend.trim() === '<p><br></p>' ||
+        contentToSend.trim() === '<p></p>') {
+      
+      if (form.boardTypeNo === 3) {
+        // 영상 게시판은 간단한 텍스트만 허용
+        contentToSend = form.boardContent || '내용 없음';
+      } else {
+        // 일반 게시판은 HTML 기본값
+        contentToSend = '<p>내용 없음</p>';
+      }
+      
+      console.log('⚠️ 빈 content 감지, 기본값으로 설정:', contentToSend);
+    }
+    
     const formData = new FormData();
     formData.append("boardTitle", form.boardTitle);
-    formData.append("boardContent", form.boardContent);
+    formData.append("boardContent", contentToSend); // 검증된 content 사용
     formData.append("boardTypeNo", form.boardTypeNo);
     formData.append("userNo", form.userNo);
 
@@ -107,36 +136,32 @@ const BoardWrite = ({ isEdit = false }) => {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      const axiosConfig = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
+      // 임시 디버깅: 기존 방식도 시도해보기
+      const localStorage_token = localStorage.getItem("token");
+      console.log('🔍 localStorage 토큰:', localStorage_token);
+      
       if (isEdit) {
-        await axios.put(
-          `${import.meta.env.VITE_API_URL}/board/${boardNo}`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-              "Content-Type": "multipart/form-data",
-            },
-            //업로드 진행률을 추적하는 콜백함수
-            onUploadProgress: (e) => {
-              //퍼센트로 변환
-              const percent = Math.round((e.loaded * 100) / e.total);
-              //계산된 퍼센트를 state에 저장
-              setUploadProgress(percent);
-            },
-          }
-        );
+        await axiosInstance.put(`/board/${boardNo}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            // 임시로 기존 방식도 추가
+            ...(localStorage_token && { Authorization: `Bearer ${localStorage_token}` })
+          },
+          //업로드 진행률을 추적하는 콜백함수
+          onUploadProgress: (e) => {
+            //퍼센트로 변환
+            const percent = Math.round((e.loaded * 100) / e.total);
+            //계산된 퍼센트를 state에 저장
+            setUploadProgress(percent);
+          },
+        });
         alert("게시글이 수정되었습니다.");
       } else {
-        await axios.post(`${import.meta.env.VITE_API_URL}/board`, formData, {
+        await axiosInstance.post(`/board`, formData, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
             "Content-Type": "multipart/form-data",
+            // 임시로 기존 방식도 추가
+            ...(localStorage_token && { Authorization: `Bearer ${localStorage_token}` })
           },
           //업로드 진행률을 추적하는 콜백함수
           onUploadProgress: (e) => {

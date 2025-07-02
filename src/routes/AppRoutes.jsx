@@ -26,6 +26,8 @@ import MyComment from "../pages/MyComment.jsx";
 import ChangePassword from "../pages/ChangePassword.jsx";
 import MyPointHistory from "../pages/MyPointHistory.jsx";
 import UpdateMyPage from "../pages/UpdateMyPage.jsx";
+import MyMessage from "../pages/MyMessages"; // 🔥 추가
+import MyFollow from "../pages/MyFollow.jsx";
 
 const router = createBrowserRouter([
   {
@@ -42,7 +44,7 @@ const router = createBrowserRouter([
       { path: "board/detail/:boardNo", element: <BoardDetail /> },
 
       // 테스트 페이지 (동기 import로 변경됨)
-      { path: "test", element: <Test /> },
+      { path: "test", element: <MyMessage /> },
 
       // 마이페이지
       { path: "mypage/info", element: <MyPage /> },
@@ -51,6 +53,8 @@ const router = createBrowserRouter([
       { path: "mypage/changePassword", element: <ChangePassword /> },
       { path: "/mypage/point", element: <MyPointHistory /> },
       { path: "/mypage/update", element: <UpdateMyPage /> },
+      { path: "mypage/message", element: <MyMessage /> },
+      { path: "mypage/follow", element: <MyFollow /> },
 
       // 로그인 관련
       { path: "findPassword", element: <FindPassword /> },
