@@ -4,6 +4,7 @@ import Cookie from "js-cookie";
 import axiosInstance from "../lib/axiosInstance";
 import { useEffect } from "react";
 import UserProfilePopup from "../pages/UserProfilePopup";
+import { useSelector } from "react-redux";
 
 const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
   const [showReplies, setShowReplies] = useState({});
@@ -14,6 +15,8 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
   // 수정 모드 상태 관리
   const [editMode, setEditMode] = useState({}); // 어떤 댓글이 수정 모드인지
   const [editContent, setEditContent] = useState({}); // 수정 중인 댓글 내용
+
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   // 댓글 관련 상태
   const [inputComment, setInputComment] = useState({
@@ -102,6 +105,10 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
   const handleAddComment = async () => {
     if (!inputComment.commentContent.trim()) {
       alert("댓글 내용을 입력해주세요.");
+      return;
+    }
+    if (!isLoggedIn) {
+      alert("로그인 후 이용해주세요");
       return;
     }
     try {
@@ -253,7 +260,6 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
   const handleCommentLike = async (commentNo) => {
     try {
       const isCurrentlyLiked = commentLikeStates[commentNo] || false;
-
       // API 호출 - 좋아요 상태에 따라 다른 엔드포인트 호출
       if (isCurrentlyLiked) {
         await axiosInstance.post(`/comment/unlike/${commentNo}`);
