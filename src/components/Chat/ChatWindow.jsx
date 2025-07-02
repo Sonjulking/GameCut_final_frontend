@@ -14,12 +14,14 @@ import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 import axiosInstance from "../../lib/axiosInstance.js";
 import Cookies from "js-cookie";
+import {useSelector} from "react-redux";
 
 const ChatWindow = ({onClose}) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-    const hasToken = !!Cookies.get("accessToken");
+    //const hasToken = !!Cookies.get("accessToken");
+    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
 
     const [messages, setMessages] = useState([
@@ -28,7 +30,7 @@ const ChatWindow = ({onClose}) => {
     const [input, setInput] = useState("");
 
     const handleSend = async () => {
-        if (!hasToken) return;
+        if (!isLoggedIn) return;
         const trimmed = input.trim();
         if (!trimmed) return;
 
@@ -155,7 +157,7 @@ const ChatWindow = ({onClose}) => {
                 </Box>
 
                 <Divider sx={{borderColor: "#444"}}/>
-                {!hasToken && (
+                {!isLoggedIn && (
                         <Typography sx={{p: 2, color: "grey.400", textAlign: "center"}}>
                             채팅 기능은 로그인 후 이용할 수 있습니다.
                         </Typography>
@@ -170,7 +172,7 @@ const ChatWindow = ({onClose}) => {
                         }}
                 >
                     <TextField
-                            disabled={!hasToken}
+                            disabled={!isLoggedIn}
                             fullWidth
                             placeholder="메시지 입력..."
                             variant="outlined"
