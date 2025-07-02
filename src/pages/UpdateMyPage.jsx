@@ -1,4 +1,3 @@
-// src/pages/UpdateMyPage.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../lib/axiosInstance";
@@ -6,7 +5,6 @@ import axiosInstance from "../lib/axiosInstance";
 const UpdateMyPage = () => {
   const navigate = useNavigate();
 
-  // userId와 userNickname 두 가지만 관리
   const [form, setForm] = useState({
     userId: "",
     userNickname: "",
