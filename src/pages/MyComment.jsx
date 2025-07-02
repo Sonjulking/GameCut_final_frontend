@@ -14,7 +14,6 @@ const MyComments = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   useEffect(() => {
-<<<<<<< HEAD
     if (!isLoggedIn) return;
 
     const fetchComments = async () => {
@@ -39,6 +38,10 @@ const MyComments = () => {
     fetchComments();
   }, [isLoggedIn, navigate]);
 
+  useEffect(() => {
+    console.log(comments);
+  }, [comments]);
+
   // 로그인하지 않은 경우
   if (!isLoggedIn) {
     return (
@@ -57,16 +60,6 @@ const MyComments = () => {
     );
   }
 
-=======
-    axios
-      .get("/comment/my")
-      .then((res) => setComments(res.data))
-      .catch((err) => console.error("댓글 목록 조회 실패", err));
-  }, []);
-  useEffect(() => {
-    console.log(comments);
-  });
->>>>>>> origin/dev
   return (
     <div className="mypage-container">
       <div className="mypage-content">
