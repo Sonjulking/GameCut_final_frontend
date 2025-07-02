@@ -5,7 +5,7 @@ import store from "../store/store";
 import { logout } from "../store/authSlice";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8081",
+  baseURL: `${import.meta.env.VITE_API_URL}`,
   withCredentials: true, // ⭐ 쿠키 자동 포함
 });
 
