@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import "../styles/MyBoard.css";
-import axiosInstance from "../lib/axiosInstance";
+import { useSelector } from "react-redux";
 
 const MyBoard = () => {
   const navigate = useNavigate();
@@ -11,8 +11,9 @@ const MyBoard = () => {
   const [filteredList, setFilteredList] = useState([]);
   const [viewMode, setViewMode] = useState("card");
   const [selectedType, setSelectedType] = useState("전체");
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
+
+  const user = useSelector((state) => state.auth.user);
+  console.log(user);
 
   // 체크박스 관련 상태 추가
   const [selectedBoards, setSelectedBoards] = useState(new Set());
@@ -116,43 +117,23 @@ const MyBoard = () => {
     }
   };
 
-  // 사용자 정보 로드
-  const loadUserInfo = async () => {
-    try {
-      const response = await axiosInstance.get("/user/myinfo");
-      console.log("user : ", response.data);
-      setUser(response.data);
-      return response.data;
-    } catch (error) {
-      console.error("사용자 정보 로드 실패:", error);
-      if (error.response?.status === 401) {
-        alert("로그인이 필요합니다.");
-        navigate("/login");
-      }
-      return null;
-    }
-  };
-
   // 내 게시글 로드
-  const loadMyBoards = async (userInfo) => {
+  const loadMyBoards = async () => {
     try {
-      setLoading(true);
-
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/board/listAll`
       );
+      console.log("사용자 : ", user);
 
       // 현재 사용자가 작성한 게시글만 필터링
       const userBoards = response.data.content.filter(
-        (board) => board.user.userNo == localStorage.getItem("userNo")
+        (board) => board.user.userNo == user.userNo
       );
       setMyBoards(userBoards);
       setFilteredList(userBoards);
     } catch (error) {
       console.error("내 게시글 로드 실패:", error);
       alert("게시글을 불러오는 중 오류가 발생했습니다.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -205,16 +186,6 @@ const MyBoard = () => {
     }
   };
 
-  // 날짜 포맷팅 함수
-  const formatDate = (dateString) => {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString("ko-KR");
-    } catch (error) {
-      return dateString;
-    }
-  };
-
   // 썸네일 이미지 URL 처리
   const getThumbnailUrl = (board) => {
     if (
@@ -231,10 +202,7 @@ const MyBoard = () => {
 
   useEffect(() => {
     const initializeData = async () => {
-      const userInfo = await loadUserInfo();
-      if (userInfo) {
-        await loadMyBoards(userInfo);
-      }
+      await loadMyBoards();
     };
 
     initializeData();
@@ -318,7 +286,7 @@ const MyBoard = () => {
                   </td>
                   <td>{board.boardCount}</td>
                   <td>{board.boardLike}</td>
-                  <td>{formatDate(board.boardCreateDate)}</td>
+                  <td>{new Date(board.boardCreateDate).toLocaleString()}</td>
                   <td>
                     <div className="action-buttons">
                       <button
@@ -404,7 +372,7 @@ const MyBoard = () => {
                     </span>
                   </div>
                   <p className="board-date">
-                    {formatDate(board.boardCreateDate)}
+                    {new Date(board.boardCreateDate).toLocaleString()}
                   </p>
                 </div>
               </div>
@@ -425,26 +393,10 @@ const MyBoard = () => {
     </div>
   );
 
-  if (loading) {
-    return (
-      <div className="mypage-container">
-        <div className="mypage-content">
-          <div className="loading-spinner">
-            <div className="spinner"></div>
-            <p>게시글을 불러오는 중...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="mypage-container">
       <div className="mypage-content">
         <div className="content-wrapper">
-          {/* 재사용 사이드바 컴포넌트 */}
-          <MyPageSidebar />
-
           {/* 메인 내용 영역 */}
           <div className="mypage-user-section">
             <div className="board-container">
@@ -553,6 +505,8 @@ const MyBoard = () => {
               </div>
             </div>
           </div>
+          {/* 재사용 사이드바 컴포넌트 */}
+          <MyPageSidebar />
         </div>
       </div>
     </div>

@@ -17,7 +17,6 @@ import MyBoard from "../pages/MyBoard.jsx";
 import Settings from "../pages/Settings.jsx";
 import RankingsPage from "../pages/RankingsPage.jsx";
 import Test from "../pages/Test.jsx"; // ✅ lazy 대신 일반 import
-import WebGame from "../pages/WebGame.jsx";
 // 웹게임 관련 컴포넌트 분리
 import WebGameSelector from "../pages/WebGameSelector.jsx";
 import TournamentGame from "../pages/TournamentGame.jsx";
@@ -26,6 +25,12 @@ import TournamentRanking from "../pages/TournamentRanking.jsx";
 import MyComment from "../pages/MyComment.jsx";
 import ChangePassword from "../pages/ChangePassword.jsx";
 import MyPointHistory from "../pages/MyPointHistory.jsx";
+import UpdateMyPage from "../pages/UpdateMyPage.jsx";
+import MyMessage from "../pages/MyMessages"; // 🔥 추가
+import MyFollow from "../pages/MyFollow.jsx";
+//관리자페이지
+import AdminBoard from "../pages/AdminBoard.jsx";
+import ReportList from "../pages/ReporitList.jsx";
 
 const router = createBrowserRouter([
   {
@@ -42,14 +47,17 @@ const router = createBrowserRouter([
       { path: "board/detail/:boardNo", element: <BoardDetail /> },
 
       // 테스트 페이지 (동기 import로 변경됨)
-      { path: "test", element: <Test /> },
+      { path: "test", element: <MyMessage /> },
 
       // 마이페이지
       { path: "mypage/info", element: <MyPage /> },
       { path: "mypage/board", element: <MyBoard /> },
-      { path: "mypage/mycomment", element: <MyComment /> },
+      { path: "mypage/comment", element: <MyComment /> },
       { path: "mypage/changePassword", element: <ChangePassword /> },
       { path: "/mypage/point", element: <MyPointHistory /> },
+      { path: "/mypage/update", element: <UpdateMyPage /> },
+      { path: "mypage/message", element: <MyMessage /> },
+      { path: "mypage/follow", element: <MyFollow /> },
 
       // 로그인 관련
       { path: "findPassword", element: <FindPassword /> },
@@ -68,6 +76,10 @@ const router = createBrowserRouter([
       { path: "webgame/tournament", element: <TournamentGame /> },
       { path: "webgame/guess-rank", element: <GuessTheRankGame /> },
       { path: "webgame/tournament/ranking", element: <TournamentRanking /> },
+
+      //관리자페이지
+      { path: "admin/", element: <AdminBoard /> },
+      { path: "admin/reportlist", element: <ReportList /> },
 
       // 404
       { path: "*", element: <ErrorPage /> },

@@ -4,8 +4,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import "../styles/boardList.css";
 import { Button, Stack } from "@mui/material";
 import axiosInstance from "../lib/axiosInstance";
+import {useSelector} from "react-redux";
 
 const BoardList = () => {
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const [searchParams, setSearchParams] = useSearchParams();
   const [totalPages, setTotalPages] = useState(1); // 먼저 선언
   const [totalElements, setTotalElements] = useState(1); // 먼저 선언
@@ -133,6 +135,7 @@ const BoardList = () => {
           <th>조회수</th>
           <th>좋아요</th>
           <th>작성일</th>
+          <th width="120">관리</th>
         </tr>
       </thead>
       <tbody>
@@ -161,13 +164,23 @@ const BoardList = () => {
                 <td>{board.user.userNickname}</td>
                 <td>{board.boardCount}</td>
                 <td>{board.boardLike}</td>
-                <td>{board.boardCreateDate}</td>
+                <td>{new Date(board.boardCreateDate).toLocaleString()}</td>
+                <td>
+                  {false ? (
+                    <div className="action-buttons">
+                      <button className="edit-btn">수정</button>
+                      <button className="delete-btn">삭제</button>
+                    </div>
+                  ) : (
+                    <span className="no-action">-</span> // 본인 게시글이 아닐 때
+                  )}
+                </td>
               </tr>
             );
           })
         ) : (
           <tr className="mypage_empty_row">
-            <td colSpan="7">등록된 게시글이 없습니다.</td>
+            <td colSpan="8">등록된 게시글이 없습니다.</td>
           </tr>
         )}
       </tbody>
@@ -236,7 +249,9 @@ const BoardList = () => {
                       좋아요 {board.boardLike}
                     </span>
                   </div>
-                  <p className="board-date">{board.boardCreateDate}</p>
+                  <p className="board-date">
+                    {new Date(board.boardCreateDate).toLocaleString()}
+                  </p>
                 </div>
               </div>
             </div>
@@ -297,7 +312,7 @@ const BoardList = () => {
         </div>
         <button
           className="write-btn"
-          onClick={() => navigate("/board/write")}
+          onClick={() => isLoggedIn ? navigate("/board/write") : alert("로그인 후 작성가능합니다.")}
           title="새 글 작성"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">

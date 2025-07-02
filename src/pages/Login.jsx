@@ -4,6 +4,7 @@ import axios from "../lib/axiosInstance";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../store/authSlice";
+import { JwtUtils } from "../util/JwtUtil";
 import Cookies from "js-cookie";
 
 const NAVER_CLIENT_ID = "CQbPXwMaS8p6gHpnTpsS";
@@ -26,21 +27,37 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post("/user/login", { userId, pwd });
+      const response = await axios.post(
+        "/user/login",
+        { userId, pwd },
+        {
+          withCredentials: true,
+        }
+      );
 
       if (response.data.success) {
-        const { token, userId, userNickname } = response.data;
+        const accessToken = Cookies.get("accessToken");
 
-        // ✅ 쿠키에 저장
-        Cookies.set("accessToken", token, {
-          path: "/",
-          sameSite: "Lax",
-        });
-
-        dispatch(loginSuccess({ userId, nickname: userNickname }));
-
-        alert(`${userNickname}님 환영합니다!`);
-        navigate("/");
+        if (accessToken) {
+          // ✅ JWT에서 사용자 정보 추출
+          const userInfo = JwtUtils.decode(accessToken);
+          console.log(userInfo);
+          if (userInfo) {
+            // ✅ Redux store에 사용자 정보 저장
+            dispatch(
+              loginSuccess({
+                userNo: userInfo.userNo,
+                userId: userInfo.userId,
+                userName: userInfo.userName,
+                userNickname: userInfo.userNickname,
+                userEmail: userInfo.userEmail,
+                role: userInfo.role,
+              })
+            );
+            alert(`${userInfo.userNickname}님 환영합니다!`);
+            navigate("/");
+          }
+        }
       } else {
         setError(response.data.message || "아이디 또는 비밀번호가 틀렸습니다.");
       }
@@ -60,21 +77,38 @@ const Login = () => {
       }
 
       try {
-        const res = await axios.post("/user/oauth/google", { accessToken });
+        // ✅ withCredentials 추가
+        const res = await axios.post(
+          "/user/oauth/google",
+          { accessToken },
+          {
+            withCredentials: true,
+          }
+        );
 
         if (res.data.success) {
-          const { token, userId, userNickname } = res.data;
+          // ✅ 쿠키에서 토큰 읽어서 JWT 디코딩
+          const token = Cookies.get("accessToken");
 
-          // ✅ 쿠키 저장
-          Cookies.set("accessToken", token, {
-            path: "/",
-            sameSite: "Lax",
-          });
+          if (token) {
+            const userInfo = JwtUtils.decode(token);
 
-          dispatch(loginSuccess({ userId, nickname: userNickname }));
+            if (userInfo) {
+              dispatch(
+                loginSuccess({
+                  userNo: userInfo.userNo,
+                  userId: userInfo.userId,
+                  userName: userInfo.userName,
+                  userNickname: userInfo.userNickname,
+                  userEmail: userInfo.userEmail,
+                  role: userInfo.role,
+                })
+              );
 
-          alert(`${userNickname}님 환영합니다!`);
-          navigate("/");
+              alert(`${userInfo.userNickname}님 환영합니다!`);
+              navigate("/");
+            }
+          }
         } else {
           setError("구글 로그인 실패");
         }
@@ -151,11 +185,14 @@ const Login = () => {
 
 const styles = {
   container: {
-    height: "100vh",
+    minHeight: "calc(100vh - 120px)", // 헤더/푸터 공간 제외
     background: "#141414",
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "flex-start", // 상단 정렬
+    paddingTop: "10vh", // 상단에서 10% 지점에 배치
+    paddingBottom: "20px",
+    boxSizing: "border-box",
   },
   card: {
     background: "#1e1e1e",
@@ -227,5 +264,6 @@ const styles = {
     textDecoration: "underline",
   },
 };
+
 
 export default Login;
