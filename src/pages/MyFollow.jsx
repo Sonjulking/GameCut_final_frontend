@@ -48,7 +48,6 @@ const MyFollow = () => {
     <div className="mypage-container">
       <div className="mypage-content">
         <div className="content-wrapper">
-          <MyPageSidebar />
           <div className="mypage-user-section">
             <div className="board-container">
               <div className="board-header">
@@ -133,6 +132,7 @@ const MyFollow = () => {
               />
             </div>
           </div>
+          <MyPageSidebar />
         </div>
       </div>
     </div>
