@@ -8,9 +8,11 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import CloseIcon from "@mui/icons-material/Close";
 import {formatRelativeTimeKo} from "../../util/timeFormatUtil.js";
+import {useSelector} from "react-redux";
+import axiosInstance from "../../lib/axiosInstance.js";
 
 const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComment}) => {
-    const token = Cookies.get("accessToken");
+    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
     const [inputComment, setInputComment] = useState({
         boardNo: boardNo,
@@ -26,13 +28,17 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
     }, [comments]);
 
     const handleAddComment = () => {
+        if (!isLoggedIn) {
+            alert("로그인 후 댓글 작성이 가능합니다.");
+            return;
+        }
 
-        const axiosConfig = {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        };
-        axios.post(`${import.meta.env.VITE_API_URL}/comment`, inputComment, axiosConfig)
+        if (!inputComment.commentContent.trim()) {
+            alert("댓글 내용을 입력해주세요.");
+            return;
+        }
+
+        axiosInstance.post(`/comment`, inputComment)
                 .then(res => {
                     onAddComment(res.data); // 댓글 추가!
                     setInputComment({boardNo, commentContent: ""}); // 입력창 초기화
@@ -116,7 +122,7 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
                 <div className="comment-input">
                     <input
                             type="text"
-                            placeholder={token ? "댓글 작성" : "로그인 후 댓글이 작성가능합니다."}
+                            placeholder={isLoggedIn ? "댓글 작성" : "로그인 후 댓글이 작성가능합니다."}
                             className="comment-input-field"
                             value={inputComment.commentContent}
                             onChange={(e) => setInputComment({
@@ -124,18 +130,23 @@ const CommentSection = ({boardNo, isOpen, comments, videoId, onClose, onAddComme
                                 commentContent: e.target.value,
                             })}
                             onKeyPress={handleKeyPress}
-                            disabled={!token}
+                            disabled={!isLoggedIn}
                     />
                     {/*<button className="comment-submit-button">⮝</button>*/}
                     <Button
                             variant="outlined"
                             onClick={handleAddComment}
+                            disabled={!isLoggedIn || !inputComment.commentContent.trim()}
                             sx={{
                                 minWidth: "40px",
                                 height: "20px",
                                 padding: 0,
                                 color: "#90caf9",
                                 borderColor: "#90caf9",
+                                "&.Mui-disabled": {
+                                    color: "#666",
+                                    borderColor: "#666",
+                                },
                             }}
                     >
                         <ArrowUpwardIcon fontSize="medium"/>
