@@ -1,4 +1,3 @@
-// 2025-07-02 생성됨
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../lib/axiosInstance";

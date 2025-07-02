@@ -1,4 +1,3 @@
-// 2025-07-02 생성됨
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
     FormControl,

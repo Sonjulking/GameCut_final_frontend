@@ -1,4 +1,3 @@
-// 2025-07-02 생성됨
 import React, {useEffect, useState, useRef, useCallback} from "react";
 import VideoItem from "./VideoItem.jsx";
 import axios from "axios";
