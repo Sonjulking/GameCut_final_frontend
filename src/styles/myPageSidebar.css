@@ -47,6 +47,21 @@
   overflow: hidden;
 }
 
+/* 👇 이 부분을 반응형 위쪽에 새로 추가해주세요 */
+.admin-button {
+  background-color: #d32f2f;
+  color: #ffffff;
+  font-weight: bold;
+  border: 1px solid #b71c1c;
+  box-shadow: 0 0 8px rgba(211, 47, 47, 0.6);
+  transition: all 0.3s ease;
+}
+
+.admin-button:hover {
+  background-color: #b71c1c;
+  box-shadow: 0 0 12px rgba(183, 28, 28, 0.9);
+  transform: translateX(4px) scale(1.05);
+}
 .mypage-menu-item::before {
   content: "";
   position: absolute;

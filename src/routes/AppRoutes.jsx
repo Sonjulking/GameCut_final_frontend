@@ -28,6 +28,9 @@ import ChangePassword from "../pages/ChangePassword.jsx";
 import MyPointHistory from "../pages/MyPointHistory.jsx";
 import MyMessage from "../pages/MyMessages"; // 🔥 추가
 import MyFollow from "../pages/MyFollow.jsx";
+//관리자페이지
+import AdminBoard from "../pages/AdminBoard.jsx";
+import ReportList from "../pages/ReporitList.jsx";
 
 const router = createBrowserRouter([
   {
@@ -72,6 +75,10 @@ const router = createBrowserRouter([
       { path: "webgame/tournament", element: <TournamentGame /> },
       { path: "webgame/guess-rank", element: <GuessTheRankGame /> },
       { path: "webgame/tournament/ranking", element: <TournamentRanking /> },
+
+      //관리자페이지
+      { path: "admin/", element: <AdminBoard /> },
+      { path: "admin/reportlist", element: <ReportList /> },
 
       // 404
       { path: "*", element: <ErrorPage /> },
