@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../lib/axiosInstance";
 import "../styles/itemshop.css";
+import Cookies from "js-cookie";
 
 const GRID_BREAKPOINTS = [
   { min: 1200, columns: 5 },
