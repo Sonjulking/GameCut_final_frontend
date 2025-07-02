@@ -55,16 +55,30 @@ const BoardDetail = () => {
       setLoading(false);
     }
   };
+  // 좋아요 여부 체크
+  const checkLikeStatus = async () => {
+    try {
+      const response = await axiosInstance.post(`/board/isLike/${boardNo}`);
+      setIsLiked(response.data); // true/false 값 설정
+    } catch (error) {
+      console.error("좋아요 상태 확인 실패:", error);
+    }
+  };
 
   // 좋아요 토글
   const toggleLike = async () => {
     try {
-      const response = await axiosInstance.post(`/board/like/${boardNo}`);
+      {
+        isLiked
+          ? await axiosInstance.post(`/board/unlike/${boardNo}`)
+          : await axiosInstance.post(`/board/like/${boardNo}`);
+      }
       setIsLiked(!isLiked);
       setBoard((prev) => ({
         ...prev,
         boardLike: isLiked ? prev.boardLike - 1 : prev.boardLike + 1,
       }));
+      loadBoardDetail();
     } catch (error) {
       console.error("좋아요 처리 실패:", error);
     }
@@ -98,6 +112,7 @@ const BoardDetail = () => {
 
   useEffect(() => {
     if (boardNo) {
+      checkLikeStatus();
       loadBoardDetail(); // 게시글만 로드하면 comments도 함께 옴
     }
   }, [boardNo]);
