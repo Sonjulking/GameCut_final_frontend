@@ -34,12 +34,13 @@ const ItemShop = () => {
     }
   };
 
-  // 유저 정보 불러오기 (실제 API에 맞춰 경로 조정)
+  // 유저 정보 불러오기
   const loadUser = async () => {
     try {
-      const res = await axiosInstance.get("/user/me");
+      const res = await axiosInstance.get("/user/myinfo");
       setUser(res.data);
       setUserPoint(res.data.userPoint ?? 0);
+      console.log("유저 정보:", res.data);
     } catch (e) {
       alert("유저 정보를 불러올 수 없습니다.");
       setUser(null);
