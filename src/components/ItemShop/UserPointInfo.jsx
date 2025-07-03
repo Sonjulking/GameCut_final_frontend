@@ -10,7 +10,7 @@ const UserPointInfo = () => {
 
   return (
     <div style={{ fontWeight: "bold", marginBottom: 16 }}>
-      {userInfo.userNickname}: {userInfo.userPoint}P
+      {userInfo.userNickname}님의 포인트 : {userInfo.userPoint}P
     </div>
   );
 };

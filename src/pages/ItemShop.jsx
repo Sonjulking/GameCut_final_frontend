@@ -2,9 +2,10 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchItems } from "../store/itemSlice";
 import { fetchUser } from "../store/userSlice";
-import ItemList from "../components/itemshop/ItemList";
-import UserPointInfo from "../components/itemshop/UserPointInfo";
-import ItemUploadButton from "../components/itemshop/ItemUploadButton";
+import ItemList from "../components/ItemShop/ItemList";
+import UserPointInfo from "../components/ItemShop/UserPointInfo";
+import ItemUploadButton from "../components/ItemShop/ItemUploadButton";
+import "../styles/itemshop.css";
 
 const ItemShopPage = () => {
   const dispatch = useDispatch();
@@ -17,10 +18,9 @@ const ItemShopPage = () => {
   }, [dispatch]);
 
   return (
-    <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-      <h2 style={{ marginBottom: "16px" }}>아이템샵</h2>
-      <UserPointInfo userInfo={userInfo} />
-      <div style={{ textAlign: "right", margin: "16px 0" }}>
+    <div className="itemshop-container">
+      <div className="itemshop-header">
+        <UserPointInfo userInfo={userInfo} />
         <ItemUploadButton userInfo={userInfo} />
       </div>
       <ItemList itemList={itemList} userInfo={userInfo} />

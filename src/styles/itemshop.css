@@ -1,9 +1,119 @@
-.itemshop-container {
-  padding: 24px 28px;
+/* src/styles/itemshop-dark.css */
+
+/* 공통 카드 레이아웃 */
+.itemcard {
+  background-color: #2a2a2a;
+  color: #ffffff;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 16px;
+  width: 200px;
+  margin: 10px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease;
 }
-.itemshop-card {
-  transition: box-shadow 0.2s;
+
+.itemcard:hover {
+  transform: scale(1.02);
 }
-.itemshop-card:hover {
-  box-shadow: 0 0 0 3px #90caf9;
+
+/* 이미지 */
+.itemcard img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+/* 버튼 */
+.itemshop-button {
+  background-color: #3a3a3a;
+  color: #f0f0f0;
+  padding: 10px 16px;
+  border: 1px solid #555;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.itemshop-button:hover {
+  background-color: #555;
+  border-color: #777;
+  color: #ffffff;
+}
+
+.itemshop-button:disabled {
+  background-color: #2a2a2a;
+  color: #888;
+  border-color: #444;
+  cursor: not-allowed;
+}
+
+/* 아이템 리스트 그리드 */
+.itemlist-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  max-width: 1280px;
+  margin: 100px auto;
+}
+
+/* 업로드 모달 */
+.itemupload-modal {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 10px;
+  color: #ffffff;
+  width: 100%;
+  max-width: 400px;
+}
+
+.itemupload-modal input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  background-color: #333;
+  color: white;
+  border: 1px solid #666;
+  border-radius: 4px;
+}
+
+.itemupload-modal button {
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-right: 10px;
+}
+.itemupload-modal button:hover {
+  background-color: #ffaa33;
+}
+
+/* 반응형: 모바일 대응 */
+@media (max-width: 600px) {
+  .itemlist-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .itemcard {
+    width: 90%;
+  }
+
+  .itemupload-modal {
+    width: 90%;
+  }
+
+  .itemshop-header {
+    flex-direction: column;
+    align-items: center;
+    margin: 200;
+  }
 }
