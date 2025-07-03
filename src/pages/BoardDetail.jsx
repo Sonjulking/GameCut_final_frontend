@@ -44,9 +44,7 @@ const BoardDetail = () => {
   const loadBoardDetail = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `http://localhost:8081/board/detail/${boardNo}`
-      );
+      const response = await axiosInstance.get(`/board/detail/${boardNo}`); // axiosInstance 사용으로 변경
       setBoard(response.data);
       if (response.data.comments) {
         setComments(response.data.comments);
@@ -157,6 +155,9 @@ const BoardDetail = () => {
 
   useEffect(() => {
     if (boardNo) {
+      // 모바일에서 페이지 로드 시 상단으로 스크롤
+      window.scrollTo(0, 0);
+      
       checkLikeStatus();
       loadBoardDetail(); // 게시글만 로드하면 comments도 함께 옴
     }
@@ -258,8 +259,8 @@ const BoardDetail = () => {
                   onLoadedMetadata={handleVideoLoad}
                   style={{
                     width: isVerticalVideo ? "auto" : "100%",
-                    maxWidth: isVerticalVideo ? "400px" : "100%",
-                    maxHeight: isVerticalVideo ? "600px" : "70vh",
+                    maxWidth: isVerticalVideo ? "min(400px, 90vw)" : "100%", // 모바일에서 90vw 제한
+                    maxHeight: isVerticalVideo ? "min(600px, 60vh)" : "70vh", // 모바일에서 60vh 제한
                     height: isVerticalVideo ? "auto" : "auto",
                     objectFit: "contain",
                     backgroundColor: "#000",
@@ -267,6 +268,8 @@ const BoardDetail = () => {
                     border: "1px solid #333"
                   }}
                   controls
+                  playsInline // 모바일에서 인라인 재생
+                  preload="metadata" // 메타데이터만 먼저 로드
                 />
               </div>
               <Box
