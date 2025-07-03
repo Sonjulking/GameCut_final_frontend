@@ -20,7 +20,7 @@ const AdminBoard = () => {
           🚨 신고글 관리
         </button>
 
-        <button
+        {/* <button
           style={styles.button}
           onClick={() => handleNavigate("/admin/users")}
         >
@@ -32,7 +32,7 @@ const AdminBoard = () => {
           onClick={() => handleNavigate("/admin/posts")}
         >
           📝 게시물 관리
-        </button>
+        </button> */}
       </div>
     </div>
   );
