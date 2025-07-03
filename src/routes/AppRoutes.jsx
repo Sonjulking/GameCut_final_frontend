@@ -16,6 +16,7 @@ import MyPage from "../pages/MyPage.jsx";
 import MyBoard from "../pages/MyBoard.jsx";
 import Settings from "../pages/Settings.jsx";
 import RankingsPage from "../pages/RankingsPage.jsx";
+import MyReportList from "../pages/MyReportList.jsx";
 import Test from "../pages/Test.jsx"; // ✅ lazy 대신 일반 import
 // 웹게임 관련 컴포넌트 분리
 import WebGameSelector from "../pages/WebGameSelector.jsx";
@@ -28,6 +29,7 @@ import MyPointHistory from "../pages/MyPointHistory.jsx";
 import UpdateMyPage from "../pages/UpdateMyPage.jsx";
 import MyMessage from "../pages/MyMessages"; // 🔥 추가
 import MyFollow from "../pages/MyFollow.jsx";
+
 //관리자페이지
 import AdminBoard from "../pages/AdminBoard.jsx";
 import ReportList from "../pages/ReporitList.jsx";
@@ -58,6 +60,7 @@ const router = createBrowserRouter([
       { path: "/mypage/update", element: <UpdateMyPage /> },
       { path: "mypage/message", element: <MyMessage /> },
       { path: "mypage/follow", element: <MyFollow /> },
+      { path: "mypage/report", element: <MyReportList /> },
 
       // 로그인 관련
       { path: "findPassword", element: <FindPassword /> },
