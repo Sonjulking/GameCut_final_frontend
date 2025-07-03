@@ -239,7 +239,7 @@ const BoardList = () => {
                 <h3 className="board-title">{board.boardTitle}</h3>
                 <div className="board-meta">
                   <p className="board-author">
-                    작성자: {board.user.userNickname}
+                   {board.user.userNickname}
                   </p>
                   <div className="board-stats">
                     <span className="board-views">

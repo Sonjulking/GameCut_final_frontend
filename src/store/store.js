@@ -6,6 +6,9 @@ import { combineReducers } from "@reduxjs/toolkit";
 
 import authReducer from "./authSlice"; // authSlice는 따로 파일로 생성해야 함
 
+import itemReducer from "./itemSlice";
+import userReducer from "./userSlice";
+
 // 기존 test 슬라이스 유지 (그대로)
 const test = createSlice({
   name: "test",
@@ -33,6 +36,8 @@ const persistConfig = {
 const rootReducer = combineReducers({
   test: test.reducer,
   auth: authReducer,
+  item: itemReducer,
+  user: userReducer,
 });
 
 // ✅ 새로 추가: persist가 적용된 reducer 생성

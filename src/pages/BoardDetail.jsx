@@ -1,3 +1,4 @@
+// 2025-07-03 16:10 생성됨
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -16,6 +17,9 @@ const BoardDetail = () => {
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
   const [comments, setComments] = useState([]);
+  
+  // 세로 영상 감지 상태
+  const [isVerticalVideo, setIsVerticalVideo] = useState(false);
 
   // ✅ 신고 모달 상태
   const [isReportOpen, setIsReportOpen] = useState(false);
@@ -131,6 +135,16 @@ const BoardDetail = () => {
     }
   };
 
+  // 비디오 로드 완료 시 종횡비 체크
+  const handleVideoLoad = (e) => {
+    const { videoWidth, videoHeight } = e.target;
+    const aspectRatio = videoWidth / videoHeight;
+    
+    // 종횡비가 1보다 작으면 세로영상
+    setIsVerticalVideo(aspectRatio < 1);
+    console.log('비디오 종횡비:', { videoWidth, videoHeight, aspectRatio, isVertical: aspectRatio < 1 });
+  };
+
   const handleProfileClick = async () => {
     try {
       const res = await axiosInstance.get(`/user/${board.user.userNo}`);
@@ -213,7 +227,7 @@ const BoardDetail = () => {
                 onClick={handleProfileClick}
                 style={{ cursor: "pointer", textDecoration: "underline" }}
               >
-                작성자: {board.user.userNickname}
+              {board.user.userNickname}
               </span>
               <span className="create-date">{board.boardCreateDate}</span>
             </div>
@@ -232,13 +246,29 @@ const BoardDetail = () => {
         <div className="detail-body">
           {board.boardTypeNo === 3 && board.video?.attachFile && (
             <>
-              <video
-                src={`${import.meta.env.VITE_API_URL}${
-                  board.video.attachFile.fileUrl
-                }`}
-                style={{ width: "100%" }}
-                controls
-              />
+              <div style={{
+                display: "flex",
+                justifyContent: "center",
+                marginBottom: "16px"
+              }}>
+                <video
+                  src={`${import.meta.env.VITE_API_URL}${
+                    board.video.attachFile.fileUrl
+                  }`}
+                  onLoadedMetadata={handleVideoLoad}
+                  style={{
+                    width: isVerticalVideo ? "auto" : "100%",
+                    maxWidth: isVerticalVideo ? "400px" : "100%",
+                    maxHeight: isVerticalVideo ? "600px" : "70vh",
+                    height: isVerticalVideo ? "auto" : "auto",
+                    objectFit: "contain",
+                    backgroundColor: "#000",
+                    borderRadius: "8px",
+                    border: "1px solid #333"
+                  }}
+                  controls
+                />
+              </div>
               <Box
                 sx={{
                   maxHeight: "100px",
