@@ -1,5 +1,6 @@
+// 2025-07-03 생성됨
 // src/components/VideoItem.jsx
-import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
+import React, {useEffect, useLayoutEffect, useRef, useState, useCallback} from "react";
 import CommentSection from "./CommentSection.jsx";
 import {Chip, Avatar, Stack, Box} from "@mui/material";
 // 아이콘 파일들을 import 합니다.
@@ -10,6 +11,7 @@ import saveIcon from "../../assets/img/main/icons/save_icon.png";
 import reportIcon from "../../assets/img/main/icons/report_icon.png";
 
 import videoLoadingImage from "../../assets/img/main/logo/gamecut_logo(black).png";
+import axiosInstance from "../../lib/axiosInstance.js";
 
 const VideoItem = ({board, isLoading}) => {
     const {
@@ -24,10 +26,39 @@ const VideoItem = ({board, isLoading}) => {
     const videoRef = useRef(null);
     const commentRef = useRef(null); // ✅ 댓글창 참조
 
-
     const [isCommentOpen, setIsCommentOpen] = useState(false);
     const [comments, setComments] = useState(initialComments || []);
+    const [totalCommentCount, setTotalCommentCount] = useState(0); // 전체 댓글 개수
+    const [hasMoreComments, setHasMoreComments] = useState(false); // 더 많은 댓글이 있는지 여부
+    const [isLoadingComments, setIsLoadingComments] = useState(false); // 댓글 로딩 상태
+    const [currentPage, setCurrentPage] = useState(0); // 현재 페이지
     const [isVideoReady, setIsVideoReady] = useState(false);
+
+    // 초기 댓글 설정 및 전체 댓글 개수 조회
+    useEffect(() => {
+        const initComments = initialComments || [];
+        setComments(initComments);
+
+        if (initComments.length === 5) {
+            // 5개 댓글이 있으면 더 많은 댓글이 있을 가능성
+            setHasMoreComments(true);
+            // 전체 댓글 개수 조회
+            axiosInstance.get(`/comment/board/${board.boardNo}/count`)
+                    .then(response => {
+                        const total = response.data;
+                        setTotalCommentCount(total);
+                        setHasMoreComments(total > 5);
+                    })
+                    .catch(error => {
+                        console.error("댓글 개수 조회 실패:", error);
+                        setTotalCommentCount(initComments.length);
+                        setHasMoreComments(false);
+                    });
+        } else {
+            setTotalCommentCount(initComments.length);
+            setHasMoreComments(false);
+        }
+    }, [initialComments, board.boardNo]);
 
     useLayoutEffect(() => {
         const video = videoRef.current;
@@ -38,7 +69,6 @@ const VideoItem = ({board, isLoading}) => {
         }
     }, [isVideoReady, isCommentOpen]);
 
-
     useEffect(() => {
         const handleResize = () => {
             setIsCommentOpen(false); // 화면 크기 바뀌면 댓글창 닫기
@@ -47,7 +77,6 @@ const VideoItem = ({board, isLoading}) => {
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
-
 
     // IntersectionObserver 생성 후 비디오 요소 관찰
     useEffect(() => {
@@ -105,6 +134,46 @@ const VideoItem = ({board, isLoading}) => {
         return () => videoEl.removeEventListener("loadedmetadata", onLoadedMetadata);
     }, []);
 
+    // 댓글 더 불러오기 함수
+    const loadMoreComments = useCallback(async () => {
+        if (isLoadingComments || !hasMoreComments) return;
+
+        setIsLoadingComments(true);
+        try {
+            const nextPage = currentPage + 1;
+            const response = await axiosInstance.get(`/comment/board/${board.boardNo}`, {
+                params: {
+                    page: nextPage,
+                    size: 5 // 10에서 5로 변경
+                }
+            });
+
+            const newComments = response.data;
+
+            if (newComments.length === 0) {
+                // 더 이상 댓글이 없음
+                setHasMoreComments(false);
+            } else {
+                // 기존 댓글에 새 댓글 추가 (중복 제거)
+                setComments(prev => {
+                    const existingIds = new Set(prev.map(c => c.commentNo));
+                    const filteredNew = newComments.filter(c => !existingIds.has(c.commentNo));
+                    return [...prev, ...filteredNew];
+                });
+                setCurrentPage(nextPage);
+
+                // 불러온 댓글이 5개 미만이면 더 이상 없음
+                if (newComments.length < 5) {
+                    setHasMoreComments(false);
+                }
+            }
+        } catch (error) {
+            console.error("댓글 로딩 실패:", error);
+        } finally {
+            setIsLoadingComments(false);
+        }
+    }, [board.boardNo, currentPage, hasMoreComments, isLoadingComments]);
+
     // 댓글 토글 클릭 핸들러
     const toggleComment = () => {
         setIsCommentOpen((prev) => !prev);
@@ -122,7 +191,8 @@ const VideoItem = ({board, isLoading}) => {
 
     // 댓글 추가 함수 (CommentSection 컴포넌트에서 호출)
     const addComment = (newComment) => {
-        setComments((prev) => [...prev, newComment]);
+        setComments((prev) => [newComment, ...prev]); // 새 댓글을 맨 앞에 추가
+        setTotalCommentCount(prev => prev + 1); // 총 개수 증가
     };
 
     return (
@@ -252,6 +322,12 @@ const VideoItem = ({board, isLoading}) => {
                                 src={commentIcon}
                                 alt="댓글"
                         />
+                        {/* 댓글 개수 표시 */}
+                        {totalCommentCount > 0 && (
+                                <span className="comment-count">
+                                {totalCommentCount > 99 ? '99+' : totalCommentCount}
+                            </span>
+                        )}
                     </button>
                     <button
                             className="video_side_buttons"
@@ -290,6 +366,10 @@ const VideoItem = ({board, isLoading}) => {
                         videoId={video?.videoNo}
                         onClose={toggleComment}
                         onAddComment={addComment}
+                        hasMoreComments={hasMoreComments}
+                        isLoadingComments={isLoadingComments}
+                        onLoadMore={loadMoreComments}
+                        totalCount={totalCommentCount}
                 />
             </div>
     );

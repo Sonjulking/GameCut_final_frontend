@@ -466,7 +466,7 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
                             <path d="M18.77,11h-4.23l1.52-4.94C16.38,5.03,15.54,4,14.38,4c-0.58,0-1.14,0.24-1.52,0.65L7,11H3v10h4h1h9.43 c1.06,0,1.97-0.67,2.32-1.66l1.9-5.49c0.14-0.41,0.21-0.84,0.21-1.28V12C21.86,11.45,21.38,11,20.81,11L18.77,11z" />
                           </svg>
                           <span className="bd-like-count">
-                            {comment.likeCount || 0}
+                            {comment.commentLike || 0}
                           </span>
                         </button>
                       </div>
