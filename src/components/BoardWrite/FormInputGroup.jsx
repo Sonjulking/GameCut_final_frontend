@@ -200,6 +200,14 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
                                 "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                                     borderColor: "#1976d2",
                                 },
+                                "&.Mui-disabled": {
+                                    color: "white", // 👉 원하는 밝은 색
+                                },
+                                "& .MuiSelect-select.Mui-disabled": {
+                                    color: "grey", // 원하는 밝은 색
+                                    WebkitTextFillColor: "grey", // Safari 대응
+                                    opacity: 1, // 디폴트 opacity 제거
+                                },
                             }}
                     >
                         <MenuItem value={1}>자유 게시판</MenuItem>
