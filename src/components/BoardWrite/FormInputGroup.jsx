@@ -1,6 +1,5 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
-    Autocomplete,
     FormControl,
     InputLabel,
     MenuItem,
@@ -8,133 +7,148 @@ import {
     TextField,
     Chip, Box, Button,
 } from "@mui/material";
-import {Editor} from "@toast-ui/react-editor";
+import { Editor } from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import "../../styles/toast-editor-dark.css";
-import axios from "axios"; // 이미지 업로드에 필요
+import axiosInstance from "../../lib/axiosInstance.js";
 
-const FormInputGroup = ({form, handleChange, isEdit}) => {
+const FormInputGroup = ({ form, handleChange, isEdit }) => {
     const editorRef = useRef(null);
-    // 태그 입력 상태
     const [tagInput, setTagInput] = useState("");
     const [tags, setTags] = useState([]);
     const [tagLoading, setTagLoading] = useState(false);
     const [tagSuggested, setTagSuggested] = useState(false);
 
+    // 무한 렌더링 방지
+    const updateTags = useCallback((newTags) => {
+        setTags((prevTags) => {
+            const updatedTags = [...new Set([...prevTags, ...newTags])];
+            return updatedTags;
+        });
+    }, []);
+
+    // 태그 데이터를 부모 컴포넌트로 전달 (영상 게시판일 때만)
+    useEffect(() => {
+        if (form.boardTypeNo === 3) {
+            const currentTags = Array.isArray(form.videoTags) ? form.videoTags : [];
+            const tagsChanged = currentTags.length !== tags.length ||
+                    !currentTags.every((tag, i) => tag === tags[i]);
+
+            if (tagsChanged) {
+                handleChange({
+                    target: { name: "videoTags", value: tags },
+                });
+            }
+        }
+    }, [tags, form.boardTypeNo]);
+
+    // form.videoTags에서 tags로 동기화
     useEffect(() => {
         if (Array.isArray(form.videoTags)) {
             const incoming = form.videoTags;
             const current = tags;
 
-            // 배열이 같으면 setTags 하지 않음
             const isSame = incoming.length === current.length &&
                     incoming.every((tag, i) => tag === current[i]);
 
             if (!isSame) {
-                setTags(incoming);
+                updateTags(incoming);
             }
         } else if (typeof form.videoTags === "string") {
             const parsed = form.videoTags.trim() === "" ? [] : form.videoTags.trim().split(/\s+/);
             const isSame = parsed.length === tags.length &&
                     parsed.every((tag, i) => tag === tags[i]);
             if (!isSame) {
-                setTags(parsed);
+                updateTags(parsed);
             }
         }
-    }, [form.videoTags]);
-
-
-    useEffect(() => {
-        console.log(tags);
-    }, []);
-
-
-    useEffect(() => {
-        handleChange({
-            target: {
-                name: "videoTags",
-                value: tags,
-            },
-        });
-    }, [tags]);
-
+    }, [form.videoTags, updateTags]);
 
     const handleTagKeyDown = (e) => {
-        // IME 조합 중(isComposing)이면 무시
         if ((e.key === "Enter" || e.key === ",") && !e.nativeEvent.isComposing) {
             e.preventDefault();
             const raw = e.target.value.trim();
             if (!raw) return;
 
             const formatted = raw.startsWith("#") ? raw : `#${raw}`;
-            if (!tags.includes(formatted)) setTags((prev) => [...prev, formatted]);
+            if (!tags.includes(formatted)) {
+                updateTags([formatted]);
+            }
             setTagInput("");
-            e.target.value = "";         // 입력 DOM도 즉시 비워 줌
+            e.target.value = "";
         }
     };
-
 
     const handleDeleteTag = (tagToDelete) => {
         setTags(tags.filter((tag) => tag !== tagToDelete));
     };
 
+    // 게시판 타입 변경 시 초기화
     useEffect(() => {
         if (form.boardTypeNo === 3 && !isEdit) {
             handleChange({
-                target: {name: "boardContent", value: ""},
+                target: { name: "boardContent", value: "" },
             });
         }
     }, [form.boardTypeNo]);
 
+    // 에디터 내용 변경 후 부모로 전달
+    const handleEditorBlur = () => {
+        const instance = editorRef.current.getInstance();
+        const html = instance.getHTML();
+
+        if (html !== form.boardContent) {
+            handleChange({
+                target: { name: "boardContent", value: html },
+            });
+        }
+    };
+
+    // 에디터 초기화 (수정 모드)
     useEffect(() => {
-        if (!editorRef.current) return;
+        if (!editorRef.current || form.boardTypeNo === 3) return;
+
+        const instance = editorRef.current.getInstance();
+
+        if (isEdit) {
+            instance.setHTML(form.boardContent || "");
+            instance.changeMode("wysiwyg", true);
+        }
+    }, [isEdit, form.boardContent]);
+
+    // 게시판 타입 변경 시 에디터 초기화 (새 글 작성 모드)
+    useEffect(() => {
+        if (!editorRef.current || form.boardTypeNo === 3) return;
 
         if (!isEdit) {
             handleChange({
-                target: {name: "boardContent", value: ""},
+                target: { name: "boardContent", value: "" },
             });
 
-            if (form.boardTypeNo !== 3) {
-                // 에디터가 렌더링된 다음 프레임에 초기화
-                requestAnimationFrame(() => {
-                    if (editorRef.current) {
-                        const instance = editorRef.current.getInstance();
-                        instance.setHTML(form.boardContent || "");
-                        instance.changeMode("wysiwyg", true);
-                    }
-                });
-            }
-        } else {
-            if (form.boardTypeNo !== 3 && editorRef.current) {
-                requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                if (editorRef.current) {
                     const instance = editorRef.current.getInstance();
-                    instance.setHTML(form.boardContent || ""); // 여기에서 form.boardContent를 확실히 반영
+                    instance.setHTML("");
                     instance.changeMode("wysiwyg", true);
-                });
-            }
-        }
-
-    }, [form.boardTypeNo, isEdit, form.boardContent]);
-
-    const aiTagRecommended = async () => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("로그인이 필요합니다.");
-            return;
-        }
-
-        setTagLoading(true); // 버튼 비활성화
-
-        try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/ai/tag`, null, {
-                params: {
-                    title: form.boardTitle,
-                    content: form.boardContent,
-                },
-                headers: {
-                    Authorization: `Bearer ${token}`,
                 }
             });
+        }
+    }, [form.boardTypeNo]);
+
+    const aiTagRecommended = async () => {
+        setTagLoading(true);
+
+        try {
+            const res = await axiosInstance.post(
+                    "/ai/tag",
+                    {},
+                    {
+                        params: {
+                            title: form.boardTitle,
+                            content: form.boardContent,
+                        },
+                    }
+            );
 
             const recommendedTags = res.data;
 
@@ -142,9 +156,8 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                 const formatted = recommendedTags.map(tag =>
                         tag.startsWith("#") ? tag : `#${tag}`
                 );
-                const merged = [...new Set([...tags, ...formatted])];
-                setTags(merged);
-                setTagSuggested(true); //  추천 완료 표시
+                updateTags(formatted);
+                setTagSuggested(true);
             } else {
                 alert("추천 결과가 배열 형식이 아닙니다.");
             }
@@ -152,27 +165,27 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
             console.error("태그 추천 실패:", err);
             alert("태그 추천 요청에 실패했습니다.");
         } finally {
-            setTagLoading(false); // 완료 후 재활성화
+            setTagLoading(false);
         }
     };
 
+    // 제목/내용 변경 시 태그 관련 상태 초기화
     useEffect(() => {
-        setTags([]);        // 태그 초기화
-        setTagLoading(false); // 버튼 다시 활성화
-        setTagSuggested(false); //버튼 다시활성화
+        setTags([]);
+        setTagLoading(false);
+        setTagSuggested(false);
     }, [form.boardTitle, form.boardContent]);
+
     const isTagButtonDisabled = () => {
         const titleEmpty = !form.boardTitle || form.boardTitle.trim() === "";
         const contentEmpty = !form.boardContent || form.boardContent.trim() === "";
         return tagLoading || tagSuggested || titleEmpty || contentEmpty;
     };
+
     return (
             <>
-                <FormControl
-                        fullWidth
-                        sx={{mb: 3}}
-                >
-                    <InputLabel sx={{color: "#ccc"}}>게시판 타입</InputLabel>
+                <FormControl fullWidth sx={{ mb: 3 }}>
+                    <InputLabel sx={{ color: "#ccc" }}>게시판 타입</InputLabel>
                     <Select
                             name="boardTypeNo"
                             value={form.boardTypeNo}
@@ -182,32 +195,19 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                             sx={{
                                 color: "#fff",
                                 backgroundColor: "#2b2b2b",
-                                "& .MuiOutlinedInput-notchedOutline": {borderColor: "#555"},
-                                "&:hover .MuiOutlinedInput-notchedOutline": {borderColor: "#999"},
+                                "& .MuiOutlinedInput-notchedOutline": { borderColor: "#555" },
+                                "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#999" },
                                 "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                                     borderColor: "#1976d2",
                                 },
                                 "&.Mui-disabled": {
-                                    color: "#aaa", // 텍스트 색상
-                                    "-webkit-text-fill-color": "#aaa", // Webkit 계열 브라우저 텍스트 색상
-                                    backgroundColor: "#2b2b2b", // 배경 유지
-                                    "& .MuiOutlinedInput-notchedOutline": {
-                                        borderColor: "#444", // 테두리 색상
-                                    },
-                                    "& .MuiSelect-select.Mui-disabled": {
-                                        color: "#aaa", // 드롭다운 텍스트 색상
-                                        WebkitTextFillColor: "#aaa", // 크롬에서 적용 안될 시
-                                    },
-                                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                                        borderColor: "#999",
-                                    },
-                                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                        borderColor: "#1976d2",
-                                    },
-                                    "&.Mui-disabled .MuiOutlinedInput-notchedOutline": {
-                                        borderColor: "#444", // disabled일 때 테두리
-                                    },
-                                }
+                                    color: "white", // 👉 원하는 밝은 색
+                                },
+                                "& .MuiSelect-select.Mui-disabled": {
+                                    color: "grey", // 원하는 밝은 색
+                                    WebkitTextFillColor: "grey", // Safari 대응
+                                    opacity: 1, // 디폴트 opacity 제거
+                                },
                             }}
                     >
                         <MenuItem value={1}>자유 게시판</MenuItem>
@@ -222,15 +222,17 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                         value={form.boardTitle}
                         onChange={handleChange}
                         required
-                        InputLabelProps={{style: {color: "#ccc"}}}
+                        fullWidth
                         sx={{
-                            input: {color: "#fff"},
+                            mb: 3,
+                            input: { color: "#fff" },
                             "& .MuiOutlinedInput-root": {
-                                "& fieldset": {borderColor: "#555"},
-                                "&:hover fieldset": {borderColor: "#999"},
-                                "&.Mui-focused fieldset": {borderColor: "#1976d2"},
+                                "& fieldset": { borderColor: "#555" },
+                                "&:hover fieldset": { borderColor: "#999" },
+                                "&.Mui-focused fieldset": { borderColor: "#1976d2" },
                             },
                         }}
+                        InputLabelProps={{ style: { color: "#ccc" } }}
                 />
 
                 {form.boardTypeNo === 3 ? (
@@ -243,30 +245,32 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                                     value={form.boardContent?.trim() === "<p><br></p>" ? "" : form.boardContent}
                                     onChange={handleChange}
                                     required
-                                    InputLabelProps={{style: {color: "#ccc"}}}
+                                    fullWidth
                                     sx={{
-                                        textarea: {color: "#fff"},
+                                        mb: 2,
+                                        textarea: { color: "#fff" },
                                         "& .MuiOutlinedInput-root": {
-                                            "& fieldset": {borderColor: "#555"},
-                                            "&:hover fieldset": {borderColor: "#999"},
-                                            "&.Mui-focused fieldset": {borderColor: "#1976d2"},
+                                            "& fieldset": { borderColor: "#555" },
+                                            "&:hover fieldset": { borderColor: "#999" },
+                                            "&.Mui-focused fieldset": { borderColor: "#1976d2" },
                                         },
                                     }}
+                                    InputLabelProps={{ style: { color: "#ccc" } }}
                             />
-                            <Box sx={{display: "flex", gap: 1, alignItems: "center", mt: 2}}>
+                            <Box sx={{ display: "flex", gap: 1, alignItems: "center", mt: 2 }}>
                                 <TextField
                                         label="태그 입력"
                                         placeholder="태그 입력 후 Enter를 눌러주세요."
                                         value={tagInput}
                                         onChange={(e) => setTagInput(e.target.value)}
                                         onKeyDown={handleTagKeyDown}
-                                        InputLabelProps={{style: {color: "#ccc"}}}
+                                        InputLabelProps={{ style: { color: "#ccc" } }}
                                         sx={{
-                                            input: {color: "#fff"},
+                                            input: { color: "#fff" },
                                             "& .MuiOutlinedInput-root": {
-                                                "& fieldset": {borderColor: "#555"},
-                                                "&:hover fieldset": {borderColor: "#999"},
-                                                "&.Mui-focused fieldset": {borderColor: "#1976d2"},
+                                                "& fieldset": { borderColor: "#555" },
+                                                "&:hover fieldset": { borderColor: "#999" },
+                                                "&.Mui-focused fieldset": { borderColor: "#1976d2" },
                                             },
                                             flex: 1,
                                         }}
@@ -274,7 +278,7 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                                 <Button
                                         variant="outlined"
                                         onClick={aiTagRecommended}
-                                        disabled={isTagButtonDisabled()} // 이미 추천했으면 또 못 누르게
+                                        disabled={isTagButtonDisabled()}
                                         sx={{
                                             px: 2,
                                             py: 1,
@@ -294,20 +298,19 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                                 </Button>
                             </Box>
 
-
-                            <Box sx={{mt: 1, display: "flex", flexWrap: "wrap", gap: 1}}>
+                            <Box sx={{ mt: 1, display: "flex", flexWrap: "wrap", gap: 1 }}>
                                 {tags.map((tag, index) => (
                                         <Chip
                                                 key={index}
                                                 label={tag}
-                                                onDelete={() => setTags((prev) => prev.filter((t) => t !== tag))}
+                                                onDelete={() => handleDeleteTag(tag)}
                                                 sx={{
                                                     bgcolor: "#444",
                                                     color: "#fff",
                                                     border: "1px solid #888",
                                                     "& .MuiChip-deleteIcon": {
                                                         color: "#ccc",
-                                                        "&:hover": {color: "#fff"},
+                                                        "&:hover": { color: "#fff" },
                                                     },
                                                 }}
                                         />
@@ -315,18 +318,14 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                             </Box>
                         </>
                 ) : (
-                        <div style={{marginTop: "24px"}}>
+                        <div style={{ marginTop: "24px" }}>
                             <Editor
-                                    key={form.boardTypeNo}
                                     ref={editorRef}
                                     previewStyle="vertical"
                                     hideModeSwitch={true}
                                     initialEditType="wysiwyg"
                                     useCommandShortcut={true}
-                                    onChange={() => {
-                                        const data = editorRef.current.getInstance().getHTML();
-                                        handleChange({target: {name: "boardContent", value: data}});
-                                    }}
+                                    onBlur={handleEditorBlur}
                                     theme="dark"
                                     style={{
                                         backgroundColor: "#2b2b2b",
@@ -335,6 +334,7 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                                         border: "1px solid #555",
                                         padding: "8px",
                                     }}
+                                    initialValue={form.boardContent || ""}
                                     toolbarItems={[
                                         ["heading", "bold", "italic", "strike"],
                                         ["hr", "quote"],
@@ -344,19 +344,14 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                                     ]}
                                     hooks={{
                                         addImageBlobHook: async (blob, callback) => {
-                                            const token = localStorage.getItem("token");
                                             const formData = new FormData();
                                             formData.append("image", blob);
 
                                             try {
-                                                const res = await axios.post(
-                                                        `${import.meta.env.VITE_API_URL}/board/img`,
-                                                        formData,
-                                                        {
-                                                            headers: {
-                                                                Authorization: `Bearer ${token}`,
-                                                            },
-                                                        }
+                                                const res = await axiosInstance.post(
+                                                        "/board/img", // baseURL이 설정되어 있으므로 상대 경로만 사용
+                                                        formData
+                                                        // Authorization 헤더는 인터셉터에서 자동 추가됨
                                                 );
                                                 const imageUrl = `${import.meta.env.VITE_API_URL}${res.data.imageUrl}`;
                                                 callback(imageUrl);
@@ -367,7 +362,6 @@ const FormInputGroup = ({form, handleChange, isEdit}) => {
                                         },
                                     }}
                             />
-
                         </div>
                 )}
             </>

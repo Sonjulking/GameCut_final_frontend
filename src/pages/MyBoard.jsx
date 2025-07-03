@@ -397,9 +397,6 @@ const MyBoard = () => {
     <div className="mypage-container">
       <div className="mypage-content">
         <div className="content-wrapper">
-          {/* 재사용 사이드바 컴포넌트 */}
-          <MyPageSidebar />
-
           {/* 메인 내용 영역 */}
           <div className="mypage-user-section">
             <div className="board-container">
@@ -508,6 +505,8 @@ const MyBoard = () => {
               </div>
             </div>
           </div>
+          {/* 재사용 사이드바 컴포넌트 */}
+          <MyPageSidebar />
         </div>
       </div>
     </div>

@@ -2,14 +2,21 @@ import axios from "axios";
 import React, { useState } from "react";
 import Cookie from "js-cookie";
 import axiosInstance from "../lib/axiosInstance";
+import { useEffect } from "react";
+import UserProfilePopup from "../pages/UserProfilePopup";
+import { useSelector } from "react-redux";
 
 const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
   const [showReplies, setShowReplies] = useState({});
   const [showReplyInput, setShowReplyInput] = useState({}); // 대댓글 입력창 표시 상태
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   // 수정 모드 상태 관리
   const [editMode, setEditMode] = useState({}); // 어떤 댓글이 수정 모드인지
   const [editContent, setEditContent] = useState({}); // 수정 중인 댓글 내용
+
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   // 댓글 관련 상태
   const [inputComment, setInputComment] = useState({
@@ -22,6 +29,8 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
     parentComment: null, // 객체로 변경 (숫자가 아닌 전체 댓글 객체를 저장)
   });
 
+  const [commentLikeStates, setCommentLikeStates] = useState({});
+
   // 각 댓글별 대댓글 입력 상태를 객체로 관리
   const [replyInputs, setReplyInputs] = useState({});
 
@@ -30,6 +39,18 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
       ...prev,
       [commentNo]: !prev[commentNo],
     }));
+  };
+
+  //닉네임클릭핸들러
+  const handleProfileClick = async (userNo) => {
+    try {
+      const res = await axiosInstance.get(`/user/${userNo}`);
+      setSelectedUser(res.data);
+      setProfileOpen(true);
+    } catch (err) {
+      console.error("유저 정보 불러오기 실패", err);
+      alert("유저 정보를 불러올 수 없습니다.");
+    }
   };
 
   // 대댓글 입력창 토글
@@ -84,6 +105,10 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
   const handleAddComment = async () => {
     if (!inputComment.commentContent.trim()) {
       alert("댓글 내용을 입력해주세요.");
+      return;
+    }
+    if (!isLoggedIn) {
+      alert("로그인 후 이용해주세요");
       return;
     }
     try {
@@ -232,15 +257,59 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
     }
   };
 
-  // 댓글 목록 새로고침 함수
-  const refreshComments = async () => {
+  const handleCommentLike = async (commentNo) => {
     try {
-      const response = await axiosInstance.get(`/comment/board/${boardNo}`);
-      setComments(response.data);
+      const isCurrentlyLiked = commentLikeStates[commentNo] || false;
+      // API 호출 - 좋아요 상태에 따라 다른 엔드포인트 호출
+      if (isCurrentlyLiked) {
+        await axiosInstance.post(`/comment/unlike/${commentNo}`);
+      } else {
+        await axiosInstance.post(`/comment/like/${commentNo}`);
+      }
+
+      // 로컬 상태 업데이트
+      setCommentLikeStates((prev) => ({
+        ...prev,
+        [commentNo]: !isCurrentlyLiked,
+      }));
+
+      // 댓글 목록의 좋아요 수 업데이트
+      setComments((prev) =>
+        prev.map((comment) =>
+          comment.commentNo === commentNo
+            ? {
+                ...comment,
+                likeCount: isCurrentlyLiked
+                  ? (comment.likeCount || 1) - 1
+                  : (comment.likeCount || 0) + 1,
+                isLiked: !isCurrentlyLiked,
+              }
+            : comment
+        )
+      );
+
+      console.log(
+        `댓글 ${commentNo} 좋아요 ${isCurrentlyLiked ? "취소" : "추가"} 완료`
+      );
     } catch (error) {
-      console.error("댓글 목록 새로고침 실패:", error);
+      console.error("댓글 좋아요 처리 실패:", error);
+      alert("좋아요 처리 중 오류가 발생했습니다.");
     }
   };
+
+  const initializeCommentLikeStates = () => {
+    const likeStates = {};
+    comments.forEach((comment) => {
+      likeStates[comment.commentNo] = comment.isLiked || false;
+    });
+    setCommentLikeStates(likeStates);
+  };
+
+  useEffect(() => {
+    if (comments.length > 0) {
+      initializeCommentLikeStates();
+    }
+  }, [comments]);
 
   return (
     <div className="bd-comment-section">
@@ -293,7 +362,14 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
                       />
                     )}
                     <div className="bd-comment-info">
-                      <span className="bd-comment-nickname">
+                      <span
+                        className="bd-comment-nickname"
+                        onClick={() => handleProfileClick(comment.user.userNo)}
+                        style={{
+                          cursor: "pointer",
+                          textDecoration: "underline",
+                        }}
+                      >
                         {/* 🔥 삭제된 댓글인지 확인 */}
                         {comment.commentDeleteDate
                           ? ""
@@ -342,6 +418,7 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
                 </div>
 
                 {/* 🔥 댓글 내용 - 수정 모드에 따라 다르게 표시 */}
+                {/* 기존 댓글 내용 부분을 이렇게 수정 */}
                 {editMode[comment.commentNo] ? (
                   <div className="bd-comment-edit-area">
                     <input
@@ -361,15 +438,40 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
                     />
                   </div>
                 ) : (
-                  <p className="bd-comment-content">
-                    {comment.commentDeleteDate ? (
-                      <span className="deleted-comment">
-                        삭제된 댓글입니다.
-                      </span>
-                    ) : (
-                      comment.commentContent
+                  <>
+                    <p className="bd-comment-content">
+                      {comment.commentDeleteDate ? (
+                        <span className="deleted-comment">
+                          삭제된 댓글입니다.
+                        </span>
+                      ) : (
+                        comment.commentContent
+                      )}
+                    </p>
+
+                    {/* 삭제되지 않은 댓글에만 좋아요 버튼 표시 */}
+                    {!comment.commentDeleteDate && (
+                      <div className="bd-comment-actions">
+                        <button
+                          className={`bd-like-button ${
+                            comment.isLiked ? "liked" : ""
+                          }`}
+                          onClick={() => handleCommentLike(comment.commentNo)}
+                        >
+                          <svg
+                            className="bd-like-icon"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path d="M18.77,11h-4.23l1.52-4.94C16.38,5.03,15.54,4,14.38,4c-0.58,0-1.14,0.24-1.52,0.65L7,11H3v10h4h1h9.43 c1.06,0,1.97-0.67,2.32-1.66l1.9-5.49c0.14-0.41,0.21-0.84,0.21-1.28V12C21.86,11.45,21.38,11,20.81,11L18.77,11z" />
+                          </svg>
+                          <span className="bd-like-count">
+                            {comment.commentLike || 0}
+                          </span>
+                        </button>
+                      </div>
                     )}
-                  </p>
+                  </>
                 )}
 
                 {/* 🔥 삭제되지 않은 댓글만 대댓글 입력창 표시 */}
@@ -451,7 +553,18 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
                                         />
                                       )}
                                       <div className="bd-comment-info">
-                                        <span className="bd-comment-nickname">
+                                        <span
+                                          className="bd-comment-nickname"
+                                          onClick={() =>
+                                            handleProfileClick(
+                                              reply.user.userNo
+                                            )
+                                          }
+                                          style={{
+                                            cursor: "pointer",
+                                            textDecoration: "underline",
+                                          }}
+                                        >
                                           {/* 🔥 대댓글도 동일하게 */}
                                           {reply.commentDeleteDate
                                             ? ""
@@ -500,6 +613,7 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
                                   </div>
 
                                   {/* 🔥 대댓글 내용도 수정 모드에 따라 다르게 표시 */}
+                                  {/* 대댓글 내용 부분 */}
                                   {editMode[reply.commentNo] ? (
                                     <div className="bd-comment-edit-area">
                                       <input
@@ -521,16 +635,42 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
                                       />
                                     </div>
                                   ) : (
-                                    <p className="bd-comment-content bd-reply-content-text">
-                                      {/* 🔥 대댓글 내용도 조건부 표시 */}
-                                      {reply.commentDeleteDate ? (
-                                        <span className="deleted-comment">
-                                          삭제된 댓글입니다.
-                                        </span>
-                                      ) : (
-                                        reply.commentContent
+                                    <>
+                                      <p className="bd-comment-content bd-reply-content-text">
+                                        {reply.commentDeleteDate ? (
+                                          <span className="deleted-comment">
+                                            삭제된 댓글입니다.
+                                          </span>
+                                        ) : (
+                                          reply.commentContent
+                                        )}
+                                      </p>
+
+                                      {/* 삭제되지 않은 대댓글에만 좋아요 버튼 표시 */}
+                                      {!reply.commentDeleteDate && (
+                                        <div className="bd-reply-actions">
+                                          <button
+                                            className={`bd-like-button ${
+                                              reply.isLiked ? "liked" : ""
+                                            }`}
+                                            onClick={() =>
+                                              handleCommentLike(reply.commentNo)
+                                            }
+                                          >
+                                            <svg
+                                              className="bd-like-icon"
+                                              viewBox="0 0 24 24"
+                                              fill="currentColor"
+                                            >
+                                              <path d="M18.77,11h-4.23l1.52-4.94C16.38,5.03,15.54,4,14.38,4c-0.58,0-1.14,0.24-1.52,0.65L7,11H3v10h4h1h9.43 c1.06,0,1.97-0.67,2.32-1.66l1.9-5.49c0.14-0.41,0.21-0.84,0.21-1.28V12C21.86,11.45,21.38,11,20.81,11L18.77,11z" />
+                                            </svg>
+                                            <span className="bd-like-count">
+                                              {reply.likeCount || 0}
+                                            </span>
+                                          </button>
+                                        </div>
                                       )}
-                                    </p>
+                                    </>
                                   )}
                                 </div>
                               </div>
@@ -548,6 +688,13 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
           </div>
         )}
       </div>
+
+      {/* ✅ 유저 프로필 팝업 추가 */}
+      <UserProfilePopup
+        open={profileOpen}
+        onClose={() => setProfileOpen(false)}
+        user={selectedUser}
+      />
     </div>
   );
 };

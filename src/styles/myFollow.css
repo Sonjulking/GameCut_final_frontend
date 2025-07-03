@@ -1,0 +1,83 @@
+.follow-container {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+.follow-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.follow-tabs button {
+  background-color: transparent;
+  border: 1px solid #888;
+  color: #ccc;
+  margin-left: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.follow-tabs .active {
+  background-color: #444;
+  color: #fff;
+}
+
+.follow-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.follow-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #444;
+}
+
+.follow-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.follow-nickname {
+  flex: 1;
+  font-size: 16px;
+}
+
+.follow-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.unfollow-button,
+.message-button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  color: white;
+}
+
+.unfollow-button {
+  background-color: #ff4d4d;
+}
+
+.message-button {
+  background-color: #4d88ff;
+}
+
+.empty-text {
+  color: #aaa;
+  text-align: center;
+  padding: 20px 0;
+}

@@ -301,11 +301,14 @@ const Join = () => {
 
 const styles = {
   container: {
-    height: "100vh",
+    minHeight: "calc(100vh - 120px)", // 헤더/푸터 공간 제외
     background: "#141414",
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "flex-start", // 상단 정렬
+    paddingTop: "10vh", // 상단에서 10% 지점에 배치
+    paddingBottom: "20px",
+    boxSizing: "border-box",
   },
   card: {
     background: "#1e1e1e",

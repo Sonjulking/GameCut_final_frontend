@@ -4,8 +4,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import "../styles/boardList.css";
 import { Button, Stack } from "@mui/material";
 import axiosInstance from "../lib/axiosInstance";
+import {useSelector} from "react-redux";
 
 const BoardList = () => {
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const [searchParams, setSearchParams] = useSearchParams();
   const [totalPages, setTotalPages] = useState(1); // 먼저 선언
   const [totalElements, setTotalElements] = useState(1); // 먼저 선언
@@ -237,7 +239,7 @@ const BoardList = () => {
                 <h3 className="board-title">{board.boardTitle}</h3>
                 <div className="board-meta">
                   <p className="board-author">
-                    작성자: {board.user.userNickname}
+                   {board.user.userNickname}
                   </p>
                   <div className="board-stats">
                     <span className="board-views">
@@ -310,7 +312,7 @@ const BoardList = () => {
         </div>
         <button
           className="write-btn"
-          onClick={() => navigate("/board/write")}
+          onClick={() => isLoggedIn ? navigate("/board/write") : alert("로그인 후 작성가능합니다.")}
           title="새 글 작성"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
