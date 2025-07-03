@@ -16,6 +16,7 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
   const [editMode, setEditMode] = useState({}); // 어떤 댓글이 수정 모드인지
   const [editContent, setEditContent] = useState({}); // 수정 중인 댓글 내용
 
+  const user = useSelector((state) => state.auth.user);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   // 댓글 관련 상태
@@ -384,27 +385,31 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
                   {/* 🔥 삭제되지 않은 댓글만 버튼 표시 */}
                   {!comment.commentDeleteDate && (
                     <div className="bd-actions-right">
-                      <div
-                        className="bd-reply-delete-button"
-                        onClick={() => {
-                          if (editMode[comment.commentNo]) {
-                            handleEditComment(comment.commentNo);
-                          } else {
-                            toggleEditMode(
-                              comment.commentNo,
-                              comment.commentContent
-                            );
-                          }
-                        }}
-                      >
-                        {editMode[comment.commentNo] ? "완료" : "수정"}
-                      </div>
-                      <div
-                        className="bd-reply-delete-button"
-                        onClick={() => deleteComment(comment.commentNo)}
-                      >
-                        삭제
-                      </div>
+                      {user && user.userNo == comment.user.userNo ? (
+                        <>
+                          <div
+                            className="bd-reply-delete-button"
+                            onClick={() => {
+                              if (editMode[comment.commentNo]) {
+                                handleEditComment(comment.commentNo);
+                              } else {
+                                toggleEditMode(
+                                  comment.commentNo,
+                                  comment.commentContent
+                                );
+                              }
+                            }}
+                          >
+                            {editMode[comment.commentNo] ? "완료" : "수정"}
+                          </div>
+                          <div
+                            className="bd-reply-delete-button"
+                            onClick={() => deleteComment(comment.commentNo)}
+                          >
+                            삭제
+                          </div>
+                        </>
+                      ) : null}
                       <div
                         className="bd-reply-insert-button"
                         onClick={() => toggleReplyInput(comment.commentNo)}

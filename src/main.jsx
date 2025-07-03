@@ -13,18 +13,16 @@ const GOOGLE_CLIENT_ID =
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <QueryClientProvider client={queryClient}>
-        <Provider store={store}>
-          <PersistGate
-            loading={<div>앱을 불러오는 중...</div>}
-            persistor={persistor}
-          >
-            <App />
-          </PersistGate>
-        </Provider>
-      </QueryClientProvider>
-    </GoogleOAuthProvider>
-  </StrictMode>
+  <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <PersistGate
+          loading={<div>앱을 불러오는 중...</div>}
+          persistor={persistor}
+        >
+          <App />
+        </PersistGate>
+      </Provider>
+    </QueryClientProvider>
+  </GoogleOAuthProvider>
 );

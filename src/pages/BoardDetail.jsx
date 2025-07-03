@@ -8,6 +8,7 @@ import UserProfilePopup from "../pages/UserProfilePopup.jsx";
 import "../styles/boardDetail.css";
 import axiosInstance from "../lib/axiosInstance.js";
 import ReportModal from "./ReportModal.jsx"; // ✅ 신고 모달 import
+import { useSelector } from "react-redux";
 
 const BoardDetail = () => {
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ const BoardDetail = () => {
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
   const [comments, setComments] = useState([]);
+
+  const user = useSelector((state) => state.auth.user);
 
   // ✅ 신고 모달 상태
   const [isReportOpen, setIsReportOpen] = useState(false);
@@ -142,6 +145,7 @@ const BoardDetail = () => {
   };
 
   useEffect(() => {
+    console.log(user);
     if (boardNo) {
       checkLikeStatus();
       loadBoardDetail(); // 게시글만 로드하면 comments도 함께 옴
@@ -185,12 +189,16 @@ const BoardDetail = () => {
           목록으로
         </button>
         <div className="detail-actions">
-          <button onClick={handleEdit} className="edit-btn">
-            수정
-          </button>
-          <button onClick={handleDelete} className="board-delete-btn">
-            삭제
-          </button>
+          {user && user.userNo == board.user.userNo ? (
+            <>
+              <button onClick={handleEdit} className="edit-btn">
+                수정
+              </button>
+              <button onClick={handleDelete} className="board-delete-btn">
+                삭제
+              </button>
+            </>
+          ) : null}
           <button onClick={handleReport} className="board-report-btn">
             신고
           </button>
