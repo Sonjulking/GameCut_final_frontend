@@ -9,8 +9,11 @@ const UserPointInfo = () => {
   }
 
   return (
-    <div style={{ fontWeight: "bold", marginBottom: 16 }}>
-      {userInfo.userNickname}님의 포인트 : {userInfo.userPoint}P
+    <div className="itemshop-userinfo">
+      사용자 닉네임 : {userInfo.userNickname}
+      <br />
+      현재 포인트 :
+      <span style={{ color: "yellow" }}> {userInfo.userPoint} P</span>
     </div>
   );
 };
