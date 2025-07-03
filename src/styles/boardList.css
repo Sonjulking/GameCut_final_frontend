@@ -131,6 +131,13 @@
   border: 1px solid #30363d;
 }
 
+/* 모바일에서 토글 버튼 숨기기 */
+@media (max-width: 768px) {
+  .view-toggle {
+    display: none;
+  }
+}
+
 .toggle-btn {
   display: flex;
   align-items: center;
@@ -428,8 +435,9 @@
     text-align: center;
   }
 
+  /* 모바일에서 토글 버튼 완전히 숨기기 */
   .view-toggle {
-    align-self: center;
+    display: none !important;
   }
 
   /* 필터와 글쓰기 반응형 */
