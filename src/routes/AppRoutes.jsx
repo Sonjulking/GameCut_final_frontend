@@ -23,6 +23,7 @@ import WebGame from "../pages/WebGame.jsx";
 import WebGameSelector from "../pages/WebGameSelector.jsx";
 import TournamentGame from "../pages/TournamentGame.jsx";
 import GuessTheRankGame from "../pages/GuessTheRankGame.jsx";
+import { TierCreator } from "../pages/TierCreator.jsx";
 import TournamentRanking from "../pages/TournamentRanking.jsx";
 import MyComment from "../pages/MyComment.jsx";
 import ChangePassword from "../pages/ChangePassword.jsx";
@@ -80,6 +81,7 @@ const router = createBrowserRouter([
       { path: "webgame", element: <WebGameSelector /> },
       { path: "webgame/tournament", element: <TournamentGame /> },
       { path: "webgame/guess-rank", element: <GuessTheRankGame /> },
+      { path: "webgame/guess-rank/create", element: <TierCreator /> },
       { path: "webgame/tournament/ranking", element: <TournamentRanking /> },
 
       { path: "shopping", element: <ItemShop /> },
