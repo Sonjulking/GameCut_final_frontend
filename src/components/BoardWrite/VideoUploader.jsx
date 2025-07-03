@@ -238,9 +238,32 @@ const VideoUploader = ({
                 <Box>
                     <Typography color="white">썸네일 선택 방식</Typography>
                     <RadioGroup
-                            row
+                            row={false} /* 모바일에서 세로 배치 */
                             value={thumbnailMode}
                             onChange={(e) => setThumbnailMode(e.target.value)}
+                            sx={{
+                                '@media (max-width: 768px)': {
+                                    '& .MuiFormControlLabel-root': {
+                                        margin: '8px 0', // 위아래 간격
+                                        display: 'flex',
+                                        width: '100%', // 전체 너비 사용
+                                        justifyContent: 'flex-start',
+                                        alignItems: 'center',
+                                        padding: '8px 12px', // 패딩 추가
+                                        border: '1px solid #444', // 테두리 추가
+                                        borderRadius: '8px', // 둥근 모서리
+                                        backgroundColor: '#2a2a2a', // 배경색
+                                        transition: 'all 0.2s ease',
+                                        '&:hover': {
+                                            backgroundColor: '#333',
+                                            borderColor: '#666'
+                                        }
+                                    }
+                                },
+                                '@media (min-width: 769px)': {
+                                    flexDirection: 'row' // 데스크톱에서는 가로 배치
+                                }
+                            }}
                     >
 
                         {existingPhoto?.fileUrl &&
@@ -253,7 +276,13 @@ const VideoUploader = ({
                                                 }}
                                         />}
                                         label="기존 썸네일"
-                                        sx={{color: "#fff"}}
+                                        sx={{
+                                            color: "#fff",
+                                            '& .MuiFormControlLabel-label': {
+                                                fontSize: '0.95rem',
+                                                fontWeight: '500'
+                                            }
+                                        }}
                                 />
                         }
                         <FormControlLabel
@@ -262,7 +291,13 @@ const VideoUploader = ({
                                         sx={{color: "#aaa", "&.Mui-checked": {color: "#42a5f5"}}}
                                 />}
                                 label="자동 생성"
-                                sx={{color: "#fff"}}
+                                sx={{
+                                    color: "#fff",
+                                    '& .MuiFormControlLabel-label': {
+                                        fontSize: '0.95rem',
+                                        fontWeight: '500'
+                                    }
+                                }}
                         />
                         <FormControlLabel
                                 value="custom"
@@ -270,7 +305,13 @@ const VideoUploader = ({
                                         sx={{color: "#aaa", "&.Mui-checked": {color: "#42a5f5"}}}
                                 />}
                                 label="사용자 지정"
-                                sx={{color: "#fff"}}
+                                sx={{
+                                    color: "#fff",
+                                    '& .MuiFormControlLabel-label': {
+                                        fontSize: '0.95rem',
+                                        fontWeight: '500'
+                                    }
+                                }}
                         />
                     </RadioGroup>
                 </Box>
