@@ -227,7 +227,7 @@ const BoardDetail = () => {
                 onClick={handleProfileClick}
                 style={{ cursor: "pointer", textDecoration: "underline" }}
               >
-                작성자: {board.user.userNickname}
+              {board.user.userNickname}
               </span>
               <span className="create-date">{board.boardCreateDate}</span>
             </div>
