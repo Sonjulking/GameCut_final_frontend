@@ -187,7 +187,13 @@ const BoardWrite = ({ isEdit = false }) => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 5, pb: 10 }}>
+    <Container maxWidth="sm" sx={{ 
+      mt: 5, 
+      pb: 10,
+      '@media (max-width: 768px)': {
+        pb: 15 // 모바일에서 하단 패딩 크게 늘려서 버튼이 잘리지 않게
+      }
+    }}>
       <Paper
         elevation={6}
         sx={{
@@ -195,6 +201,10 @@ const BoardWrite = ({ isEdit = false }) => {
           p: 4,
           borderRadius: 3,
           border: "1px solid #555",
+          '@media (max-width: 768px)': {
+            p: 3, // 모바일에서 패딩 조정
+            mb: 5 // 모바일에서 하단 마진 크게 늘림
+          }
         }}
       >
         <Typography variant="h4" gutterBottom color="white" fontWeight="bold">

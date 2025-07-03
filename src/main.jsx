@@ -13,7 +13,6 @@ const GOOGLE_CLIENT_ID =
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
@@ -26,5 +25,4 @@ createRoot(document.getElementById("root")).render(
         </Provider>
       </QueryClientProvider>
     </GoogleOAuthProvider>
-  </StrictMode>
 );
