@@ -40,7 +40,6 @@ const ItemUploadButton = ({ userInfo }) => {
       <button className="itemshop-button" onClick={() => setShowModal(true)}>
         업로드
       </button>
-
       {showModal && (
         <div
           style={{
@@ -52,9 +51,7 @@ const ItemUploadButton = ({ userInfo }) => {
           }}
         >
           <form onSubmit={handleSubmit} className="itemupload-modal">
-            <h3 style={{ marginBottom: "12px" }}>아이템 업로드</h3>
-
-            <label>아이템 이름:</label>
+            <label>아이템 이름</label>
             <input
               type="text"
               value={itemName}
@@ -62,7 +59,7 @@ const ItemUploadButton = ({ userInfo }) => {
               required
             />
 
-            <label>가격(P):</label>
+            <label>가격(P)</label>
             <input
               type="number"
               value={itemPrice}
@@ -71,7 +68,7 @@ const ItemUploadButton = ({ userInfo }) => {
               min={1}
             />
 
-            <label>이미지 선택:</label>
+            <label>이미지 선택</label>
             <input
               type="file"
               accept="image/*"
