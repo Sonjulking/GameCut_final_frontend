@@ -8,9 +8,11 @@ import CommentSection from "./CommentSection.jsx";
 import UserProfilePopup from "../pages/UserProfilePopup.jsx";
 import "../styles/boardDetail.css";
 import axiosInstance from "../lib/axiosInstance.js";
-import ReportModal from "./ReportModal.jsx"; // ✅ 신고 모달 import
+import ReportModal from "./ReportModal.jsx";
+import {useSelector} from "react-redux"; // ✅ 신고 모달 import
 
 const BoardDetail = () => {
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const navigate = useNavigate();
   const { boardNo } = useParams();
   const [board, setBoard] = useState(null);
@@ -68,6 +70,10 @@ const BoardDetail = () => {
   };
 
   const toggleLike = async () => {
+    if (!isLoggedIn) {
+      alert("로그인 후 좋아요가 가능합니다.")
+      return;
+    }
     try {
       {
         isLiked
