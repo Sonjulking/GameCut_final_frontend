@@ -19,7 +19,10 @@ const BoardList = () => {
 
   const navigate = useNavigate();
   const [list, setList] = useState([]);
-  const [viewMode, setViewMode] = useState("card"); // 'list' 또는 'card'
+  const [viewMode, setViewMode] = useState(() => {
+    // 모바일에서는 기본적으로 카드뷰, 데스크톱에서는 카드뷰
+    return window.innerWidth <= 768 ? "card" : "card";
+  });
 
   const typeParam = searchParams.get("type") || "전체";
   const [selectedType, setSelectedType] = useState(typeParam);
@@ -116,6 +119,18 @@ const BoardList = () => {
     const typeNo = getBoardTypeNo(selectedType);
     loadData(pageParam, typeNo); // 선택된 타입과 페이지 기반으로 요청
   }, [pageParam, selectedType]);
+
+  // 모바일에서는 항상 카드뷰 유지
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setViewMode("card");
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // useEffect(() => {
   //   console.log(list);
@@ -245,7 +260,7 @@ const BoardList = () => {
                 <h3 className="board-title">{board.boardTitle}</h3>
                 <div className="board-meta">
                   <p className="board-author">
-                    작성자: {board.user.userNickname}
+                   {board.user.userNickname}
                   </p>
                   <div className="board-stats">
                     <span className="board-views">

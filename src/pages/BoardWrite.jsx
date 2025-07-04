@@ -21,6 +21,7 @@ const BoardWrite = ({ isEdit = false }) => {
   const [existingVideo, setExistingVideo] = useState({});
   const [existingPhoto, setExistingPhoto] = useState({});
   const [existingVideoNo, setExistingVideoNo] = useState({});
+  const [existingTags, setExistingTags] = useState([]);
   useEffect(() => {
     if (isEdit && boardNo) {
       axiosInstance
@@ -43,6 +44,7 @@ const BoardWrite = ({ isEdit = false }) => {
           setExistingVideo(data.video.attachFile);
           setExistingPhoto(data.photos[0]?.attachFile);
           setExistingVideoNo(data.video.videoNo);
+          setExistingTags(tagList);
         })
         .catch((err) => console.error("수정용 데이터 로드 실패", err))
         .finally(() => setIsLoading(false));
@@ -187,7 +189,13 @@ const BoardWrite = ({ isEdit = false }) => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 5, pb: 10 }}>
+    <Container maxWidth="sm" sx={{ 
+      mt: 5, 
+      pb: 10,
+      '@media (max-width: 768px)': {
+        pb: 15 // 모바일에서 하단 패딩 크게 늘려서 버튼이 잘리지 않게
+      }
+    }}>
       <Paper
         elevation={6}
         sx={{
@@ -195,6 +203,10 @@ const BoardWrite = ({ isEdit = false }) => {
           p: 4,
           borderRadius: 3,
           border: "1px solid #555",
+          '@media (max-width: 768px)': {
+            p: 3, // 모바일에서 패딩 조정
+            mb: 5 // 모바일에서 하단 마진 크게 늘림
+          }
         }}
       >
         <Typography variant="h4" gutterBottom color="white" fontWeight="bold">
@@ -207,6 +219,7 @@ const BoardWrite = ({ isEdit = false }) => {
               form={form}
               handleChange={handleChange}
               isEdit={isEdit}
+              existingTags = {existingTags}
             />
             {form.boardTypeNo === 3 ? (
               <VideoUploader

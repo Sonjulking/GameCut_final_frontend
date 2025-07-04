@@ -66,7 +66,7 @@
   background: linear-gradient(135deg, #238636, #2ea043);
   color: white;
   border-color: #238636;
-  box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4);
+  box-shadow: 0 2px 8px rgba(35, 134, 54, 0.3); /* 0.4에서 0.3으로 줄임 */
 }
 
 .active-count {
@@ -129,6 +129,13 @@
   padding: 4px;
   border-radius: 8px;
   border: 1px solid #30363d;
+}
+
+/* 모바일에서 토글 버튼 숨기기 */
+@media (max-width: 768px) {
+  .view-toggle {
+    display: none;
+  }
 }
 
 .toggle-btn {
@@ -428,31 +435,90 @@
     text-align: center;
   }
 
+  /* 모바일에서 토글 버튼 완전히 숨기기 */
   .view-toggle {
-    align-self: center;
+    display: none !important;
   }
 
   /* 필터와 글쓰기 반응형 */
   .filter-and-write-container {
-    flex-direction: column;
-    gap: 16px;
-    padding: 12px;
+    flex-direction: row !important; /* 모바일에서도 가로 배치 */
+    gap: 8px !important; /* 간격 줄임 */
+    padding: 6px !important; /* 패딩 더 줄임 */
+    position: relative;
+    align-items: center; /* 수직 중앙 정렬 */
+  }
+
+  /* 스크롤 가능 표시를 위한 그라데이션 */
+  .filter-and-write-container::after {
+    content: "";
+    position: absolute;
+    top: 16px;
+    right: 12px;
+    width: 20px;
+    height: 40px;
+    background: linear-gradient(to left, rgba(22, 27, 34, 0.8), transparent);
+    pointer-events: none;
+    z-index: 1;
   }
 
   .type-filter-container {
-    justify-content: center;
-    gap: 8px;
+    justify-content: flex-start; /* center에서 flex-start로 변경 */
+    gap: 3px !important; /* 6px에서 3px로 줄임 */
+    flex-wrap: nowrap; /* 한 줄로 강제 */
+    overflow-x: auto; /* 가로 스크롤 가능 */
+    -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE, Edge */
+    padding: 8px 8px 8px 8px !important; /* 상하 패딩 더 늘려서 잘림 방지 */
+    flex: 1; /* 남은 공간 차지 */
+  }
+
+  .type-filter-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
   }
 
   .type-filter-btn {
-    padding: 8px 16px;
-    font-size: 13px;
+    padding: 8px 8px !important; /* 6px 8px에서 위아래 패딩 더 늘림 */
+    font-size: 10px !important; /* 11px에서 10px로 줄임 */
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    flex-shrink: 0; /* 버튼 크기 고정 */
+    min-width: fit-content; /* 내용에 맞는 최소 너비 */
+    border-width: 1px; /* 모바일에서 테두리 더 얇게 */
+    border-radius: 12px !important; /* 15px에서 12px로 더 작게 */
+    gap: 2px !important; /* 4px에서 2px로 줄임 */
+    flex: 1; /* 모든 버튼이 같은 크기로 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    justify-content: center; /* 중앙 정렬 */
+  }
+
+  .type-filter-btn:hover {
+    transform: none; /* 모바일에서 hover 애니메이션 제거 */
+  }
+
+  .type-filter-btn.active {
+    box-shadow: 0 1px 4px rgba(35, 134, 54, 0.3); /* 그림자 더 작게 */
+  }
+
+  .active-count {
+    font-size: 8px !important; /* 9px에서 8px로 더 작게 */
+    padding: 0px 2px !important; /* 1px 4px에서 더 작게 */
+    border-radius: 4px !important; /* 8px에서 4px로 */
   }
 
   .write-btn {
     align-self: center;
-    padding: 10px 20px;
-    font-size: 13px;
+    padding: 4px 8px !important; /* 8px 16px에서 더 작게 */
+    font-size: 9px !important; /* 12px에서 9px로 줄임 */
+    border-radius: 12px !important; /* 18px에서 12px로 줄임 */
+    box-shadow: 0 1px 4px rgba(31, 111, 235, 0.3); /* 그림자 줄임 */
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    flex-shrink: 0; /* 버튼 크기 고정 */
+    min-width: fit-content; /* 내용에 맞는 최소 너비 */
+  }
+
+  .write-btn:hover {
+    transform: none; /* 모바일에서 hover 애니메이션 제거 */
   }
 
   /* 카드 뷰 반응형 */
@@ -498,6 +564,36 @@
 
   .thumbnail-container {
     height: 200px;
+  }
+
+  /* 매우 작은 화면에서 카테고리 버튼 더 작게 */
+  .type-filter-btn {
+    padding: 6px 6px !important; /* 4px 6px에서 위아래 패딩 더 늘림 */
+    font-size: 9px !important; /* 10px에서 9px로 */
+    border-width: 1px; /* 테두리도 더 얇게 */
+    border-radius: 10px !important; /* 12px에서 10px로 더 작은 radius */
+    gap: 1px !important; /* 2px에서 1px로 간격 더 줄임 */
+    flex: 1; /* 모든 버튼이 같은 크기로 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    justify-content: center; /* 중앙 정렬 */
+  }
+
+  .write-btn {
+    padding: 3px 6px !important; /* 더 작게 */
+    font-size: 8px !important; /* 9px에서 8px로 */
+    border-radius: 10px !important;
+    gap: 1px !important; /* 아이콘과 텍스트 간격 줄임 */
+  }
+
+  .type-filter-container {
+    gap: 2px !important; /* 간격 더 줄임 */
+    padding: 8px 2px 8px 2px !important; /* 상하 패딩 더 늘리고 좌우 최소화 */
+  }
+
+  .active-count {
+    font-size: 7px !important; /* 8px에서 7px로 카운트 글씨 더 작게 */
+    padding: 0px 2px !important; /* 패딩 유지 */
+    border-radius: 3px !important; /* 6px에서 3px로 */
   }
 
   /* 테이블을 모바일에서 스크롤 가능하게 */

@@ -315,6 +315,7 @@
   border: 0.0625rem solid #30363d;
   overflow: hidden;
   box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.4);
+  margin-bottom: 2rem; /* 하단 여백 추가 */
 }
 
 .bd-comment-header {
@@ -913,16 +914,48 @@
 @media (max-width: 48rem) {
   .board-detail-container {
     padding: 1rem;
+    padding-bottom: 3rem; /* 모바일에서 하단 여백 크게 */
+    /* 모바일에서 터치 스크롤 개선 */
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+  }
+
+  /* 댓글 섹션 모바일 하단 여백 */
+  .bd-comment-section {
+    margin-bottom: 3rem; /* 모바일에서 더 큰 하단 여백 */
+  }
+
+  /* 모바일에서 버튼 터치 영역 확대 */
+  .back-btn,
+  .edit-btn,
+  .board-delete-btn,
+  .board-report-btn {
+    min-height: 44px; /* iOS 권장 터치 영역 */
+    min-width: 44px;
+    padding: 12px 16px;
+    touch-action: manipulation; /* 더블탭 줌 방지 */
+  }
+
+  /* 좋아요 버튼 터치 영역 확대 */
+  .like-button,
+  .stat-item {
+    min-height: 44px;
+    padding: 12px 16px;
+    touch-action: manipulation;
   }
 
   .detail-header {
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
+    /* 모바일에서 고정 헤더 방지 */
+    position: relative;
+    z-index: 1;
   }
 
   .detail-actions {
     justify-content: center;
+    flex-wrap: wrap;
   }
 
   .detail-meta {
@@ -931,6 +964,9 @@
 
   .detail-title {
     font-size: 1.5rem;
+    /* 모바일에서 텍스트 선택 방지 */
+    -webkit-user-select: text;
+    user-select: text;
   }
 
   .meta-right {
@@ -943,6 +979,13 @@
     padding: 1.25rem;
   }
 
+  /* 비디오 모바일 최적화 */
+  .detail-body video {
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 50vh !important;
+  }
+
   .bd-comment-input-wrapper {
     flex-direction: column;
     align-items: stretch;
@@ -950,6 +993,13 @@
 
   .bd-comment-input-field {
     margin-bottom: 0.5rem;
+    min-height: 44px; /* 터치 영역 확대 */
+  }
+
+  .bd-comment-submit-btn,
+  .bd-reply-submit-btn {
+    min-height: 44px;
+    touch-action: manipulation;
   }
 
   .bd-comment-content {
@@ -971,6 +1021,10 @@
 
   .bd-reply-toggle-btn {
     margin-left: 1.5rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    touch-action: manipulation;
   }
 
   .bd-reply-item .bd-comment-edit-area {
@@ -981,6 +1035,12 @@
 @media (max-width: 30rem) {
   .board-detail-container {
     padding: 0.75rem;
+    padding-bottom: 4rem; /* 작은 화면에서 더 큰 하단 여백 */
+  }
+
+  /* 댓글 섹션 작은 화면 하단 여백 */
+  .bd-comment-section {
+    margin-bottom: 4rem; /* 작은 화면에서 더 큰 하단 여백 */
   }
 
   .detail-meta,
