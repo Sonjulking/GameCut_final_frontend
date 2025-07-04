@@ -43,19 +43,27 @@ const BoardDetail = () => {
   const loadBoardDetail = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `http://localhost:8081/board/detail/${boardNo}`
-      );
+      const response = await axiosInstance.get(`/board/detail/${boardNo}`);  // axios → axiosInstance
       setBoard(response.data);
-      if (response.data.comments) {
-        setComments(response.data.comments);
-      }
+      // 댓글은 별도로 로드
+      await loadComments();
     } catch (error) {
       console.error("게시글 로드 실패:", error);
       alert("게시글을 불러올 수 없습니다.");
       navigate("/board/list");
     } finally {
       setLoading(false);
+    }
+  };
+  
+  // 댓글 로드 함수 추가
+  const loadComments = async () => {
+    try {
+      const response = await axiosInstance.get(`/comment/board/${boardNo}`);
+      console.log('받은 댓글 데이터:', response.data);
+      setComments(response.data);
+    } catch (error) {
+      console.error("댓글 로드 실패:", error);
     }
   };
   // 좋아요 여부 체크
@@ -309,7 +317,7 @@ const BoardDetail = () => {
         boardNo={boardNo}
         comments={comments}
         setComments={setComments}
-        onRefresh={loadBoardDetail}
+        onRefresh={loadComments}  // loadBoardDetail 대신 loadComments 사용
       />
 
       {/* 유저 프로필 팝업 */}

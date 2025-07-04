@@ -36,42 +36,30 @@ const CommentSection = ({
     const observerRef = useRef(null);
     const loadMoreRef = useRef(null);
 
-    // 댓글 좋아요 상태 초기화
+    // 댓글 좋아요 상태 초기화 (서버에서 받은 데이터 사용)
     useEffect(() => {
-        if (isLoggedIn && comments.length > 0) {
-            const checkLikedComments = async () => {
-                const likedSet = new Set();
-                const likesCount = {};
+        console.log('댓글 데이터 받음:', comments);
+        
+        const likedSet = new Set();
+        const likesCount = {};
 
-                for (const comment of comments) {
-                    try {
-                        // 좋아요 상태 확인
-                        const response = await axiosInstance.get(`/comment/like/${comment.commentNo}`);
-                        if (response.data) {
-                            likedSet.add(comment.commentNo);
-                        }
-                        // 좋아요 수 저장
-                        likesCount[comment.commentNo] = comment.commentLike || 0;
-                    } catch (error) {
-                        console.error("댓글 좋아요 상태 확인 실패:", error);
-                        likesCount[comment.commentNo] = comment.commentLike || 0;
-                    }
-                }
+        comments.forEach(comment => {
+            // 좋아요 수 설정
+            likesCount[comment.commentNo] = comment.commentLike || 0;
+            
+            // 좋아요 상태 설정 (서버에서 받은 isLikedByCurrentUser 사용)
+            console.log(`댓글 ${comment.commentNo} 좋아요 상태:`, comment.isLikedByCurrentUser);
+            if (comment.isLikedByCurrentUser) {
+                likedSet.add(comment.commentNo);
+            }
+        });
 
-                setLikedComments(likedSet);
-                setCommentLikes(likesCount);
-            };
-
-            checkLikedComments();
-        } else {
-            // 비로그인 시에도 좋아요 수는 표시
-            const likesCount = {};
-            comments.forEach(comment => {
-                likesCount[comment.commentNo] = comment.commentLike || 0;
-            });
-            setCommentLikes(likesCount);
-        }
-    }, [comments, isLoggedIn]);
+        console.log('좋아요한 댓글들:', Array.from(likedSet));
+        console.log('댓글별 좋아요 수:', likesCount);
+        
+        setLikedComments(likedSet);
+        setCommentLikes(likesCount);
+    }, [comments]);
 
     // 새 댓글 작성 시에만 맨 위로 스크롤
     useEffect(() => {

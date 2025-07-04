@@ -280,10 +280,10 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
           comment.commentNo === commentNo
             ? {
                 ...comment,
-                likeCount: isCurrentlyLiked
-                  ? (comment.likeCount || 1) - 1
-                  : (comment.likeCount || 0) + 1,
-                isLiked: !isCurrentlyLiked,
+                commentLike: isCurrentlyLiked  // likeCount → commentLike
+                  ? (comment.commentLike || 1) - 1
+                  : (comment.commentLike || 0) + 1,
+                isLikedByCurrentUser: !isCurrentlyLiked,  // isLiked → isLikedByCurrentUser
               }
             : comment
         )
@@ -299,10 +299,15 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
   };
 
   const initializeCommentLikeStates = () => {
+    console.log('댓글 좋아요 상태 초기화:', comments);
+    
     const likeStates = {};
     comments.forEach((comment) => {
-      likeStates[comment.commentNo] = comment.isLiked || false;
+      console.log(`댓글 ${comment.commentNo} 좋아요 상태:`, comment.isLikedByCurrentUser);
+      likeStates[comment.commentNo] = comment.isLikedByCurrentUser || false;
     });
+    
+    console.log('최종 좋아요 상태:', likeStates);
     setCommentLikeStates(likeStates);
   };
 
@@ -459,19 +464,25 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
                       <div className="bd-comment-actions">
                         <button
                           className={`bd-like-button ${
-                            comment.isLiked ? "liked" : ""
+                            commentLikeStates[comment.commentNo] ? "liked" : ""
                           }`}
                           onClick={() => handleCommentLike(comment.commentNo)}
                         >
                           <svg
                             className="bd-like-icon"
                             viewBox="0 0 24 24"
-                            fill="currentColor"
+                            fill={
+                              commentLikeStates[comment.commentNo]
+                                ? "currentColor"
+                                : "none"
+                            }
+                            stroke="currentColor"
+                            strokeWidth="2"
                           >
-                            <path d="M18.77,11h-4.23l1.52-4.94C16.38,5.03,15.54,4,14.38,4c-0.58,0-1.14,0.24-1.52,0.65L7,11H3v10h4h1h9.43 c1.06,0,1.97-0.67,2.32-1.66l1.9-5.49c0.14-0.41,0.21-0.84,0.21-1.28V12C21.86,11.45,21.38,11,20.81,11L18.77,11z" />
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                           </svg>
                           <span className="bd-like-count">
-                            {comment.commentLike || 0}
+                            {comment.commentLike || 0}  {/* likeCount → commentLike */}
                           </span>
                         </button>
                       </div>
@@ -656,7 +667,9 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
                                         <div className="bd-reply-actions">
                                           <button
                                             className={`bd-like-button ${
-                                              reply.isLiked ? "liked" : ""
+                                              commentLikeStates[reply.commentNo]
+                                                ? "liked"
+                                                : ""
                                             }`}
                                             onClick={() =>
                                               handleCommentLike(reply.commentNo)
@@ -665,12 +678,20 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
                                             <svg
                                               className="bd-like-icon"
                                               viewBox="0 0 24 24"
-                                              fill="currentColor"
+                                              fill={
+                                                commentLikeStates[
+                                                  reply.commentNo
+                                                ]
+                                                  ? "currentColor"
+                                                  : "none"
+                                              }
+                                              stroke="currentColor"
+                                              strokeWidth="2"
                                             >
-                                              <path d="M18.77,11h-4.23l1.52-4.94C16.38,5.03,15.54,4,14.38,4c-0.58,0-1.14,0.24-1.52,0.65L7,11H3v10h4h1h9.43 c1.06,0,1.97-0.67,2.32-1.66l1.9-5.49c0.14-0.41,0.21-0.84,0.21-1.28V12C21.86,11.45,21.38,11,20.81,11L18.77,11z" />
+                                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                                             </svg>
                                             <span className="bd-like-count">
-                                              {reply.likeCount || 0}
+                                              {reply.commentLike || 0}  {/* likeCount → commentLike */}
                                             </span>
                                           </button>
                                         </div>
