@@ -14,6 +14,7 @@ import BoardList from "../pages/BoardList.jsx";
 import BoardDetail from "../pages/BoardDetail.jsx";
 import MyPage from "../pages/MyPage.jsx";
 import MyBoard from "../pages/MyBoard.jsx";
+import MyItemList from "../pages/MyItemList.jsx";
 import Settings from "../pages/Settings.jsx";
 import RankingsPage from "../pages/RankingsPage.jsx";
 import MyReportList from "../pages/MyReportList.jsx";
@@ -64,6 +65,7 @@ const router = createBrowserRouter([
       { path: "mypage/message", element: <MyMessage /> },
       { path: "mypage/follow", element: <MyFollow /> },
       { path: "mypage/report", element: <MyReportList /> },
+      { path: "mypage/item", element: <MyItemList /> },
 
       // 로그인 관련
       { path: "findPassword", element: <FindPassword /> },
