@@ -21,6 +21,7 @@ const BoardWrite = ({ isEdit = false }) => {
   const [existingVideo, setExistingVideo] = useState({});
   const [existingPhoto, setExistingPhoto] = useState({});
   const [existingVideoNo, setExistingVideoNo] = useState({});
+  const [existingTags, setExistingTags] = useState([]);
   useEffect(() => {
     if (isEdit && boardNo) {
       axiosInstance
@@ -43,6 +44,7 @@ const BoardWrite = ({ isEdit = false }) => {
           setExistingVideo(data.video.attachFile);
           setExistingPhoto(data.photos[0]?.attachFile);
           setExistingVideoNo(data.video.videoNo);
+          setExistingTags(tagList);
         })
         .catch((err) => console.error("수정용 데이터 로드 실패", err))
         .finally(() => setIsLoading(false));
@@ -217,6 +219,7 @@ const BoardWrite = ({ isEdit = false }) => {
               form={form}
               handleChange={handleChange}
               isEdit={isEdit}
+              existingTags = {existingTags}
             />
             {form.boardTypeNo === 3 ? (
               <VideoUploader

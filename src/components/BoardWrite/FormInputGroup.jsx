@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, {useEffect, useRef, useState, useCallback} from "react";
 import {
     FormControl,
     InputLabel,
@@ -7,15 +7,15 @@ import {
     TextField,
     Chip, Box, Button,
 } from "@mui/material";
-import { Editor } from "@toast-ui/react-editor";
+import {Editor} from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import "../../styles/toast-editor-dark.css";
 import axiosInstance from "../../lib/axiosInstance.js";
 
-const FormInputGroup = ({ form, handleChange, isEdit }) => {
+const FormInputGroup = ({form, handleChange, isEdit, existingTags}) => {
     const editorRef = useRef(null);
     const [tagInput, setTagInput] = useState("");
-    const [tags, setTags] = useState([]);
+    const [tags, setTags] = useState(() => existingTags || []);
     const [tagLoading, setTagLoading] = useState(false);
     const [tagSuggested, setTagSuggested] = useState(false);
 
@@ -26,6 +26,11 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
             return updatedTags;
         });
     }, []);
+    useEffect(() => {
+        if (isEdit && Array.isArray(existingTags)) {
+            updateTags(existingTags);
+        }
+    }, [existingTags]);
 
     // 태그 데이터를 부모 컴포넌트로 전달 (영상 게시판일 때만)
     useEffect(() => {
@@ -36,7 +41,7 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
 
             if (tagsChanged) {
                 handleChange({
-                    target: { name: "videoTags", value: tags },
+                    target: {name: "videoTags", value: tags},
                 });
             }
         }
@@ -87,7 +92,7 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
     useEffect(() => {
         if (form.boardTypeNo === 3 && !isEdit) {
             handleChange({
-                target: { name: "boardContent", value: "" },
+                target: {name: "boardContent", value: ""},
             });
         }
     }, [form.boardTypeNo]);
@@ -99,7 +104,7 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
 
         if (html !== form.boardContent) {
             handleChange({
-                target: { name: "boardContent", value: html },
+                target: {name: "boardContent", value: html},
             });
         }
     };
@@ -122,7 +127,7 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
 
         if (!isEdit) {
             handleChange({
-                target: { name: "boardContent", value: "" },
+                target: {name: "boardContent", value: ""},
             });
 
             requestAnimationFrame(() => {
@@ -137,6 +142,7 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
 
     const aiTagRecommended = async () => {
         setTagLoading(true);
+        setTags([]);
 
         try {
             const res = await axiosInstance.post(
@@ -171,7 +177,6 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
 
     // 제목/내용 변경 시 태그 관련 상태 초기화
     useEffect(() => {
-        setTags([]);
         setTagLoading(false);
         setTagSuggested(false);
     }, [form.boardTitle, form.boardContent]);
@@ -184,8 +189,11 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
 
     return (
             <>
-                <FormControl fullWidth sx={{ mb: 3 }}>
-                    <InputLabel sx={{ color: "#ccc" }}>게시판 타입</InputLabel>
+                <FormControl
+                        fullWidth
+                        sx={{mb: 3}}
+                >
+                    <InputLabel sx={{color: "#ccc"}}>게시판 타입</InputLabel>
                     <Select
                             name="boardTypeNo"
                             value={form.boardTypeNo}
@@ -195,8 +203,8 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
                             sx={{
                                 color: "#fff",
                                 backgroundColor: "#2b2b2b",
-                                "& .MuiOutlinedInput-notchedOutline": { borderColor: "#555" },
-                                "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#999" },
+                                "& .MuiOutlinedInput-notchedOutline": {borderColor: "#555"},
+                                "&:hover .MuiOutlinedInput-notchedOutline": {borderColor: "#999"},
                                 "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                                     borderColor: "#1976d2",
                                 },
@@ -225,14 +233,14 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
                         fullWidth
                         sx={{
                             mb: 3,
-                            input: { color: "#fff" },
+                            input: {color: "#fff"},
                             "& .MuiOutlinedInput-root": {
-                                "& fieldset": { borderColor: "#555" },
-                                "&:hover fieldset": { borderColor: "#999" },
-                                "&.Mui-focused fieldset": { borderColor: "#1976d2" },
+                                "& fieldset": {borderColor: "#555"},
+                                "&:hover fieldset": {borderColor: "#999"},
+                                "&.Mui-focused fieldset": {borderColor: "#1976d2"},
                             },
                         }}
-                        InputLabelProps={{ style: { color: "#ccc" } }}
+                        InputLabelProps={{style: {color: "#ccc"}}}
                 />
 
                 {form.boardTypeNo === 3 ? (
@@ -248,29 +256,29 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
                                     fullWidth
                                     sx={{
                                         mb: 2,
-                                        textarea: { color: "#fff" },
+                                        textarea: {color: "#fff"},
                                         "& .MuiOutlinedInput-root": {
-                                            "& fieldset": { borderColor: "#555" },
-                                            "&:hover fieldset": { borderColor: "#999" },
-                                            "&.Mui-focused fieldset": { borderColor: "#1976d2" },
+                                            "& fieldset": {borderColor: "#555"},
+                                            "&:hover fieldset": {borderColor: "#999"},
+                                            "&.Mui-focused fieldset": {borderColor: "#1976d2"},
                                         },
                                     }}
-                                    InputLabelProps={{ style: { color: "#ccc" } }}
+                                    InputLabelProps={{style: {color: "#ccc"}}}
                             />
-                            <Box sx={{ display: "flex", gap: 1, alignItems: "center", mt: 2 }}>
+                            <Box sx={{display: "flex", gap: 1, alignItems: "center", mt: 2}}>
                                 <TextField
                                         label="태그 입력"
                                         placeholder="태그 입력 후 Enter를 눌러주세요."
                                         value={tagInput}
                                         onChange={(e) => setTagInput(e.target.value)}
                                         onKeyDown={handleTagKeyDown}
-                                        InputLabelProps={{ style: { color: "#ccc" } }}
+                                        InputLabelProps={{style: {color: "#ccc"}}}
                                         sx={{
-                                            input: { color: "#fff" },
+                                            input: {color: "#fff"},
                                             "& .MuiOutlinedInput-root": {
-                                                "& fieldset": { borderColor: "#555" },
-                                                "&:hover fieldset": { borderColor: "#999" },
-                                                "&.Mui-focused fieldset": { borderColor: "#1976d2" },
+                                                "& fieldset": {borderColor: "#555"},
+                                                "&:hover fieldset": {borderColor: "#999"},
+                                                "&.Mui-focused fieldset": {borderColor: "#1976d2"},
                                             },
                                             flex: 1,
                                         }}
@@ -298,7 +306,7 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
                                 </Button>
                             </Box>
 
-                            <Box sx={{ mt: 1, display: "flex", flexWrap: "wrap", gap: 1 }}>
+                            <Box sx={{mt: 1, display: "flex", flexWrap: "wrap", gap: 1}}>
                                 {tags.map((tag, index) => (
                                         <Chip
                                                 key={index}
@@ -310,7 +318,7 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
                                                     border: "1px solid #888",
                                                     "& .MuiChip-deleteIcon": {
                                                         color: "#ccc",
-                                                        "&:hover": { color: "#fff" },
+                                                        "&:hover": {color: "#fff"},
                                                     },
                                                 }}
                                         />
@@ -318,7 +326,7 @@ const FormInputGroup = ({ form, handleChange, isEdit }) => {
                             </Box>
                         </>
                 ) : (
-                        <div style={{ marginTop: "24px" }}>
+                        <div style={{marginTop: "24px"}}>
                             <Editor
                                     ref={editorRef}
                                     previewStyle="vertical"
