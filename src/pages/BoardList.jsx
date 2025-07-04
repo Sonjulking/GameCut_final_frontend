@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import "../styles/boardList.css";
 import { Button, Stack } from "@mui/material";
 import axiosInstance from "../lib/axiosInstance";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 
 const BoardList = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -14,6 +14,8 @@ const BoardList = () => {
 
   const pageParamRaw = parseInt(searchParams.get("page") || "1", 10); // 기본은 1
   const pageParam = isNaN(pageParamRaw) ? 0 : pageParamRaw - 1; // 내부용은 0부터 시작
+
+  const user = useSelector((state) => state.auth.user);
 
   const navigate = useNavigate();
   const [list, setList] = useState([]);
@@ -181,7 +183,7 @@ const BoardList = () => {
                 <td>{board.boardLike}</td>
                 <td>{new Date(board.boardCreateDate).toLocaleString()}</td>
                 <td>
-                  {false ? (
+                  {user && user.userNo == board.user.userNo ? (
                     <div className="action-buttons">
                       <button className="edit-btn">수정</button>
                       <button className="delete-btn">삭제</button>
@@ -232,22 +234,26 @@ const BoardList = () => {
                   {typeName}
                 </div>
                 <div className="card-actions">
-                  <button
-                    className="card-edit-btn"
-                    onClick={(e) => handleEditClick(e, board.boardNo)}
-                    title="수정"
-                  >
-                    수정
-                  </button>
-                  <button
-                    className="card-delete-btn"
-                    onClick={(e) =>
-                      handleDeleteClick(e, board.boardNo, board.boardTitle)
-                    }
-                    title="삭제"
-                  >
-                    삭제
-                  </button>
+                  {user && user.userNo == board.user.userNo ? (
+                    <>
+                      <button
+                        className="card-edit-btn"
+                        onClick={(e) => handleEditClick(e, board.boardNo)}
+                        title="수정"
+                      >
+                        수정
+                      </button>
+                      <button
+                        className="card-delete-btn"
+                        onClick={(e) =>
+                          handleDeleteClick(e, board.boardNo, board.boardTitle)
+                        }
+                        title="삭제"
+                      >
+                        삭제
+                      </button>
+                    </>
+                  ) : null}
                 </div>
               </div>
               <div className="board-info">
@@ -327,7 +333,11 @@ const BoardList = () => {
         </div>
         <button
           className="write-btn"
-          onClick={() => isLoggedIn ? navigate("/board/write") : alert("로그인 후 작성가능합니다.")}
+          onClick={() =>
+            isLoggedIn
+              ? navigate("/board/write")
+              : alert("로그인 후 작성가능합니다.")
+          }
           title="새 글 작성"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
