@@ -21,7 +21,9 @@ const ItemShopPage = () => {
     <div className="itemshop-container">
       <div className="itemshop-header">
         <UserPointInfo userInfo={userInfo} />
-        <ItemUploadButton userInfo={userInfo} />
+        {userInfo?.role === "ROLE_ADMIN" && (
+          <ItemUploadButton userInfo={userInfo} />
+        )}
       </div>
       <ItemList itemList={itemList} userInfo={userInfo} />
     </div>

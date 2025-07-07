@@ -15,7 +15,7 @@ const MyPageSidebar = () => {
     { id: "message", name: "내 쪽지", path: "/mypage/message" },
     { id: "board", name: "내 게시글", path: "/mypage/board" },
     { id: "comment", name: "내 댓글", path: "/mypage/comment" },
-    { id: "video", name: "내 영상", path: "/mypage/video" },
+    // { id: "video", name: "내 영상", path: "/mypage/video" },
     { id: "item", name: "내 아이템", path: "/mypage/item" },
     { id: "point", name: "내 포인트 내역", path: "/mypage/point" },
     { id: "follow", name: "팔로우", path: "/mypage/follow" },
