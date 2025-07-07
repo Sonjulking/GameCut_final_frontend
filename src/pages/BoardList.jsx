@@ -9,15 +9,17 @@ import { useSelector } from "react-redux";
 const BoardList = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [totalPages, setTotalPages] = useState(1); // 먼저 선언
-  const [totalElements, setTotalElements] = useState(1); // 먼저 선언
+  const keywordParam = searchParams.get("keyword") || "";
 
-  const pageParamRaw = parseInt(searchParams.get("page") || "1", 10); // 기본은 1
-  const pageParam = isNaN(pageParamRaw) ? 0 : pageParamRaw - 1; // 내부용은 0부터 시작
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(1);
+
+  const pageParamRaw = parseInt(searchParams.get("page") || "1", 10);
+  const pageParam = isNaN(pageParamRaw) ? 0 : pageParamRaw - 1;
 
   const user = useSelector((state) => state.auth.user);
-
   const navigate = useNavigate();
+
   const [list, setList] = useState([]);
   const [viewMode, setViewMode] = useState(() => {
     // 모바일에서는 기본적으로 카드뷰, 데스크톱에서는 카드뷰
@@ -64,6 +66,10 @@ const BoardList = () => {
     if (boardTypeNo !== null) {
       params.boardTypeNo = boardTypeNo;
     }
+    // ─── 여기만 추가: keywordParam 이 있으면 넘겨줌 ───
+    if (keywordParam) {
+      params.keyword = keywordParam;
+    }
 
     const res = await axios.get(
       `${import.meta.env.VITE_API_URL}/board/listAll`,
@@ -80,7 +86,12 @@ const BoardList = () => {
   // 타입별 필터링 함수
   const filterByType = (type) => {
     setSelectedType(type);
-    setSearchParams({ page: 1, type }); // page 초기화
+    // ─── 여기만 수정: 검색어가 있을 때 유지 ───
+    setSearchParams({
+      page: 1,
+      type,
+      ...(keywordParam ? { keyword: keywordParam } : {}),
+    });
   };
 
   // 게시글 상세보기
@@ -90,21 +101,19 @@ const BoardList = () => {
 
   // 게시글 수정하기
   const handleEditClick = (e, boardNo) => {
-    e.stopPropagation(); // 이벤트 버블링 방지
+    e.stopPropagation();
     navigate(`/board/edit/${boardNo}`);
   };
 
   // 게시글 삭제하기
   const handleDeleteClick = async (e, boardNo, boardTitle) => {
-    e.stopPropagation(); // 이벤트 버블링 방지
-
+    e.stopPropagation();
     if (window.confirm(`"${boardTitle}" 게시글을 정말 삭제하시겠습니까?`)) {
       try {
         await axiosInstance.delete(
           `${import.meta.env.VITE_API_URL}/board/${boardNo}`
         );
         alert("게시글이 삭제되었습니다.");
-
         // 삭제 후 목록 새로고침
         const typeNo = getBoardTypeNo(selectedType);
         loadData(pageParam, typeNo);
@@ -115,10 +124,11 @@ const BoardList = () => {
     }
   };
 
+  // ─── useEffect 에 keywordParam 추가 ───
   useEffect(() => {
     const typeNo = getBoardTypeNo(selectedType);
     loadData(pageParam, typeNo); // 선택된 타입과 페이지 기반으로 요청
-  }, [pageParam, selectedType]);
+  }, [pageParam, selectedType, keywordParam]);
 
   // 모바일에서는 항상 카드뷰 유지
   useEffect(() => {
@@ -127,14 +137,9 @@ const BoardList = () => {
         setViewMode("card");
       }
     };
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  // useEffect(() => {
-  //   console.log(list);
-  // }, [list]);
 
   const currentGroup = Math.floor(pageParam / 10);
   const startPage = currentGroup * 10;
@@ -225,10 +230,11 @@ const BoardList = () => {
                       : "/common/empty.png"
                   }
                   alt={board.boardTitle}
-                  className={`board-thumbnail
-                ${
-                  !board.photos[0]?.attachFile.fileUrl ? "empty-thumbnail" : ""
-                } `}
+                  className={`board-thumbnail ${
+                    !board.photos[0]?.attachFile.fileUrl
+                      ? "empty-thumbnail"
+                      : ""
+                  }`}
                 />
                 <div className={`card-type-badge type-${board.boardTypeNo}`}>
                   {typeName}
@@ -259,9 +265,7 @@ const BoardList = () => {
               <div className="board-info">
                 <h3 className="board-title">{board.boardTitle}</h3>
                 <div className="board-meta">
-                  <p className="board-author">
-                   {board.user.userNickname}
-                  </p>
+                  <p className="board-author">{board.user.userNickname}</p>
                   <div className="board-stats">
                     <span className="board-views">
                       조회수 {board.boardCount}
@@ -290,6 +294,12 @@ const BoardList = () => {
     <div className="board-container">
       {/* 헤더와 토글 버튼 */}
       <div className="board-header">
+        {/* 검색 결과 카운트 */}
+        {keywordParam && (
+          <div className="search-result">
+            “{keywordParam}” 검색 결과: 총 {totalElements}건
+          </div>
+        )}
         <h2 className="board-title-header"></h2>
         <div className="view-toggle">
           <button
@@ -359,6 +369,7 @@ const BoardList = () => {
               setSearchParams({
                 page: startPage,
                 type: selectedType,
+                ...(keywordParam ? { keyword: keywordParam } : {}),
               })
             }
           >
@@ -375,6 +386,7 @@ const BoardList = () => {
                 setSearchParams({
                   page: pageNumber + 1,
                   type: selectedType,
+                  ...(keywordParam ? { keyword: keywordParam } : {}),
                 })
               }
             >
@@ -388,6 +400,7 @@ const BoardList = () => {
               setSearchParams({
                 page: endPage + 1,
                 type: selectedType,
+                ...(keywordParam ? { keyword: keywordParam } : {}),
               })
             }
           >
