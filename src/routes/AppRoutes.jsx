@@ -66,6 +66,8 @@ const router = createBrowserRouter([
       { path: "mypage/follow", element: <MyFollow /> },
       { path: "mypage/report", element: <MyReportList /> },
       { path: "mypage/item", element: <MyItemList /> },
+      { path: "mypage/admin", element: <AdminBoard /> },
+      { path: "admin/reportList", element: <ReportList /> },
 
       // 로그인 관련
       { path: "findPassword", element: <FindPassword /> },
