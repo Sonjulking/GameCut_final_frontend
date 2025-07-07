@@ -25,3 +25,7 @@ export const uploadItemApi = (itemDTO, file) => {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
+
+// ✅ 최종: 관리자 아이템 삭제 API 경로에 맞게 수정
+export const deleteItemApi = (itemNo) =>
+  axios.delete(`/admin/admin/delete?itemNo=${itemNo}`);
