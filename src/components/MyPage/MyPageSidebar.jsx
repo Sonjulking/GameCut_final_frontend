@@ -35,6 +35,7 @@ const MyPageSidebar = () => {
     if (path === "/mypage/follow") return "follow";
     if (path === "/mypage/gtr") return "gtr";
     if (path === "/mypage/report") return "report";
+    if (path === "/mypage/admin") return "admin";
     return "info";
   };
 
@@ -61,7 +62,7 @@ const MyPageSidebar = () => {
         {/* ✅ 관리자 전용 메뉴 */}
         {user?.role === "ROLE_ADMIN" && (
           <button
-            onClick={() => navigate("/admin")}
+            onClick={() => navigate("/mypage/admin")}
             className="mypage-menu-item admin-button"
             title="관리자 페이지"
           >
