@@ -30,7 +30,6 @@ const useAuthInit = () => {
     } else {
       // 쿠키가 없으면 즉시 로그아웃
       dispatch(logout());
-      a;
     }
   }, [dispatch, isLoggedIn]);
 };
