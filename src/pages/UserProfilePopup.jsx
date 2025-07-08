@@ -12,11 +12,26 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import axiosInstance from "../lib/axiosInstance";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const UserProfilePopup = ({ open, onClose, user }) => {
+  const currentUser = useSelector((state) => state.auth.user);
+  const isAdmin = currentUser?.role === "ROLE_ADMIN";
+
   const [isFollowing, setIsFollowing] = useState(false);
-  const [isBlocked, setIsBlocked] = useState(false); // 🔸 추가
+  const [isBlocked, setIsBlocked] = useState(false);
   const [messageContent, setMessageContent] = useState("");
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const navigate = useNavigate();
+
+  // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
+  useEffect(() => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
 
   useEffect(() => {
     const checkStatuses = async () => {
@@ -30,7 +45,7 @@ const UserProfilePopup = ({ open, onClose, user }) => {
           const blockRes = await axiosInstance.get(
             `/block/check?blockedUserNo=${user.userNo}`
           );
-          setIsBlocked(blockRes.data.isBlocked); // 🔸 차단 상태도 확인
+          setIsBlocked(blockRes.data.isBlocked);
         } catch (err) {
           console.error("상태 확인 실패", err);
         }
@@ -103,6 +118,23 @@ const UserProfilePopup = ({ open, onClose, user }) => {
     }
   };
 
+  const handleUserDelete = async () => {
+    if (!window.confirm("정말로 이 사용자를 탈퇴시키겠습니까?")) return;
+
+    try {
+      const res = await axiosInstance.post(`/admin/user/delete/${user.userNo}`);
+      if (res.data.success) {
+        alert("유저가 탈퇴 처리되었습니다.");
+        onClose();
+      } else {
+        alert("탈퇴 실패: " + res.data.message);
+      }
+    } catch (err) {
+      console.error("유저 탈퇴 실패", err);
+      alert("유저 탈퇴 중 오류가 발생했습니다.");
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -158,7 +190,11 @@ const UserProfilePopup = ({ open, onClose, user }) => {
             InputLabelProps={{ style: { color: "#aaa" } }}
           />
 
-          <Stack direction="row" spacing={2} sx={{ marginTop: 2 }}>
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{ marginTop: 2, flexWrap: "wrap", justifyContent: "center" }}
+          >
             <Button
               variant="contained"
               color="primary"
@@ -181,6 +217,15 @@ const UserProfilePopup = ({ open, onClose, user }) => {
             >
               {isBlocked ? "차단 해제" : "차단"}
             </Button>
+            {isAdmin && (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleUserDelete}
+              >
+                유저 탈퇴
+              </Button>
+            )}
           </Stack>
         </Stack>
       </DialogContent>

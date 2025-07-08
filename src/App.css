@@ -523,6 +523,7 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 .video_side_buttons img {
@@ -538,6 +539,45 @@ header {
 
 .video_side_buttons:active {
   transform: scale(0.95);
+}
+
+/* 댓글 개수 표시 스타일 */
+.comment-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #ff4444, #cc0000);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: bold;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border: 2px solid var(--bg-color-dark);
+  animation: commentPulse 2s infinite;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes commentPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(255, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
+    transform: scale(1);
+  }
 }
 
 /* === 댓글 래퍼 === */
@@ -589,6 +629,110 @@ header {
   max-height: 35vh;
   overflow-y: auto;
   margin-bottom: 0.75rem;
+  /* scroll-behavior: smooth; 제거 - 무한스크롤시 튕김 방지 */
+}
+
+/* 스크롤바 스타일링 */
+.comment-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.comment-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.comment-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.comment-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* 로딩 인디케이터 스타일 */
+.comment-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  gap: 8px;
+  animation: fadeIn 0.3s ease;
+}
+
+.comment-loading-text {
+  color: #90caf9;
+  font-size: 0.9rem;
+}
+
+/* 더보기 버튼 스타일 */
+.load-more-trigger {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  min-height: 60px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 8px;
+}
+
+.load-more-trigger:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.load-more-text {
+  color: #90caf9;
+  text-decoration: underline;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.load-more-text:hover {
+  color: #64b5f6;
+}
+
+/* 댓글 끝 표시 */
+.comments-end {
+  text-align: center;
+  padding: 20px 16px;
+  color: #777;
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 8px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border-radius: 0 0 8px 8px;
+}
+
+.comments-end::before {
+  content: "📝";
+  display: block;
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  opacity: 0.6;
+}
+
+/* 새 댓글 하이라이트 효과 */
+.comment.new-comment {
+  border-left: 3px solid #90caf9;
+  background-color: rgba(144, 202, 249, 0.1);
+  animation: newCommentGlow 2s ease-out;
+}
+
+@keyframes newCommentGlow {
+  0% {
+    background-color: rgba(144, 202, 249, 0.3);
+    transform: translateX(-5px);
+  }
+  100% {
+    background-color: rgba(144, 202, 249, 0.1);
+    transform: translateX(0);
+  }
 }
 
 .comment {
@@ -677,10 +821,16 @@ header {
   }
 
   .comment-list {
-    min-height: 35vh;
-    max-height: 35vh;
+    min-height: 40vh;
+    max-height: 40vh;
     overflow-y: auto;
     margin-bottom: 0.75rem;
+  }
+
+  .comment-count {
+    min-width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
   }
 
   .widthVideo {
@@ -762,19 +912,19 @@ header {
     max-width: 100%;
     height: auto;
     min-height: 200px;
-    max-height: 60vh;
+    max-height: 50vh; /* 60vh에서 50vh로 줄임 */
   }
 
   .heightVideo {
     width: auto !important;
     height: auto !important;
-    max-height: 60vh;
+    max-height: 45vh !important; /* 60vh에서 45vh로 줄임 */
   }
 
   .widthVideo {
     width: 100% !important;
     height: auto !important;
-    max-height: 60vh;
+    max-height: 50vh; /* 60vh에서 50vh로 줄임 */
   }
 
   .video_texts {
@@ -839,18 +989,45 @@ header {
     flex-grow: 1;
     overflow-y: auto;
     margin-bottom: 1rem;
-    min-height: 62.5%;
-    padding-right: 5px;
+    min-height: 60vh;
+    max-height: none;
+    padding-right: 8px;
   }
 
   .main_comment_wrapper .comment-list::-webkit-scrollbar {
-    width: 0;
+    width: 4px;
     background: transparent;
+  }
+
+  .main_comment_wrapper .comment-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
   }
 
   .main_comment_wrapper .comment-list {
     -ms-overflow-style: none;
-    scrollbar-width: none;
+    scrollbar-width: thin;
+  }
+
+  .comment-count {
+    min-width: 16px;
+    height: 16px;
+    font-size: 0.65rem;
+  }
+
+  /* 모바일에서 댓글 없음 상태 */
+  .no-comments {
+    padding: 2rem 1rem;
+    min-height: 150px;
+  }
+
+  .no-comments-icon {
+    font-size: 2.5rem;
+  }
+
+  .comments-end {
+    padding: 16px 12px;
+    font-size: 0.85rem;
   }
 
   .main_comment_wrapper .comment-input {
@@ -888,6 +1065,18 @@ header {
 
   /* 매우 작은 화면 (320px 이하) */
   @media (max-width: 320px) {
+    .video_player {
+      max-height: 40vh !important; /* 매우 작은 화면에서는 더 작게 */
+    }
+
+    .heightVideo {
+      max-height: 35vh !important; /* 세로영상은 더욱 작게 */
+    }
+
+    .widthVideo {
+      max-height: 40vh !important;
+    }
+
     .video_texts {
       padding: 0.75rem 0.25rem;
     }
@@ -969,4 +1158,182 @@ button:hover,
 input,
 textarea {
   cursor: url("/cursor/cursor_i.png"), text;
+}
+
+/* === 무한스크롤 댓글을 위한 추가 스타일 === */
+
+/* 스켈레톤 로딩 애니메이션 */
+.comment-skeleton {
+  animation: skeleton-loading 1.5s infinite ease-in-out;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  border-radius: 0.25rem;
+  height: 60px;
+  margin-bottom: 0.625rem;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* 무한스크롤 트리거 영역 스타일 */
+.infinite-scroll-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  min-height: 60px;
+  transition: all 0.3s ease;
+}
+
+.infinite-scroll-trigger.loading {
+  opacity: 0.8;
+}
+
+.infinite-scroll-trigger .load-more-button {
+  background: linear-gradient(135deg, #90caf9, #64b5f6);
+  border: none;
+  border-radius: 20px;
+  color: white;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(144, 202, 249, 0.3);
+}
+
+.infinite-scroll-trigger .load-more-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(144, 202, 249, 0.4);
+}
+
+.infinite-scroll-trigger .load-more-button:active {
+  transform: translateY(0);
+}
+
+/* 댓글 작성 성공 알림 */
+@keyframes commentSuccess {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.comment.success-animation {
+  animation: commentSuccess 0.5s ease-out;
+}
+
+/* 댓글 없음 상태 */
+.no-comments {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #666;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.no-comments-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.6;
+  filter: grayscale(50%);
+}
+
+.no-comments p {
+  margin: 0.5rem 0;
+  font-weight: 500;
+}
+
+.no-comments p:first-of-type {
+  font-size: 1.1rem;
+  color: #888;
+}
+
+/* 반응형 무한스크롤 최적화 */
+@media (max-width: 768px) {
+  .infinite-scroll-trigger {
+    padding: 12px;
+    min-height: 50px;
+  }
+
+  .infinite-scroll-trigger .load-more-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+
+  .comment-skeleton {
+    height: 50px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .infinite-scroll-trigger {
+    padding: 14px;
+    min-height: 55px;
+  }
+}
+
+/* 접근성 개선 */
+@media (prefers-reduced-motion: reduce) {
+  .comment-skeleton,
+  .commentPulse,
+  .newCommentGlow,
+  .commentSuccess {
+    animation: none !important;
+  }
+
+  .infinite-scroll-trigger .load-more-button:hover {
+    transform: none;
+  }
+}
+
+.search-input {
+  width: 12rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: #fff;
+  background-color: #333;
+  border: 1px solid #555;
+  border-radius: 0.375rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #ff8c00;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.2);
+  background-color: #444;
+}
+
+.search-result {
+  background-color: #333;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
 }

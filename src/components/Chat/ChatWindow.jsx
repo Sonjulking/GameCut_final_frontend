@@ -168,7 +168,7 @@ const ChatWindow = ({onClose}) => {
                         sx={{
                             px: 1.5,
                             pt: 1.5,
-                            pb: {xs: 10, sm: 3, md: 2}, // 반응형 패딩
+                            pb: {xs: 15, sm: 3, md: 2}, // 반응형 패딩
                         }}
                 >
                     <TextField

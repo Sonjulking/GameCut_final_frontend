@@ -1,16 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../lib/axiosInstance"; // ✅ axiosInstance 사용
+import axios from "../lib/axiosInstance";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar.jsx";
 import "../styles/MyPage.css";
-import { useSelector } from "react-redux";
-import Cookie from "js-cookie";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchUser } from "../store/userSlice";
 
 const MyPage = () => {
   const navigate = useNavigate();
-  //전역변수 추가된부분
-  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const userInfo = useSelector((state) => state.user.userInfo);
+
+  // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
+  useEffect(() => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
+
+  // 최신 유저 정보 불러오기
+  useEffect(() => {
+    if (isLoggedIn) {
+      dispatch(fetchUser());
+    }
+  }, [dispatch, isLoggedIn]);
+
   const confirmDelete = () => {
     if (window.confirm("정말 탈퇴하시겠습니까?")) {
       handleDeleteUser();
@@ -28,22 +45,11 @@ const MyPage = () => {
     }
   };
 
-  // if (user) {
-  //   return (
-  //     <div className="mypage-container">
-  //       <div className="loading-spinner">
-  //         <div className="spinner"></div>
-  //         <p>사용자 정보를 불러오는 중...</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
-  if (!user) {
+  if (!userInfo) {
     return (
       <div className="mypage-container">
         <div className="error-message">
-          <h2>사용자 정보를 찾을 수 없습니다</h2>
+          <h2>사용자 정보를 불러오는 중...</h2>
           <button onClick={() => navigate("/")} className="back-btn">
             홈으로 돌아가기
           </button>
@@ -65,25 +71,29 @@ const MyPage = () => {
                   className="mypage-user-image"
                   alt="프로필 이미지"
                   src={
-                    user.photoNo && user.photoNo !== 0 && user.profileImage
-                      ? `${import.meta.env.VITE_API_URL}${user.profileImage}`
+                    userInfo?.photo?.photoNo &&
+                    userInfo.photo.photoNo !== 0 &&
+                    userInfo.photo?.attachFile?.fileUrl
+                      ? `${import.meta.env.VITE_API_URL}${
+                          userInfo.photo.attachFile.fileUrl
+                        }`
                       : "/src/assets/img/main/icons/profile_icon.png"
                   }
                 />
               </div>
 
               <div className="mypage-user-details">
-                {user.role === "role_admin" && (
+                {userInfo.role === "role_admin" && (
                   <img
                     alt="관리자이모티콘"
                     src="/src/assets/img/main/icons/admin.jpg"
                     className="admin-icon"
                   />
                 )}
-                <p className="mypage-user-id">{user.userId}</p>
-                <p className="mypage-user-nickname">{user.userNickname}</p>
+                <p className="mypage-user-id">{userInfo.userId}</p>
+                <p className="mypage-user-nickname">{userInfo.userNickname}</p>
                 <p className="mypage-user-point">
-                  포인트: <span>{user.userPoint?.toLocaleString()}</span>P
+                  포인트: <span>{userInfo.userPoint?.toLocaleString()}</span>P
                 </p>
               </div>
             </div>

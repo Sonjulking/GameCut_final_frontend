@@ -315,6 +315,7 @@
   border: 0.0625rem solid #30363d;
   overflow: hidden;
   box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.4);
+  margin-bottom: 2rem; /* 하단 여백 추가 */
 }
 
 .bd-comment-header {
@@ -790,6 +791,107 @@
   font-size: 12px;
 }
 
+/* 댓글 좋아요 버튼 기본 스타일 */
+.bd-like-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 18px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #7d8590;
+  transition: all 0.3s ease;
+  min-height: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 기본 호버 상태 */
+.bd-like-button:hover {
+  background-color: #21262d;
+  color: #e6edf3;
+  transform: translateY(-1px);
+}
+
+/* 좋아요 누른 상태 */
+.bd-like-button.liked {
+  color: #ff6b6b;
+  background-color: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+/* 좋아요 누른 상태 호버 */
+.bd-like-button.liked:hover {
+  background-color: rgba(255, 107, 107, 0.2);
+  color: #ff8a8a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+/* 좋아요 아이콘 애니메이션 */
+.bd-like-icon {
+  width: 14px;
+  height: 14px;
+  transition: all 0.3s ease;
+}
+
+.bd-like-button:active .bd-like-icon {
+  transform: scale(1.2);
+}
+
+.bd-like-button.liked .bd-like-icon {
+  animation: likeHeartbeat 0.6s ease-in-out;
+}
+
+/* 좋아요 수 스타일 */
+.bd-like-count {
+  font-weight: 500;
+  font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.bd-like-button.liked .bd-like-count {
+  font-weight: 600;
+  color: #ff6b6b;
+}
+
+/* 하트 애니메이션 키프레임 */
+@keyframes likeHeartbeat {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 클릭 시 리플 효과 */
+.bd-like-button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 107, 107, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.bd-like-button.liked::before {
+  width: 60px;
+  height: 60px;
+  opacity: 0;
+  transition: width 0.6s, height 0.6s, opacity 0.6s;
+}
+
 /* 반응형 - 모바일에서 좋아요 버튼 위치 조정 */
 @media (max-width: 48rem) {
   .bd-comment-actions {
@@ -812,16 +914,48 @@
 @media (max-width: 48rem) {
   .board-detail-container {
     padding: 1rem;
+    padding-bottom: 3rem; /* 모바일에서 하단 여백 크게 */
+    /* 모바일에서 터치 스크롤 개선 */
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+  }
+
+  /* 댓글 섹션 모바일 하단 여백 */
+  .bd-comment-section {
+    margin-bottom: 3rem; /* 모바일에서 더 큰 하단 여백 */
+  }
+
+  /* 모바일에서 버튼 터치 영역 확대 */
+  .back-btn,
+  .edit-btn,
+  .board-delete-btn,
+  .board-report-btn {
+    min-height: 44px; /* iOS 권장 터치 영역 */
+    min-width: 44px;
+    padding: 12px 16px;
+    touch-action: manipulation; /* 더블탭 줌 방지 */
+  }
+
+  /* 좋아요 버튼 터치 영역 확대 */
+  .like-button,
+  .stat-item {
+    min-height: 44px;
+    padding: 12px 16px;
+    touch-action: manipulation;
   }
 
   .detail-header {
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
+    /* 모바일에서 고정 헤더 방지 */
+    position: relative;
+    z-index: 1;
   }
 
   .detail-actions {
     justify-content: center;
+    flex-wrap: wrap;
   }
 
   .detail-meta {
@@ -830,6 +964,9 @@
 
   .detail-title {
     font-size: 1.5rem;
+    /* 모바일에서 텍스트 선택 방지 */
+    -webkit-user-select: text;
+    user-select: text;
   }
 
   .meta-right {
@@ -842,6 +979,13 @@
     padding: 1.25rem;
   }
 
+  /* 비디오 모바일 최적화 */
+  .detail-body video {
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 50vh !important;
+  }
+
   .bd-comment-input-wrapper {
     flex-direction: column;
     align-items: stretch;
@@ -849,6 +993,13 @@
 
   .bd-comment-input-field {
     margin-bottom: 0.5rem;
+    min-height: 44px; /* 터치 영역 확대 */
+  }
+
+  .bd-comment-submit-btn,
+  .bd-reply-submit-btn {
+    min-height: 44px;
+    touch-action: manipulation;
   }
 
   .bd-comment-content {
@@ -870,6 +1021,10 @@
 
   .bd-reply-toggle-btn {
     margin-left: 1.5rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    touch-action: manipulation;
   }
 
   .bd-reply-item .bd-comment-edit-area {
@@ -880,6 +1035,12 @@
 @media (max-width: 30rem) {
   .board-detail-container {
     padding: 0.75rem;
+    padding-bottom: 4rem; /* 작은 화면에서 더 큰 하단 여백 */
+  }
+
+  /* 댓글 섹션 작은 화면 하단 여백 */
+  .bd-comment-section {
+    margin-bottom: 4rem; /* 작은 화면에서 더 큰 하단 여백 */
   }
 
   .detail-meta,

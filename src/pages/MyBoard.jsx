@@ -13,13 +13,21 @@ const MyBoard = () => {
   const [selectedType, setSelectedType] = useState("전체");
 
   const user = useSelector((state) => state.auth.user);
-  console.log(user);
 
   // 체크박스 관련 상태 추가
   const [selectedBoards, setSelectedBoards] = useState(new Set());
   const [isAllSelected, setIsAllSelected] = useState(false);
 
   const boardTypes = ["전체", "자유", "공략", "영상"];
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
+  useEffect(() => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
 
   // boardTypeNo를 타입명으로 변환하는 함수
   const getBoardTypeName = (boardTypeNo) => {

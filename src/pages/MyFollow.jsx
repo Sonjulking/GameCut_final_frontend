@@ -3,6 +3,8 @@ import axiosInstance from "../lib/axiosInstance";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import UserProfilePopup from "./UserProfilePopup";
 import "../styles/myFollow.css";
+import { useNavigate } from "react-router-dom"; // ✅ 추가
+import { useSelector } from "react-redux";
 
 const MyFollow = () => {
   const [followingList, setFollowingList] = useState([]);
@@ -10,6 +12,17 @@ const MyFollow = () => {
   const [isFollowingTab, setIsFollowingTab] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const navigate = useNavigate();
+
+  // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
+  useEffect(() => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
 
   const loadFollowData = async () => {
     try {

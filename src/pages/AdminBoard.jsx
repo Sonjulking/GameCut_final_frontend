@@ -1,5 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 const AdminBoard = () => {
   const navigate = useNavigate();
@@ -7,6 +9,18 @@ const AdminBoard = () => {
   const handleNavigate = (path) => {
     navigate(path);
   };
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const user = useSelector((state) => state.auth.user);
+  // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
+  useEffect(() => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    } else if (user.role !== "ROLE_ADMIN") {
+      alert("권한이 없습니다.");
+      navigate("/");
+    }
+  }, [isLoggedIn, navigate]);
 
   return (
     <div style={styles.container}>
@@ -15,24 +29,26 @@ const AdminBoard = () => {
       <div style={styles.buttonContainer}>
         <button
           style={styles.button}
-          onClick={() => handleNavigate("/admin/reportlist")}
+          onClick={() => handleNavigate("/admin/reportList")}
         >
           🚨 신고글 관리
         </button>
 
-        <button
-          style={styles.button}
-          onClick={() => handleNavigate("/admin/users")}
-        >
-          👤 회원 관리
-        </button>
+        {
+          <button
+            style={styles.button}
+            onClick={() => handleNavigate("/admin/users")}
+          >
+            👤 회원 관리
+          </button>
 
-        <button
+          /*<button
           style={styles.button}
           onClick={() => handleNavigate("/admin/posts")}
         >
           📝 게시물 관리
-        </button>
+        </button> */
+        }
       </div>
     </div>
   );

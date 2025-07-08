@@ -1,3 +1,4 @@
+// 2025-07-03 16:10 생성됨
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -7,15 +8,22 @@ import CommentSection from "./CommentSection.jsx";
 import UserProfilePopup from "../pages/UserProfilePopup.jsx";
 import "../styles/boardDetail.css";
 import axiosInstance from "../lib/axiosInstance.js";
-import ReportModal from "./ReportModal.jsx"; // ✅ 신고 모달 import
+import ReportModal from "./ReportModal.jsx";
+import { useSelector } from "react-redux"; // ✅ 신고 모달 import
 
 const BoardDetail = () => {
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const navigate = useNavigate();
   const { boardNo } = useParams();
   const [board, setBoard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
   const [comments, setComments] = useState([]);
+
+  // 세로 영상 감지 상태
+  const [isVerticalVideo, setIsVerticalVideo] = useState(false);
+
+  const user = useSelector((state) => state.auth.user);
 
   // ✅ 신고 모달 상태
   const [isReportOpen, setIsReportOpen] = useState(false);
@@ -40,19 +48,27 @@ const BoardDetail = () => {
   const loadBoardDetail = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `http://localhost:8081/board/detail/${boardNo}`
-      );
+      const response = await axiosInstance.get(`/board/detail/${boardNo}`); // axiosInstance 사용으로 변경
       setBoard(response.data);
-      if (response.data.comments) {
-        setComments(response.data.comments);
-      }
+      // 댓글은 별도로 로드
+      await loadComments();
     } catch (error) {
       console.error("게시글 로드 실패:", error);
       alert("게시글을 불러올 수 없습니다.");
       navigate("/board/list");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 댓글 로드 함수 추가
+  const loadComments = async () => {
+    try {
+      const response = await axiosInstance.get(`/comment/board/${boardNo}`);
+      console.log("받은 댓글 데이터:", response.data);
+      setComments(response.data);
+    } catch (error) {
+      console.error("댓글 로드 실패:", error);
     }
   };
   // 좋아요 여부 체크
@@ -66,6 +82,10 @@ const BoardDetail = () => {
   };
 
   const toggleLike = async () => {
+    if (!isLoggedIn) {
+      alert("로그인 후 좋아요가 가능합니다.");
+      return;
+    }
     try {
       {
         isLiked
@@ -131,6 +151,21 @@ const BoardDetail = () => {
     }
   };
 
+  // 비디오 로드 완료 시 종횡비 체크
+  const handleVideoLoad = (e) => {
+    const { videoWidth, videoHeight } = e.target;
+    const aspectRatio = videoWidth / videoHeight;
+
+    // 종횡비가 1보다 작으면 세로영상
+    setIsVerticalVideo(aspectRatio < 1);
+    console.log("비디오 종횡비:", {
+      videoWidth,
+      videoHeight,
+      aspectRatio,
+      isVertical: aspectRatio < 1,
+    });
+  };
+
   const handleProfileClick = async () => {
     try {
       const res = await axiosInstance.get(`/user/${board.user.userNo}`);
@@ -142,7 +177,11 @@ const BoardDetail = () => {
   };
 
   useEffect(() => {
+    console.log(user);
     if (boardNo) {
+      // 모바일에서 페이지 로드 시 상단으로 스크롤
+      window.scrollTo(0, 0);
+
       checkLikeStatus();
       loadBoardDetail(); // 게시글만 로드하면 comments도 함께 옴
     }
@@ -185,12 +224,16 @@ const BoardDetail = () => {
           목록으로
         </button>
         <div className="detail-actions">
-          <button onClick={handleEdit} className="edit-btn">
-            수정
-          </button>
-          <button onClick={handleDelete} className="board-delete-btn">
-            삭제
-          </button>
+          {user && user.userNo == board.user.userNo ? (
+            <>
+              <button onClick={handleEdit} className="edit-btn">
+                수정
+              </button>
+              <button onClick={handleDelete} className="board-delete-btn">
+                삭제
+              </button>
+            </>
+          ) : null}
           <button onClick={handleReport} className="board-report-btn">
             신고
           </button>
@@ -213,7 +256,7 @@ const BoardDetail = () => {
                 onClick={handleProfileClick}
                 style={{ cursor: "pointer", textDecoration: "underline" }}
               >
-                작성자: {board.user.userNickname}
+                {board.user.userNickname}
               </span>
               <span className="create-date">{board.boardCreateDate}</span>
             </div>
@@ -232,13 +275,33 @@ const BoardDetail = () => {
         <div className="detail-body">
           {board.boardTypeNo === 3 && board.video?.attachFile && (
             <>
-              <video
-                src={`${import.meta.env.VITE_API_URL}${
-                  board.video.attachFile.fileUrl
-                }`}
-                style={{ width: "100%" }}
-                controls
-              />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginBottom: "16px",
+                }}
+              >
+                <video
+                  src={`${import.meta.env.VITE_API_URL}${
+                    board.video.attachFile.fileUrl
+                  }`}
+                  onLoadedMetadata={handleVideoLoad}
+                  style={{
+                    width: isVerticalVideo ? "auto" : "100%",
+                    maxWidth: isVerticalVideo ? "min(400px, 90vw)" : "100%", // 모바일에서 90vw 제한
+                    maxHeight: isVerticalVideo ? "min(600px, 60vh)" : "70vh", // 모바일에서 60vh 제한
+                    height: isVerticalVideo ? "auto" : "auto",
+                    objectFit: "contain",
+                    backgroundColor: "#000",
+                    borderRadius: "8px",
+                    border: "1px solid #333",
+                  }}
+                  controls
+                  playsInline // 모바일에서 인라인 재생
+                  preload="metadata" // 메타데이터만 먼저 로드
+                />
+              </div>
               <Box
                 sx={{
                   maxHeight: "100px",
@@ -301,7 +364,7 @@ const BoardDetail = () => {
         boardNo={boardNo}
         comments={comments}
         setComments={setComments}
-        onRefresh={loadBoardDetail}
+        onRefresh={loadComments} // loadBoardDetail 대신 loadComments 사용
       />
 
       {/* 유저 프로필 팝업 */}

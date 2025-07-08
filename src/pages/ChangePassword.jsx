@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "../lib/axiosInstance"; // ✅ axiosInstance 사용
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import "../styles/myBoard.css";
+import { useSelector } from "react-redux";
 
 const ChangePassword = () => {
   const navigate = useNavigate();
@@ -12,6 +13,15 @@ const ChangePassword = () => {
     confirmPassword: "",
   });
   const [message, setMessage] = useState("");
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
+  useEffect(() => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
