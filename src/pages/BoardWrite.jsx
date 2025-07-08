@@ -13,6 +13,7 @@ import VideoUploader from "../components/BoardWrite/VideoUploader";
 import PhotoUploader from "../components/BoardWrite/PhotoUploader";
 import axiosInstance from "../lib/axiosInstance.js";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSelector } from 'react-redux';
 
 const BoardWrite = ({ isEdit = false }) => {
   const navigate = useNavigate(); // 추가
