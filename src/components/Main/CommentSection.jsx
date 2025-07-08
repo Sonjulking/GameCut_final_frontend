@@ -331,7 +331,11 @@ const CommentSection = ({
                 <div className="comment" key={c.commentNo || idx}>
                   <div className="comment-header">
                     <img
-                      src="/src/assets/img/main/icons/admin.jpg"
+                            src={
+                              c.user.photo && c.user.photo.attachFile
+                                      ? import.meta.env.VITE_API_URL + c.user.photo.attachFile.fileUrl
+                                      : "/common/empty.png"
+                            }
                       alt="profile"
                       className="comment-profile-img"
                     />
@@ -496,7 +500,11 @@ const CommentSection = ({
                                 >
                                   <div className="comment-header">
                                     <img
-                                      src="/src/assets/img/main/icons/admin.jpg"
+                                            src={
+                                              c.user.photo && c.user.photo.attachFile
+                                                      ? import.meta.env.VITE_API_URL + c.user.photo.attachFile.fileUrl
+                                                      : "/common/empty.png"
+                                            }
                                       alt="profile"
                                       className="comment-profile-img"
                                       style={{ width: "24px", height: "24px" }}
