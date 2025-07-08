@@ -1,5 +1,7 @@
 // src/components/Sidebar.jsx
 import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import homeIcon from "../assets/img/main/icons/home_icon.png";
 import homeCaption from "../assets/img/main/captions/home_caption.png";
@@ -25,10 +27,12 @@ import settingCaption from "../assets/img/main/captions/setting_caption.png";
 import shoppingIcon from "../assets/img/main/icons/shopping_icon.png";
 import shoppingCaption from "../assets/img/main/captions/shopping_caption.png";
 
-import { Link } from "react-router-dom";
+import "../styles/sidebar.css"; // ✅ CSS 분리
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     const toggleBtn = document.querySelector("#sidebarToggle");
@@ -39,17 +43,10 @@ const Sidebar = () => {
     };
 
     if (toggleBtn) {
-      //토글버튼이 존재한다면
-      //버튼에 click 이벤트 등록
       toggleBtn.addEventListener("click", handleToggle);
     }
 
-    // 사이드바 외부 클릭 시 사이드바 닫는 함수
     const handleOutsideClick = (e) => {
-      //sidebarEl이 존재할때
-      //!sidebarEl.contains(e.target) : 사용자가 클릭한 요소가 sidebarEl 내부에 포함되지 않는다면
-      //toggleBtn이 존재할때
-      //!toggleBtn.contains(e.target) : 사용자가 클릭한 요소가 toggleBtn 내부에 포함되지 않는다면
       if (
         sidebarEl &&
         !sidebarEl.contains(e.target) &&
@@ -60,10 +57,8 @@ const Sidebar = () => {
       }
     };
 
-    // 전체 문서에 클릭 이벤트 추가 (외부 클릭 감지용)
     document.addEventListener("click", handleOutsideClick);
 
-    // 컴포넌트가 언마운트될 때 이벤트 리스너 제거 (메모리 누수 방지) (useEffect 문법)
     return () => {
       if (toggleBtn) {
         toggleBtn.removeEventListener("click", handleToggle);
@@ -72,23 +67,37 @@ const Sidebar = () => {
     };
   }, []);
 
+  const handleProtectedRoute = (path) => {
+    if (!user) {
+      alert("로그인 후 이용해주세요.");
+      navigate("/login");
+    } else {
+      navigate(path);
+    }
+  };
+
   return (
     <div className={`sidebar ${isOpen ? "open" : ""}`}>
-      <Link to={"/"} className="sidebar_item">
+      <Link to="/" className="sidebar_item">
         <div className="icon-wrapper">
           <img src={homeIcon} className="sidebar_icons" alt="홈" />
           <img src={homeCaption} className="caption_image" alt="홈 캡션" />
         </div>
         <span className="sidebar_label">홈</span>
       </Link>
-      <Link to={"/board/list"} className="sidebar_item">
+
+      <Link to="/board/list" className="sidebar_item">
         <div className="icon-wrapper">
           <img src={boardViewIcon} className="sidebar_icons" alt="게시판" />
           <img src={boardCaption} className="caption_image" alt="게시판 캡션" />
         </div>
         <span className="sidebar_label">게시판</span>
       </Link>
-      <Link to={"/myPage"} className="sidebar_item">
+
+      <div
+        className="sidebar_item"
+        onClick={() => handleProtectedRoute("/myPage")}
+      >
         <div className="icon-wrapper">
           <img src={profileIcon} className="sidebar_icons" alt="프로필" />
           <img
@@ -98,19 +107,24 @@ const Sidebar = () => {
           />
         </div>
         <span className="sidebar_label">프로필</span>
-      </Link>
-      <Link to={"/shopping"} className="sidebar_item">
+      </div>
+
+      <div
+        className="sidebar_item"
+        onClick={() => handleProtectedRoute("/shopping")}
+      >
         <div className="icon-wrapper">
           <img src={shoppingIcon} className="sidebar_icons" alt="쇼핑 하기" />
           <img
             src={shoppingCaption}
             className="caption_image"
-            alt="쇼핑 하기 캡션"
+            alt="쇼핑 캡션"
           />
         </div>
         <span className="sidebar_label">쇼핑 하기</span>
-      </Link>
-      <Link to={"/webGame"} className="sidebar_item">
+      </div>
+
+      <Link to="/webGame" className="sidebar_item">
         <div className="icon-wrapper">
           <img src={webGameIcon} className="sidebar_icons" alt="웹 게임" />
           <img
@@ -121,7 +135,8 @@ const Sidebar = () => {
         </div>
         <span className="sidebar_label">웹 게임</span>
       </Link>
-      <Link to={"/rankings"} className="sidebar_item">
+
+      <Link to="/rankings" className="sidebar_item">
         <div className="icon-wrapper">
           <img
             src={seasonRankingIcon}
@@ -136,7 +151,8 @@ const Sidebar = () => {
         </div>
         <span className="sidebar_label">시즌 랭킹</span>
       </Link>
-      <Link to={"/settings"} className="sidebar_item">
+
+      <Link to="/settings" className="sidebar_item">
         <div className="icon-wrapper">
           <img src={settingIcon} className="sidebar_icons" alt="설정" />
           <img src={settingCaption} className="caption_image" alt="설정 캡션" />
