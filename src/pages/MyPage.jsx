@@ -48,7 +48,9 @@ const MyPage = () => {
       </div>
     );
   }
-
+  useEffect(() => {
+    console.log("userInfo : ", userInfo);
+  });
   return (
     <div className="mypage-container">
       <div className="mypage-content">
@@ -62,11 +64,11 @@ const MyPage = () => {
                   className="mypage-user-image"
                   alt="프로필 이미지"
                   src={
-                    userInfo.photoNo &&
-                    userInfo.photoNo !== 0 &&
-                    userInfo.profileImage
+                    userInfo?.photo?.photoNo && // 2025년 7월 7일 수정됨 - userInfo.photo.photoNo로 수정
+                    userInfo.photo.photoNo !== 0 &&
+                    userInfo.photo?.attachFile?.fileUrl
                       ? `${import.meta.env.VITE_API_URL}${
-                          userInfo.profileImage
+                          userInfo.photo.attachFile.fileUrl
                         }`
                       : "/src/assets/img/main/icons/profile_icon.png"
                   }
@@ -84,7 +86,8 @@ const MyPage = () => {
                 <p className="mypage-user-id">{userInfo.userId}</p>
                 <p className="mypage-user-nickname">{userInfo.userNickname}</p>
                 <p className="mypage-user-point">
-                  포인트: <span>{userInfo.userPoint?.toLocaleString()}</span>P
+                  포인트: <span>{userInfo.userPoint?.toLocaleString()}</span>P{" "}
+                  {/* 2025년 7월 7일 수정됨 - userInfo로 변경 */}
                 </p>
               </div>
             </div>
