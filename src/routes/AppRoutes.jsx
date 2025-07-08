@@ -19,7 +19,6 @@ import Settings from "../pages/Settings.jsx";
 import RankingsPage from "../pages/RankingsPage.jsx";
 import MyReportList from "../pages/MyReportList.jsx";
 import Test from "../pages/Test.jsx"; // ✅ lazy 대신 일반 import
-import WebGame from "../pages/WebGame.jsx";
 // 웹게임 관련 컴포넌트 분리
 import WebGameSelector from "../pages/WebGameSelector.jsx";
 import TournamentGame from "../pages/TournamentGame.jsx";
@@ -60,8 +59,8 @@ const router = createBrowserRouter([
       { path: "mypage/board", element: <MyBoard /> },
       { path: "mypage/comment", element: <MyComment /> },
       { path: "mypage/changePassword", element: <ChangePassword /> },
-      { path: "/mypage/point", element: <MyPointHistory /> },
-      { path: "/mypage/update", element: <UpdateMyPage /> },
+      { path: "mypage/point", element: <MyPointHistory /> },
+      { path: "mypage/update", element: <UpdateMyPage /> },
       { path: "mypage/message", element: <MyMessage /> },
       { path: "mypage/follow", element: <MyFollow /> },
       { path: "mypage/report", element: <MyReportList /> },

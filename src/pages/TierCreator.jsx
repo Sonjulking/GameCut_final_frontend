@@ -1,7 +1,8 @@
 // src/pages/TierCreator.jsx
-// 2025년 7월 8일 수정됨 - 게임 종류 선택 기능 추가
+// 2025년 7월 8일 수정됨 - 게임 종류 선택 기능 추가, CSS 클래스 적용
 import React, { useState } from "react";
-import axiosInstance from "../lib/axiosInstance"; // 2025년 7월 8일 수정됨 - axiosInstance로 수정
+import axiosInstance from "../lib/axiosInstance";
+import "../styles/webgame.css"; // 2025-07-08 수정됨 - CSS 파일 임포트
 
 // 게임별 티어 시스템 정의
 const GAME_TIER_SYSTEMS = {
@@ -105,16 +106,16 @@ export function TierCreator({ onDone }) {
   };
 
   return (
-    <div className="p-4 max-w-lg mx-auto">
-      <h3 className="text-xl font-bold mb-4">새 게임 생성</h3>
+    <div className="tier-creator-container">
+      <h3 className="tier-creator-title">새 게임 생성</h3>
 
       {/* 2025년 7월 8일 수정됨 - 게임 종류 선택 추가 */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">게임 종류 선택</label>
+      <div className="tier-creator-form-group">
+        <label className="tier-creator-label">게임 종류 선택</label>
         <select
           value={selectedGameType}
           onChange={(e) => handleGameTypeChange(e.target.value)}
-          className="w-full border rounded px-3 py-2 bg-white"
+          className="tier-creator-select"
         >
           <option value="" disabled>
             게임을 선택하세요
@@ -128,8 +129,8 @@ export function TierCreator({ onDone }) {
       </div>
 
       {/* 파일 업로드 - 게임 선택 후에만 활성화 */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">
+      <div className="tier-creator-form-group">
+        <label className="tier-creator-label">
           동영상 파일 선택
         </label>
         <input
@@ -141,10 +142,10 @@ export function TierCreator({ onDone }) {
             setFiles(Array.from(e.target.files));
             setTierMap({});
           }}
-          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-50"
+          className="tier-creator-file-input"
         />
         {!selectedGameType && (
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="tier-creator-help-text">
             먼저 게임 종류를 선택해주세요
           </p>
         )}
@@ -152,22 +153,22 @@ export function TierCreator({ onDone }) {
 
       {/* 파일별 티어 설정 */}
       {selectedGameType && files.length > 0 && (
-        <div className="space-y-3 mb-6">
-          <h4 className="font-medium">
+        <div className="tier-creator-files-section">
+          <h4 className="tier-creator-files-title">
             각 영상의 티어를 선택하세요 ({selectedGameType})
           </h4>
           {files.map((file, idx) => (
             <div
               key={idx}
-              className="flex items-center space-x-3 p-3 bg-gray-50 rounded"
+              className="tier-creator-file-item"
             >
-              <span className="flex-1 truncate text-sm">{file.name}</span>
+              <span className="tier-creator-file-name">{file.name}</span>
               <select
                 value={tierMap[idx] || ""}
                 onChange={(e) =>
                   setTierMap((m) => ({ ...m, [idx]: e.target.value }))
                 }
-                className="border rounded px-2 py-1 text-sm min-w-24"
+                className="tier-creator-tier-select"
               >
                 <option value="" disabled>
                   티어 선택
@@ -184,7 +185,7 @@ export function TierCreator({ onDone }) {
       )}
 
       {/* 버튼 그룹 */}
-      <div className="flex space-x-2">
+      <div className="tier-creator-buttons">
         <button
           onClick={createGame}
           disabled={
@@ -193,13 +194,13 @@ export function TierCreator({ onDone }) {
             Object.keys(tierMap).length !== files.length ||
             Object.values(tierMap).some((tier) => !tier)
           }
-          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          className="tier-creator-btn tier-creator-btn--primary"
         >
           게임 생성
         </button>
         <button
           onClick={onDone}
-          className="flex-1 bg-gray-400 hover:bg-gray-500 text-white py-2 rounded"
+          className="tier-creator-btn tier-creator-btn--secondary"
         >
           취소
         </button>

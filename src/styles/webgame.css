@@ -1,8 +1,637 @@
+/* 문제 수 선택 옵션 */
+.tier-question-count-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.tier-question-count-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  background: rgba(51, 65, 85, 0.6);
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.tier-question-count-option:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+}
+
+.tier-question-count-radio {
+  margin-right: 0.5rem;
+  accent-color: #3b82f6;
+}
+
+.tier-question-count-label {
+  font-size: 0.875rem;
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.tier-no-questions {
+  padding: 1rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 0.5rem;
+  color: #fecaca;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
 /* 전체 웹게임 페이지 공통 컨테이너 */
 .webgame-container {
   padding: 1.5rem;
   color: #ecf0f1;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  min-height: 100vh;
+}
+
+/* ==================== 티어 맞추기 게임 스타일 ==================== */
+
+/* 티어 게임 메인 컨테이너 */
+.tier-game-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: rgba(30, 41, 59, 0.95);
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* 티어 게임 헤더 */
+.tier-game-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.tier-game-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.tier-game-progress {
+  font-size: 1.125rem;
+  color: #94a3b8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.tier-game-score {
+  color: #10b981;
+  font-weight: 700;
+}
+
+/* 티어 게임 초기화면 */
+.tier-game-init {
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+  background: rgba(51, 65, 85, 0.8);
+  padding: 3rem;
+  border-radius: 1rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.tier-game-init-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 2rem;
+}
+
+.tier-game-form-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.tier-game-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 0.5rem;
+}
+
+.tier-game-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  background: rgba(30, 41, 59, 0.8);
+  color: #f1f5f9;
+  border: 2px solid #475569;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.tier-game-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* 티어 게임 버튼 스타일 */
+.tier-game-btn {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 0.75rem;
+  text-transform: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tier-game-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.tier-game-btn:active {
+  transform: translateY(0);
+}
+
+.tier-game-btn--primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+}
+
+.tier-game-btn--primary:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+}
+
+.tier-game-btn--success {
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  color: white;
+}
+
+.tier-game-btn--success:hover {
+  background: linear-gradient(135deg, #059669 0%, #065f46 100%);
+}
+
+.tier-game-btn--secondary {
+  background: linear-gradient(135deg, #6b7280 0%, #374151 100%);
+  color: white;
+}
+
+.tier-game-btn--secondary:hover {
+  background: linear-gradient(135deg, #4b5563 0%, #1f2937 100%);
+}
+
+.tier-game-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* 비디오 컨테이너 */
+.tier-game-video-container {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.tier-game-video {
+  width: 100%;
+  max-width: 800px;
+  max-height: 450px;
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  background: #000;
+}
+
+/* 티어 질문 */
+.tier-game-question {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.tier-game-question-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin-bottom: 2rem;
+}
+
+/* 티어 옵션 그리드 */
+.tier-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tier-option-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 0.75rem;
+  min-height: 100px;
+  border: 2px solid transparent;
+  border-radius: 0.75rem;
+  background: rgba(51, 65, 85, 0.8);
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tier-option-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  background: rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+}
+
+.tier-option-btn--selected {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border-color: #1d4ed8;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+}
+
+.tier-option-btn--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.tier-option-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.tier-option-btn:hover .tier-option-icon {
+  transform: scale(1.1);
+}
+
+.tier-option-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* 결과 화면 */
+.tier-game-result {
+  margin-top: 2rem;
+  padding: 2rem;
+  border-radius: 1rem;
+  text-align: center;
+  animation: slideInUp 0.4s ease-out;
+}
+
+.tier-game-result--correct {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.2) 100%);
+  border: 2px solid #10b981;
+  color: #d1fae5;
+}
+
+.tier-game-result--incorrect {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(185, 28, 28, 0.2) 100%);
+  border: 2px solid #ef4444;
+  color: #fecaca;
+}
+
+.tier-game-result-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.tier-game-result-details {
+  margin-bottom: 1.5rem;
+}
+
+.tier-game-result-item {
+  font-size: 1.125rem;
+  margin-bottom: 0.75rem;
+}
+
+.tier-game-result-label {
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.tier-game-result-value {
+  font-weight: 700;
+  margin-left: 0.5rem;
+}
+
+/* 게임 완료 화면 */
+.tier-game-finished {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  background: rgba(51, 65, 85, 0.9);
+  padding: 3rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.tier-game-finished-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 2rem;
+}
+
+.tier-game-stats {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+  padding: 2rem;
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.tier-game-stats-score {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  color: #e2e8f0;
+}
+
+.tier-game-stats-percentage {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #10b981;
+  margin-bottom: 1rem;
+}
+
+.tier-game-stats-info {
+  font-size: 0.875rem;
+  color: #94a3b8;
+}
+
+.tier-game-grade {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.75rem;
+}
+
+.tier-game-grade-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+/* ==================== 티어 생성기 스타일 ==================== */
+
+.tier-creator-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: rgba(30, 41, 59, 0.95);
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.tier-creator-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.tier-creator-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.tier-creator-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 0.5rem;
+}
+
+.tier-creator-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  background: rgba(30, 41, 59, 0.8);
+  color: #f1f5f9;
+  border: 2px solid #475569;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.tier-creator-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.tier-creator-file-input {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  color: #94a3b8;
+  background: rgba(30, 41, 59, 0.8);
+  border: 2px dashed #475569;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.tier-creator-file-input:hover {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.tier-creator-file-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tier-creator-help-text {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin-top: 0.5rem;
+}
+
+.tier-creator-files-section {
+  margin-bottom: 2rem;
+}
+
+.tier-creator-files-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 1rem;
+}
+
+.tier-creator-file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(51, 65, 85, 0.6);
+  border-radius: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.tier-creator-file-name {
+  flex: 1;
+  font-size: 0.875rem;
+  color: #e2e8f0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tier-creator-tier-select {
+  min-width: 120px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  background: rgba(30, 41, 59, 0.8);
+  color: #f1f5f9;
+  border: 1px solid #475569;
+  border-radius: 0.375rem;
+}
+
+.tier-creator-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.tier-creator-btn {
+  flex: 1;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tier-creator-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.tier-creator-btn--primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+}
+
+.tier-creator-btn--primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.tier-creator-btn--secondary {
+  background: linear-gradient(135deg, #6b7280 0%, #374151 100%);
+  color: white;
+}
+
+/* ==================== 애니메이션 ==================== */
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.tier-game-container,
+.tier-creator-container {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ==================== 반응형 디자인 ==================== */
+
+@media (max-width: 768px) {
+  .tier-game-container,
+  .tier-creator-container {
+    padding: 1rem;
+    margin: 0.5rem;
+  }
+  
+  .tier-game-title {
+    font-size: 2rem;
+  }
+  
+  .tier-options-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .tier-option-btn {
+    min-height: 80px;
+    padding: 1rem 0.5rem;
+  }
+  
+  .tier-option-icon {
+    font-size: 1.5rem;
+  }
+  
+  .tier-option-name {
+    font-size: 0.75rem;
+  }
+  
+  .tier-game-progress {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .tier-creator-buttons {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .tier-options-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .tier-option-btn {
+    min-height: 70px;
+    padding: 0.75rem 0.25rem;
+  }
+  
+  .tier-game-finished {
+    padding: 2rem 1rem;
+  }
 }
 
 /* 토너먼트 게임                            */
