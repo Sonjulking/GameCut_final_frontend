@@ -4,12 +4,15 @@ import "../styles/MyBoard.css";
 import "../styles/MyMessage.css";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom"; // ✅ 추가
+import { useSelector } from "react-redux";
 
 const MyMessages = () => {
   const [receivedMessages, setReceivedMessages] = useState([]);
   const [sentMessages, setSentMessages] = useState([]);
   const [isSentTab, setIsSentTab] = useState(false);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const navigate = useNavigate();
 
   // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
   useEffect(() => {

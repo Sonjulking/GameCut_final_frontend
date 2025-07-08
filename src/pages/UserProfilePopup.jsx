@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import axiosInstance from "../lib/axiosInstance";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const UserProfilePopup = ({ open, onClose, user }) => {
@@ -21,6 +22,16 @@ const UserProfilePopup = ({ open, onClose, user }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
   const [messageContent, setMessageContent] = useState("");
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const navigate = useNavigate();
+
+  // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
+  useEffect(() => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
 
   useEffect(() => {
     const checkStatuses = async () => {

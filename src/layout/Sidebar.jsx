@@ -111,7 +111,7 @@ const Sidebar = () => {
 
       <div
         className="sidebar_item"
-        onClick={() => handleProtectedRoute("/shopping")}
+        onClick={() => handleProtectedRoute("shopping")}
       >
         <div className="icon-wrapper">
           <img src={shoppingIcon} className="sidebar_icons" alt="쇼핑 하기" />

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../lib/axiosInstance";
 import { useSelector } from "react-redux";
+
 // 2025년 7월 7일 수정됨 - updateProfilePhoto import 제거 (통합 API 사용), 불필요한 API 호출 제거
 // 2025년 7월 8일 수정됨 - JSP 파일 구조 참고하여 레이아웃 변경
 
