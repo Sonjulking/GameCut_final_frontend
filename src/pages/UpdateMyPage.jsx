@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../lib/axiosInstance";
 import { useSelector } from "react-redux";
+
 // 2025년 7월 7일 수정됨 - updateProfilePhoto import 제거 (통합 API 사용), 불필요한 API 호출 제거
 // 2025년 7월 8일 수정됨 - JSP 파일 구조 참고하여 레이아웃 변경
 
@@ -24,6 +25,16 @@ const UpdateMyPage = () => {
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
   const [originalNickname, setOriginalNickname] = useState("");
 
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
+  useEffect(() => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
+
   // 2025년 7월 8일 수정됨 - auth.user 사용으로 loading 상태 불필요
 
   useEffect(() => {
@@ -31,28 +42,28 @@ const UpdateMyPage = () => {
     // 2025년 7월 8일 수정됨 - 추가 필드들 포함하여 form 초기화
     // 2025년 7월 8일 수정됨 - persist되는 auth.user 사용으로 새로고침 시 데이터 유지
     if (userInfo) {
-    setForm({
-    userName: userInfo.userName || "",
-    userId: userInfo.userId || "", // 2025년 7월 7일 수정됨 - userInfo로 데이터 경로 수정
-    userNickname: userInfo.userNickname || "", // 2025년 7월 7일 수정됨 - userInfo로 데이터 경로 수정
-    phone: userInfo.phone || "",
-    email: userInfo.email || "",
-  });
+      setForm({
+        userName: userInfo.userName || "",
+        userId: userInfo.userId || "", // 2025년 7월 7일 수정됨 - userInfo로 데이터 경로 수정
+        userNickname: userInfo.userNickname || "", // 2025년 7월 7일 수정됨 - userInfo로 데이터 경로 수정
+        phone: userInfo.phone || "",
+        email: userInfo.email || "",
+      });
 
       // 2025년 7월 8일 수정됨 - 원래 닉네임 저장
       setOriginalNickname(userInfo.userNickname || "");
 
       // 기존 프로필 이미지 미리보기 설정
       if (
-      userInfo.photo?.photoNo && // 2025년 7월 7일 수정됨 - userInfo.photo.photoNo로 수정
-      userInfo.photo.photoNo !== 0 &&
-      userInfo.photo?.attachFile?.fileUrl // 2025년 7월 7일 수정됨 - userInfo.photo로 수정
+        userInfo.photo?.photoNo && // 2025년 7월 7일 수정됨 - userInfo.photo.photoNo로 수정
+        userInfo.photo.photoNo !== 0 &&
+        userInfo.photo?.attachFile?.fileUrl // 2025년 7월 7일 수정됨 - userInfo.photo로 수정
       ) {
-      setPreviewUrl(
-      `${import.meta.env.VITE_API_URL}${userInfo.photo.attachFile.fileUrl}` // 2025년 7월 7일 수정됨 - userInfo.photo로 수정
-      );
+        setPreviewUrl(
+          `${import.meta.env.VITE_API_URL}${userInfo.photo.attachFile.fileUrl}` // 2025년 7월 7일 수정됨 - userInfo.photo로 수정
+        );
       } else {
-      setPreviewUrl("/src/assets/img/main/icons/profile_icon.png");
+        setPreviewUrl("/src/assets/img/main/icons/profile_icon.png");
       }
 
       console.log("유저정보 (Redux에서 가져옴):", userInfo);
@@ -67,9 +78,9 @@ const UpdateMyPage = () => {
   const onChange = (e) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
-    
+
     // 2025년 7월 8일 수정됨 - 닉네임 변경 시 중복확인 상태 초기화
-    if (name === 'userNickname') {
+    if (name === "userNickname") {
       setIsNicknameChecked(false);
     }
   };
@@ -78,26 +89,26 @@ const UpdateMyPage = () => {
   // 2025년 7월 8일 수정됨 - API 엔드포인트 및 응답 처리 오류 수정
   const handleNicknameCheck = async () => {
     const nickname = form.userNickname.trim();
-    
+
     if (!nickname) {
       alert("닉네임을 입력해주세요.");
       return;
     }
-    
+
     // 원래 닉네임과 같다면 중복 확인 없이 통과
     if (nickname === originalNickname) {
       alert("사용 가능한 닉네임입니다.");
       setIsNicknameChecked(true);
       return;
     }
-    
+
     try {
       const response = await axiosInstance.get(`/user/checkUserNickname`, {
-        params: { 
-          userNickname: nickname
-        }
+        params: {
+          userNickname: nickname,
+        },
       });
-      
+
       if (response.data.exists) {
         alert("이미 사용 중인 닉네임입니다.");
         setIsNicknameChecked(false);
@@ -216,7 +227,7 @@ const UpdateMyPage = () => {
     return (
       <div className="main_container">
         <div className="main_content">
-          <div style={{ textAlign: 'center', padding: '2rem' }}>
+          <div style={{ textAlign: "center", padding: "2rem" }}>
             사용자 정보를 불러오는 중...
           </div>
         </div>
@@ -302,7 +313,11 @@ const UpdateMyPage = () => {
                     onChange={onChange}
                     required
                   />
-                  <button type="button" id="checkNickname" onClick={handleNicknameCheck}>
+                  <button
+                    type="button"
+                    id="checkNickname"
+                    onClick={handleNicknameCheck}
+                  >
                     중복확인
                   </button>
                 </div>

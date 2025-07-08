@@ -15,6 +15,8 @@ import {
 } from "@mui/material";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import "../styles/MyBoard.css";
+import { useNavigate } from "react-router-dom"; // ✅ 추가
+import { useSelector } from "react-redux";
 
 const MyItemList = () => {
   const [myItems, setMyItems] = useState([]);
@@ -26,6 +28,16 @@ const MyItemList = () => {
     message: "",
     severity: "info",
   });
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const navigate = useNavigate();
+
+  // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
+  useEffect(() => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
 
   const showSnackbar = (message, severity = "info") => {
     setSnackbar({ open: true, message, severity });

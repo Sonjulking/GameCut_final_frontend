@@ -36,6 +36,7 @@ import ItemShop from "../pages/ItemShop.jsx"; // 아이템샵 페이지
 //관리자페이지
 import AdminBoard from "../pages/AdminBoard.jsx";
 import ReportList from "../pages/ReporitList.jsx";
+import AdminUserBoard from "../pages/AdminUserBoard.jsx";
 
 const router = createBrowserRouter([
   {
@@ -66,7 +67,10 @@ const router = createBrowserRouter([
       { path: "mypage/report", element: <MyReportList /> },
       { path: "mypage/item", element: <MyItemList /> },
       { path: "mypage/admin", element: <AdminBoard /> },
+
+      //관리자페이지
       { path: "admin/reportList", element: <ReportList /> },
+      { path: "admin/users", element: <AdminUserBoard /> },
 
       // 로그인 관련
       { path: "findPassword", element: <FindPassword /> },
@@ -87,6 +91,7 @@ const router = createBrowserRouter([
       { path: "webgame/guess-rank/create", element: <TierCreator /> },
       { path: "webgame/tournament/ranking", element: <TournamentRanking /> },
 
+      //쇼핑
       { path: "shopping", element: <ItemShop /> },
 
       // 404

@@ -2,10 +2,22 @@ import React, { useEffect, useState } from "react";
 import axios from "../lib/axiosInstance"; // 인증 포함된 인스턴스
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import "../styles/MyBoard.css";
+import { useNavigate } from "react-router-dom"; // ✅ 추가
+import { useSelector } from "react-redux";
 
 const MyPointHistory = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const navigate = useNavigate();
+  // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
+  useEffect(() => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
 
   useEffect(() => {
     axios

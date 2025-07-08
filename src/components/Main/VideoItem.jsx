@@ -276,7 +276,12 @@ const VideoItem = ({board, isLoading}) => {
                                 style={{display: "flex", alignItems: "center"}}
                         >
                             <img
-                                    src="/src/assets/img/main/icons/admin.jpg"
+                                    src={
+                                        user.photo && user.photo.attachFile
+                                                ? import.meta.env.VITE_API_URL + user.photo.attachFile.fileUrl
+                                                : "/common/empty.png"
+                                    }
+
                                     alt="프로필"
                                     style={{
                                         width: "36px",
