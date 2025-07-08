@@ -10,14 +10,23 @@ const MyPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const user = useSelector((state) => state.auth.user);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  const userInfo = useSelector((state) => state.user.userInfo); // 🔹 최신 유저 정보
+  const userInfo = useSelector((state) => state.user.userInfo);
 
-  // 최신 정보 갱신
+  // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
   useEffect(() => {
-    dispatch(fetchUser());
-  }, [dispatch]);
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
+
+  // 최신 유저 정보 불러오기
+  useEffect(() => {
+    if (isLoggedIn) {
+      dispatch(fetchUser());
+    }
+  }, [dispatch, isLoggedIn]);
 
   const confirmDelete = () => {
     if (window.confirm("정말 탈퇴하시겠습니까?")) {
@@ -48,9 +57,7 @@ const MyPage = () => {
       </div>
     );
   }
-  useEffect(() => {
-    console.log("userInfo : ", userInfo);
-  });
+
   return (
     <div className="mypage-container">
       <div className="mypage-content">
@@ -64,7 +71,7 @@ const MyPage = () => {
                   className="mypage-user-image"
                   alt="프로필 이미지"
                   src={
-                    userInfo?.photo?.photoNo && // 2025년 7월 7일 수정됨 - userInfo.photo.photoNo로 수정
+                    userInfo?.photo?.photoNo &&
                     userInfo.photo.photoNo !== 0 &&
                     userInfo.photo?.attachFile?.fileUrl
                       ? `${import.meta.env.VITE_API_URL}${
@@ -86,8 +93,7 @@ const MyPage = () => {
                 <p className="mypage-user-id">{userInfo.userId}</p>
                 <p className="mypage-user-nickname">{userInfo.userNickname}</p>
                 <p className="mypage-user-point">
-                  포인트: <span>{userInfo.userPoint?.toLocaleString()}</span>P{" "}
-                  {/* 2025년 7월 7일 수정됨 - userInfo로 변경 */}
+                  포인트: <span>{userInfo.userPoint?.toLocaleString()}</span>P
                 </p>
               </div>
             </div>

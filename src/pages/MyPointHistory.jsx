@@ -7,6 +7,16 @@ const MyPointHistory = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
+  useEffect(() => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
+
   useEffect(() => {
     axios
       .get("/point/my")

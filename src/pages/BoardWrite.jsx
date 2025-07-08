@@ -22,6 +22,16 @@ const BoardWrite = ({ isEdit = false }) => {
   const [existingPhoto, setExistingPhoto] = useState({});
   const [existingVideoNo, setExistingVideoNo] = useState({});
   const [existingTags, setExistingTags] = useState([]);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
+  useEffect(() => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
+
   useEffect(() => {
     if (isEdit && boardNo) {
       axiosInstance
@@ -73,8 +83,8 @@ const BoardWrite = ({ isEdit = false }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    console.log('🔄 handleChange 호출:', { name, value }); // 디버깅 로그 추가
+
+    console.log("🔄 handleChange 호출:", { name, value }); // 디버깅 로그 추가
 
     if (name === "videoTags" && Array.isArray(value)) {
       setForm((prev) => ({ ...prev, videoTags: value })); // 배열 그대로
@@ -85,33 +95,34 @@ const BoardWrite = ({ isEdit = false }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // 디버깅: 전송되는 데이터 확인
-    console.log('🔍 전송할 폼 데이터:', form);
-    console.log('🔍 boardContent:', form.boardContent);
-    console.log('🔍 boardContent 타입:', typeof form.boardContent);
-    console.log('🔍 boardContent 길이:', form.boardContent?.length);
-    
+    console.log("🔍 전송할 폼 데이터:", form);
+    console.log("🔍 boardContent:", form.boardContent);
+    console.log("🔍 boardContent 타입:", typeof form.boardContent);
+    console.log("🔍 boardContent 길이:", form.boardContent?.length);
+
     // boardContent 검증 및 기본값 설정
     let contentToSend = form.boardContent;
-    
+
     // 빈 값이거나 Toast UI Editor의 기본 빈 값인 경우 처리
-    if (!contentToSend || 
-        contentToSend.trim() === '' || 
-        contentToSend.trim() === '<p><br></p>' ||
-        contentToSend.trim() === '<p></p>') {
-      
+    if (
+      !contentToSend ||
+      contentToSend.trim() === "" ||
+      contentToSend.trim() === "<p><br></p>" ||
+      contentToSend.trim() === "<p></p>"
+    ) {
       if (form.boardTypeNo === 3) {
         // 영상 게시판은 간단한 텍스트만 허용
-        contentToSend = form.boardContent || '내용 없음';
+        contentToSend = form.boardContent || "내용 없음";
       } else {
         // 일반 게시판은 HTML 기본값
-        contentToSend = '<p>내용 없음</p>';
+        contentToSend = "<p>내용 없음</p>";
       }
-      
-      console.log('⚠️ 빈 content 감지, 기본값으로 설정:', contentToSend);
+
+      console.log("⚠️ 빈 content 감지, 기본값으로 설정:", contentToSend);
     }
-    
+
     const formData = new FormData();
     formData.append("boardTitle", form.boardTitle);
     formData.append("boardContent", contentToSend); // 검증된 content 사용
@@ -140,14 +151,16 @@ const BoardWrite = ({ isEdit = false }) => {
     try {
       // 임시 디버깅: 기존 방식도 시도해보기
       const localStorage_token = localStorage.getItem("token");
-      console.log('localStorage 토큰:', localStorage_token);
-      
+      console.log("localStorage 토큰:", localStorage_token);
+
       if (isEdit) {
         await axiosInstance.put(`/board/${boardNo}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             // 임시로 기존 방식도 추가
-            ...(localStorage_token && { Authorization: `Bearer ${localStorage_token}` })
+            ...(localStorage_token && {
+              Authorization: `Bearer ${localStorage_token}`,
+            }),
           },
           //업로드 진행률을 추적하는 콜백함수
           onUploadProgress: (e) => {
@@ -163,7 +176,9 @@ const BoardWrite = ({ isEdit = false }) => {
           headers: {
             "Content-Type": "multipart/form-data",
             // 임시로 기존 방식도 추가
-            ...(localStorage_token && { Authorization: `Bearer ${localStorage_token}` })
+            ...(localStorage_token && {
+              Authorization: `Bearer ${localStorage_token}`,
+            }),
           },
           //업로드 진행률을 추적하는 콜백함수
           onUploadProgress: (e) => {
@@ -189,13 +204,16 @@ const BoardWrite = ({ isEdit = false }) => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ 
-      mt: 5, 
-      pb: 10,
-      '@media (max-width: 768px)': {
-        pb: 15 // 모바일에서 하단 패딩 크게 늘려서 버튼이 잘리지 않게
-      }
-    }}>
+    <Container
+      maxWidth="sm"
+      sx={{
+        mt: 5,
+        pb: 10,
+        "@media (max-width: 768px)": {
+          pb: 15, // 모바일에서 하단 패딩 크게 늘려서 버튼이 잘리지 않게
+        },
+      }}
+    >
       <Paper
         elevation={6}
         sx={{
@@ -203,10 +221,10 @@ const BoardWrite = ({ isEdit = false }) => {
           p: 4,
           borderRadius: 3,
           border: "1px solid #555",
-          '@media (max-width: 768px)': {
+          "@media (max-width: 768px)": {
             p: 3, // 모바일에서 패딩 조정
-            mb: 5 // 모바일에서 하단 마진 크게 늘림
-          }
+            mb: 5, // 모바일에서 하단 마진 크게 늘림
+          },
         }}
       >
         <Typography variant="h4" gutterBottom color="white" fontWeight="bold">
@@ -219,7 +237,7 @@ const BoardWrite = ({ isEdit = false }) => {
               form={form}
               handleChange={handleChange}
               isEdit={isEdit}
-              existingTags = {existingTags}
+              existingTags={existingTags}
             />
             {form.boardTypeNo === 3 ? (
               <VideoUploader
