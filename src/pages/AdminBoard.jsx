@@ -15,7 +15,7 @@ const AdminBoard = () => {
       <div style={styles.buttonContainer}>
         <button
           style={styles.button}
-          onClick={() => handleNavigate("/admin/reportlist")}
+          onClick={() => handleNavigate("/admin/reportList")}
         >
           🚨 신고글 관리
         </button>

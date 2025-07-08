@@ -701,7 +701,11 @@ header {
   font-size: 0.9rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-top: 8px;
-  background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.02) 100%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
   border-radius: 0 0 8px 8px;
 }
 
@@ -1161,10 +1165,12 @@ textarea {
 /* 스켈레톤 로딩 애니메이션 */
 .comment-skeleton {
   animation: skeleton-loading 1.5s infinite ease-in-out;
-  background: linear-gradient(90deg, 
-    rgba(255, 255, 255, 0.1) 25%, 
-    rgba(255, 255, 255, 0.2) 50%, 
-    rgba(255, 255, 255, 0.1) 75%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 75%
+  );
   background-size: 200% 100%;
   border-radius: 0.25rem;
   height: 60px;
@@ -1270,12 +1276,12 @@ textarea {
     padding: 12px;
     min-height: 50px;
   }
-  
+
   .infinite-scroll-trigger .load-more-button {
     padding: 10px 20px;
     font-size: 1rem;
   }
-  
+
   .comment-skeleton {
     height: 50px;
   }
@@ -1296,8 +1302,38 @@ textarea {
   .commentSuccess {
     animation: none !important;
   }
-  
+
   .infinite-scroll-trigger .load-more-button:hover {
     transform: none;
   }
+}
+
+.search-input {
+  width: 12rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: #fff;
+  background-color: #333;
+  border: 1px solid #555;
+  border-radius: 0.375rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #ff8c00;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.2);
+  background-color: #444;
+}
+
+.search-result {
+  background-color: #333;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
 }

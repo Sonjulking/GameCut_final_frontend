@@ -15,7 +15,7 @@ const MyPageSidebar = () => {
     { id: "message", name: "내 쪽지", path: "/mypage/message" },
     { id: "board", name: "내 게시글", path: "/mypage/board" },
     { id: "comment", name: "내 댓글", path: "/mypage/comment" },
-    { id: "video", name: "내 영상", path: "/mypage/video" },
+    // { id: "video", name: "내 영상", path: "/mypage/video" },
     { id: "item", name: "내 아이템", path: "/mypage/item" },
     { id: "point", name: "내 포인트 내역", path: "/mypage/point" },
     { id: "follow", name: "팔로우", path: "/mypage/follow" },
@@ -35,6 +35,7 @@ const MyPageSidebar = () => {
     if (path === "/mypage/follow") return "follow";
     if (path === "/mypage/gtr") return "gtr";
     if (path === "/mypage/report") return "report";
+    if (path === "/mypage/admin") return "admin";
     return "info";
   };
 
@@ -61,7 +62,7 @@ const MyPageSidebar = () => {
         {/* ✅ 관리자 전용 메뉴 */}
         {user?.role === "ROLE_ADMIN" && (
           <button
-            onClick={() => navigate("/admin")}
+            onClick={() => navigate("/mypage/admin")}
             className="mypage-menu-item admin-button"
             title="관리자 페이지"
           >
