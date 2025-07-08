@@ -6,12 +6,14 @@ import ItemList from "../components/ItemShop/ItemList";
 import UserPointInfo from "../components/ItemShop/UserPointInfo";
 import ItemUploadButton from "../components/ItemShop/ItemUploadButton";
 import "../styles/itemshop.css";
+import { useNavigate } from "react-router-dom"; // ✅ 추가
 
 const ItemShopPage = () => {
   const dispatch = useDispatch();
   const { itemList } = useSelector((state) => state.item);
   const { userInfo } = useSelector((state) => state.user);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const navigate = useNavigate();
 
   // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
   useEffect(() => {
