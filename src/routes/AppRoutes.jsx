@@ -88,6 +88,7 @@ const router = createBrowserRouter([
       { path: "webgame/guess-rank/create", element: <TierCreator /> },
       { path: "webgame/tournament/ranking", element: <TournamentRanking /> },
 
+      //쇼핑
       { path: "shopping", element: <ItemShop /> },
 
       // 404
