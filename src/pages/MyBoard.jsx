@@ -13,7 +13,6 @@ const MyBoard = () => {
   const [selectedType, setSelectedType] = useState("전체");
 
   const user = useSelector((state) => state.auth.user);
-  console.log(user);
 
   // 체크박스 관련 상태 추가
   const [selectedBoards, setSelectedBoards] = useState(new Set());
