@@ -12,9 +12,12 @@ const Settings = () => {
   );
 
   const applySettings = () => {
+    const settingsPage = document.querySelector(".settings-page");
     const header = document.querySelector("header");
 
-    document.body.style.fontSize = fontSize;
+    if (settingsPage) {
+      settingsPage.style.fontSize = fontSize;
+    }
 
     if (header) {
       header.style.background = `linear-gradient(135deg, ${bgColor}, #1e1e1e)`;
@@ -31,9 +34,12 @@ const Settings = () => {
     setFontSize(DEFAULT_FONT);
     setBgColor(DEFAULT_COLOR);
 
+    const settingsPage = document.querySelector(".settings-page");
     const header = document.querySelector("header");
 
-    document.body.style.fontSize = DEFAULT_FONT;
+    if (settingsPage) {
+      settingsPage.style.fontSize = DEFAULT_FONT;
+    }
 
     if (header) {
       header.style.background = `linear-gradient(135deg, ${DEFAULT_COLOR}, #1e1e1e)`;
@@ -45,7 +51,7 @@ const Settings = () => {
   }, []);
 
   return (
-    <div style={styles.container}>
+    <div className="settings-page" style={styles.container}>
       <h2 style={styles.title}>🛠️ 사용자 설정</h2>
 
       <div style={styles.section}>

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Header from "./Header.jsx";
 import Sidebar from "./Sidebar.jsx";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import LoadingScreen from "../components/Loading/LoadingScreen.jsx";
 import ChatButton from "../components/Chat/ChatButton.jsx";
 import ChatWindow from "../components/Chat/ChatWindow.jsx";
 
 const Layout = () => {
+  const location = useLocation(); // 현재 경로
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [bgColor, setBgColor] = useState("#141414");
   const [fontSize, setFontSize] = useState("16px");
@@ -18,14 +19,23 @@ const Layout = () => {
     setFontSize(savedFontSize);
     setBgColor(savedBgColor);
 
-    // ✅ body 스타일은 여전히 직접 적용해도 괜찮음
     document.body.style.fontSize = savedFontSize;
+
+    // ✅ 헤더도 항상 적용
+    const header = document.querySelector("header");
+    if (header) {
+      header.style.background = `linear-gradient(135deg, ${savedBgColor}, #1e1e1e)`;
+    }
   }, []);
+
+  // ✅ 렌더링 시점에서 경로 검사
+  const isSettingsPage = location.pathname === "/settings";
+  const appliedBgColor = isSettingsPage ? bgColor : "#141414";
 
   return (
     <div
       className="App"
-      style={{ backgroundColor: bgColor, minHeight: "100vh" }}
+      style={{ backgroundColor: "#141414", minHeight: "100vh" }} // 🎯 항상 고정
     >
       <Header />
       <div className="main_container">
