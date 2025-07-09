@@ -19,7 +19,7 @@ const MyPageSidebar = () => {
     { id: "item", name: "내 아이템", path: "/mypage/item" },
     { id: "point", name: "내 포인트 내역", path: "/mypage/point" },
     { id: "follow", name: "팔로우", path: "/mypage/follow" },
-    { id: "gtr", name: "게스더랭크 기록", path: "/mypage/gtr" },
+    { id: "gtr", name: "내 게스더랭크 기록", path: "/mypage/gtr-history" }, // 2025-07-09 수정됨 - 경로 수정
     { id: "report", name: "신고 기록", path: "/mypage/report" },
   ];
 
@@ -33,7 +33,7 @@ const MyPageSidebar = () => {
     if (path === "/mypage/item") return "item";
     if (path === "/mypage/point") return "point";
     if (path === "/mypage/follow") return "follow";
-    if (path === "/mypage/gtr") return "gtr";
+    if (path === "/mypage/gtr-history") return "gtr"; // 2025-07-09 수정됨 - 경로 수정
     if (path === "/mypage/report") return "report";
     if (path === "/mypage/admin") return "admin";
     return "info";

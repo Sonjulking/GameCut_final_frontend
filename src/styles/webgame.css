@@ -11,10 +11,11 @@
   align-items: center;
   cursor: pointer;
   padding: 0.5rem 0.75rem;
-  background: rgba(51, 65, 85, 0.6);
+  /* 2025-07-08 수정됨 - 배경색 자연스럽게 조정 */
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 0.375rem;
   transition: all 0.2s ease;
-  border: 1px solid transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .tier-question-count-option:hover {
@@ -48,8 +49,9 @@
   padding: 1.5rem;
   color: #ecf0f1;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  min-height: 100vh;
+  /* 2025-07-08 수정됨 - 레이아웃 배경색과 일치시켜 이질감 제거 */
+  /* background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); */
+  min-height: calc(100vh - 140px); /* 헤더와 패딩 고려 */
 }
 
 /* ==================== 티어 맞추기 게임 스타일 ==================== */
@@ -59,9 +61,11 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  background: rgba(30, 41, 59, 0.95);
+  /* 2025-07-08 수정됨 - 배경색 톤 다운 조정 */
+  background: rgba(255, 255, 255, 0.03); /* 더 미묘한 배경 */
   border-radius: 1rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1); /* 연한 경계선 추가 */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* 티어 게임 헤더 */
@@ -98,10 +102,12 @@
   max-width: 500px;
   margin: 0 auto;
   text-align: center;
-  background: rgba(51, 65, 85, 0.8);
+  /* 2025-07-08 수정됨 - 배경색 톤 다운 조정 */
+  background: rgba(255, 255, 255, 0.05);
   padding: 3rem;
   border-radius: 1rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .tier-game-init-title {
@@ -245,14 +251,15 @@
   justify-content: center;
   padding: 1.25rem 0.75rem;
   min-height: 100px;
-  border: 2px solid transparent;
+  border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 0.75rem;
-  background: rgba(51, 65, 85, 0.8);
+  /* 2025-07-08 수정됨 - 배경색 자연스럽게 조정 */
+  background: rgba(255, 255, 255, 0.05);
   color: #e2e8f0;
   cursor: pointer;
   transition: all 0.25s ease;
   font-weight: 500;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .tier-option-btn:hover {
@@ -343,10 +350,12 @@
   max-width: 600px;
   margin: 0 auto;
   text-align: center;
-  background: rgba(51, 65, 85, 0.9);
+  /* 2025-07-08 수정됨 - 배경색 톤 다운 조정 */
+  background: rgba(255, 255, 255, 0.05);
   padding: 3rem;
   border-radius: 1rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .tier-game-finished-title {
@@ -401,9 +410,11 @@
   max-width: 600px;
   margin: 0 auto;
   padding: 2rem;
-  background: rgba(30, 41, 59, 0.95);
+  /* 2025-07-08 수정됨 - 배경색 톤 다운 조정 */
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 1rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .tier-creator-title {
