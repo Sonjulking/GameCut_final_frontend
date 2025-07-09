@@ -12,14 +12,13 @@ const Settings = () => {
   );
 
   const applySettings = () => {
-    const root = document.querySelector(".App");
     const header = document.querySelector("header");
-    const sidebar = document.querySelector(".sidebar");
 
     document.body.style.fontSize = fontSize;
-    if (root) root.style.backgroundColor = bgColor;
-    if (header) header.style.backgroundColor = bgColor;
-    if (sidebar) sidebar.style.backgroundColor = bgColor;
+
+    if (header) {
+      header.style.background = `linear-gradient(135deg, ${bgColor}, #1e1e1e)`;
+    }
 
     localStorage.setItem("fontSize", fontSize);
     localStorage.setItem("bgColor", bgColor);
@@ -32,14 +31,13 @@ const Settings = () => {
     setFontSize(DEFAULT_FONT);
     setBgColor(DEFAULT_COLOR);
 
-    const root = document.querySelector(".App");
     const header = document.querySelector("header");
-    const sidebar = document.querySelector(".sidebar");
 
     document.body.style.fontSize = DEFAULT_FONT;
-    if (root) root.style.backgroundColor = DEFAULT_COLOR;
-    if (header) header.style.backgroundColor = DEFAULT_COLOR;
-    if (sidebar) sidebar.style.backgroundColor = DEFAULT_COLOR;
+
+    if (header) {
+      header.style.background = `linear-gradient(135deg, ${DEFAULT_COLOR}, #1e1e1e)`;
+    }
   };
 
   useEffect(() => {
@@ -65,7 +63,7 @@ const Settings = () => {
       </div>
 
       <div style={styles.section}>
-        <label style={styles.label}>배경 색상</label>
+        <label style={styles.label}>헤더 배경 색상</label>
         <input
           type="color"
           value={bgColor}
