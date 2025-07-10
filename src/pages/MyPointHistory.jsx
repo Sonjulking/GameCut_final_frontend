@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "../lib/axiosInstance"; // 인증 포함된 인스턴스
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
-import "../styles/MyBoard.css";
+import "../styles/myBoard.css";
 import { useNavigate } from "react-router-dom"; // ✅ 추가
 import { useSelector } from "react-redux";
 

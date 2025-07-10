@@ -14,7 +14,7 @@ import {
   Alert,
 } from "@mui/material";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
-import "../styles/MyBoard.css";
+import "../styles/myBoard.css";
 import { useNavigate } from "react-router-dom"; // ✅ 추가
 import { useSelector } from "react-redux";
 

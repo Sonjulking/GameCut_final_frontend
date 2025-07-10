@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../lib/axiosInstance";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
-import "../styles/MyBoard.css";
+import "../styles/myBoard.css";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom"; // ✅ 추가
 import { useSelector } from "react-redux";

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../lib/axiosInstance";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar.jsx";
-import "../styles/MyPage.css";
+import "../styles/myPage.css";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUser } from "../store/userSlice";
 

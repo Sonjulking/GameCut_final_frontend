@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
-import "../styles/MyBoard.css";
+import "../styles/myBoard.css";
 import { useSelector } from "react-redux";
 
 const MyBoard = () => {
