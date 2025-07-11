@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../lib/axiosInstance"; // axiosInstance 사용
 import { useNavigate } from "react-router-dom";
 
 const Join = () => {
@@ -38,8 +38,8 @@ const Join = () => {
       return;
     }
     try {
-      const response = await axios.get(
-        `http://localhost:8081/user/checkUserId?userId=${formData.userId}`
+      const response = await axiosInstance.get(
+        `/user/checkUserId?userId=${formData.userId}`
       );
       setIdCheckMessage(
         response.data.exists
@@ -57,8 +57,8 @@ const Join = () => {
       return;
     }
     try {
-      const response = await axios.get(
-        `http://localhost:8081/user/checkUserNickname?userNickname=${formData.userNickname}`
+      const response = await axiosInstance.get(
+        `/user/checkUserNickname?userNickname=${formData.userNickname}`
       );
       setNicknameCheckMessage(
         response.data.exists
@@ -77,8 +77,8 @@ const Join = () => {
       return;
     }
     try {
-      const response = await axios.post(
-        `http://localhost:8081/user/email/send`,
+      const response = await axiosInstance.post(
+        `/user/email/send`,
         { email: formData.email }
       );
       if (response.data.success) {
@@ -138,8 +138,8 @@ const Join = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:8081/user/join",
+      const response = await axiosInstance.post(
+        "/user/join",
         formData
       );
       if (response.data.success) {
