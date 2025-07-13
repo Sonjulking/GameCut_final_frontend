@@ -42,6 +42,7 @@ export default defineConfig({
         host: true,
         port: 5173,
         // 프록시 설정 - 백엔드 혼재 상황 대응
+        allowedHosts: ['www.gamecut.net'],
         proxy: {
             // /api로 시작하는 요청 - 백엔드에 /api가 있는 경우
             '/api': {
