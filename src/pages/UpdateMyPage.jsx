@@ -52,7 +52,6 @@ const UpdateMyPage = () => {
 
       // 2025년 7월 8일 수정됨 - 원래 닉네임 저장
       setOriginalNickname(userInfo.userNickname || "");
-
       // 기존 프로필 이미지 미리보기 설정
       if (
         userInfo.photo?.photoNo && // 2025년 7월 7일 수정됨 - userInfo.photo.photoNo로 수정
@@ -60,13 +59,11 @@ const UpdateMyPage = () => {
         userInfo.photo?.attachFile?.fileUrl // 2025년 7월 7일 수정됨 - userInfo.photo로 수정
       ) {
         setPreviewUrl(
-          `/api${userInfo.photo.attachFile.fileUrl}` // 2025년 7월 7일 수정됨 - userInfo.photo로 수정
+          `${import.meta.env.VITE_API_URL}${userInfo.photo.attachFile.fileUrl}` // 2025년 7월 7일 수정됨 - userInfo.photo로 수정
         );
       } else {
         setPreviewUrl("/src/assets/img/main/icons/profile_icon.png");
       }
-
-      console.log("유저정보 (Redux에서 가져옴):", userInfo);
     } else {
       // userInfo가 아직 로드되지 않은 경우 기본값 설정
       setPreviewUrl("/src/assets/img/main/icons/profile_icon.png");
@@ -177,12 +174,6 @@ const UpdateMyPage = () => {
     }
 
     try {
-      // 디버깅: 토큰 확인
-      console.log("프로필 업데이트 시작");
-      console.log("profileImage:", profileImage);
-      console.log("deletePhoto:", deletePhoto);
-      console.log("form:", form);
-
       // FormData 생성 - multipart/form-data로 모든 데이터 전송
       const formData = new FormData();
 
@@ -203,11 +194,9 @@ const UpdateMyPage = () => {
       }
 
       // 통합 API 호출
-      console.log("통합 API 호출 시작");
       await axiosInstance.put("/api/user", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      console.log("통합 API 호출 성공");
 
       alert("정보 수정이 완료되었습니다.");
       // 2025년 7월 8일 수정됨 - 수정 후 상태 초기화

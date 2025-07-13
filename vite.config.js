@@ -46,8 +46,8 @@ export default defineConfig({
     proxy: {
       // /api로 시작하는 요청 - 백엔드에 /api가 있는 경우
       "/api": {
-        //target: 'http://server:8081',
-        target: "http://localhost:8081",
+        target: "http://server:8081",
+        // target: "http://localhost:8081",
         changeOrigin: true,
         secure: false,
         // rewrite 없음 - /api를 그대로 백엔드로 전달
