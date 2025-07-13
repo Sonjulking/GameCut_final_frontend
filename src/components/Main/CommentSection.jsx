@@ -153,6 +153,10 @@ const CommentSection = ({
 
     try {
       const isCurrentlyLiked = likedComments.has(commentNo);
+      
+      // 해당 댓글 정보 찾기 (포인트 지급용)
+      const targetComment = comments.find(comment => comment.commentNo === commentNo);
+      const user = useSelector((state) => state.auth.user); // 올바른 useSelector 사용
 
       // detail.jsx와 동일한 방식으로 API 호출
       if (isCurrentlyLiked) {
@@ -175,6 +179,22 @@ const CommentSection = ({
           ...prev,
           [commentNo]: (prev[commentNo] || 0) + 1,
         }));
+        
+        // 2025-07-10 수정됨 - 댓글 좋아요 포인트 지급 로직 추가
+        // 새로 좋아요를 누른 경우에만 포인트 지급
+        if (targetComment && targetComment.user && user && targetComment.user.userNo !== user.userNo) {
+          try {
+            const pointData = new FormData();
+            pointData.append("point", 3);
+            pointData.append("reason", "댓글 좋아요 획득");
+            pointData.append("recievedUserNo", targetComment.user.userNo);
+            
+            await axiosInstance.post("/user/updatePoint", pointData);
+            console.log("댓글 좋아요 포인트 지급 완료:", targetComment.user.userNo);
+          } catch (pointError) {
+            console.error("댓글 좋아요 포인트 지급 실패:", pointError);
+          }
+        }
       }
 
       // 서버 상태 재확인을 위한 알림 (선택사항)
@@ -331,11 +351,12 @@ const CommentSection = ({
                 <div className="comment" key={c.commentNo || idx}>
                   <div className="comment-header">
                     <img
-                            src={
-                              c.user.photo && c.user.photo.attachFile
-                                      ? import.meta.env.VITE_API_URL + c.user.photo.attachFile.fileUrl
-                                      : "/common/empty.png"
-                            }
+                      src={
+                        c.user.photo && c.user.photo.attachFile
+                          ? import.meta.env.VITE_API_URL +
+                            c.user.photo.attachFile.fileUrl
+                          : "/common/empty.png"
+                      }
                       alt="profile"
                       className="comment-profile-img"
                     />
@@ -500,11 +521,12 @@ const CommentSection = ({
                                 >
                                   <div className="comment-header">
                                     <img
-                                            src={
-                                              c.user.photo && c.user.photo.attachFile
-                                                      ? import.meta.env.VITE_API_URL + c.user.photo.attachFile.fileUrl
-                                                      : "/common/empty.png"
-                                            }
+                                      src={
+                                        c.user.photo && c.user.photo.attachFile
+                                          ? import.meta.env.VITE_API_URL +
+                                            c.user.photo.attachFile.fileUrl
+                                          : "/common/empty.png"
+                                      }
                                       alt="profile"
                                       className="comment-profile-img"
                                       style={{ width: "24px", height: "24px" }}

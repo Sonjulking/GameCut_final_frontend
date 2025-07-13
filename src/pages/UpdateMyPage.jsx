@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../lib/axiosInstance";
 import { useSelector } from "react-redux";
-
+import "../styles/updateMyPage.css";
 // 2025년 7월 7일 수정됨 - updateProfilePhoto import 제거 (통합 API 사용), 불필요한 API 호출 제거
 // 2025년 7월 8일 수정됨 - JSP 파일 구조 참고하여 레이아웃 변경
 
@@ -331,9 +331,7 @@ const UpdateMyPage = () => {
                   id="phone"
                   value={form.phone}
                   onChange={onChange}
-                  placeholder="010-1234-5678"
-                  pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}"
-                  required
+                  disabled
                 />
               </div>
 
@@ -346,7 +344,7 @@ const UpdateMyPage = () => {
                   value={form.email}
                   onChange={onChange}
                   placeholder="example@email.com"
-                  required
+                  disabled
                 />
               </div>
             </div>
@@ -362,214 +360,6 @@ const UpdateMyPage = () => {
           </div>
         </form>
       </div>
-
-      {/* 2025년 7월 8일 수정됨 - JSP 파일의 CSS 스타일을 인라인으로 추가 */}
-      <style>{`
-        .main_container {
-          width: 100%;
-          padding: 1rem;
-        }
-        
-        .main_content {
-          width: 100%;
-          padding: 2rem;
-          background-color: #1a1a1a;
-          border-radius: 0.75rem;
-          color: #f0f0f0;
-          max-height: 85vh;
-          overflow-y: auto;
-        }
-        
-        .main_content::-webkit-scrollbar {
-          width: 0.5rem;
-        }
-        
-        .main_content::-webkit-scrollbar-track {
-          background: #1a1a1a;
-        }
-        
-        .main_content::-webkit-scrollbar-thumb {
-          background: #3a3a3a;
-          border-radius: 0.25rem;
-        }
-        
-        .main_content::-webkit-scrollbar-thumb:hover {
-          background: #555;
-        }
-        
-        .joinUserTitle {
-          font-size: 1.5rem;
-          color: #f0f0f0;
-          margin-bottom: 1rem;
-          text-align: center;
-        }
-        
-        hr {
-          border: none;
-          border-top: 0.0625rem solid #3a3a3a;
-          margin: 1.5rem 0;
-        }
-        
-        form {
-          max-width: 900px;
-          margin: 0 auto;
-        }
-        
-        .form-container {
-          display: flex;
-          flex-direction: row;
-          gap: 2rem;
-          margin-bottom: 2rem;
-        }
-        
-        .left-column {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-        
-        .right-column {
-          flex: 2;
-        }
-        
-        .profile-image-container {
-          margin-bottom: 1.5rem;
-          width: 200px;
-          height: 200px;
-          overflow: hidden;
-          border-radius: 50%;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        
-        .form-group {
-          margin-bottom: 1.5rem;
-        }
-        
-        .form-group label {
-          display: block;
-          margin-bottom: 0.5rem;
-          font-weight: 500;
-          color: #ccc;
-        }
-        
-        .form-group input[type="text"],
-        .form-group input[type="tel"],
-        .form-group input[type="email"],
-        .form-group input[type="file"] {
-          width: 100%;
-          padding: 0.75rem;
-          border: none;
-          border-radius: 0.375rem;
-          background-color: #2c2c2c;
-          color: white;
-        }
-        
-        .form-group input[type="file"] {
-          padding: 0.5rem;
-          background-color: transparent;
-        }
-        
-        .form-group input::placeholder {
-          color: #888;
-          opacity: 1;
-        }
-        
-        .input-with-button {
-          display: flex;
-          gap: 0.5rem;
-        }
-        
-        .input-with-button input {
-          flex: 1;
-        }
-        
-        .file-group {
-          width: 100%;
-        }
-        
-        .file-controls {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-        
-        button,
-        input[type="button"],
-        input[type="submit"],
-        input[type="reset"] {
-          padding: 0.75rem 1rem;
-          border: none;
-          border-radius: 0.375rem;
-          background-color: #3a3a3a;
-          color: white;
-          cursor: pointer;
-          font-weight: 500;
-          transition: background-color 0.2s ease;
-        }
-        
-        button:hover,
-        input[type="button"]:hover,
-        input[type="submit"]:hover,
-        input[type="reset"]:hover {
-          background-color: #555;
-        }
-        
-        #deleteFile {
-          background-color: #c62828;
-          margin-top: 0.5rem;
-        }
-        
-        #deleteFile:hover {
-          background-color: #ef5350;
-        }
-        
-        #checkNickname {
-          background-color: #4CAF50;
-          white-space: nowrap;
-          min-width: 80px;
-          font-size: 0.9rem;
-        }
-        
-        #checkNickname:hover {
-          background-color: #66BB6A;
-        }
-        
-        .button-group {
-          display: flex;
-          justify-content: center;
-          gap: 1rem;
-          margin-top: 2rem;
-          padding-bottom: 1rem;
-        }
-        
-        .button-group button {
-          min-width: 8rem;
-        }
-        
-        #btnOK {
-          background-color: #4CAF50;
-        }
-        
-        #btnOK:hover {
-          background-color: #66BB6A;
-        }
-        
-        /* 반응형 디자인 */
-        @media (max-width: 768px) {
-          .form-container {
-            flex-direction: column;
-          }
-          
-          .left-column, .right-column {
-            width: 100%;
-          }
-          
-          .profile-image-container {
-            margin: 0 auto 1.5rem;
-          }
-        }
-      `}</style>
     </div>
   );
 };

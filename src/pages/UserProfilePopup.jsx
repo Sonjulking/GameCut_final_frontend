@@ -27,11 +27,12 @@ const UserProfilePopup = ({ open, onClose, user }) => {
 
   // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (open && !isLoggedIn) {
+      // open 조건 추가
       alert("로그인이 필요한 페이지입니다.");
       navigate("/login");
     }
-  }, [isLoggedIn, navigate]);
+  }, [open, isLoggedIn, navigate]); // open 의존성 추가
 
   useEffect(() => {
     const checkStatuses = async () => {

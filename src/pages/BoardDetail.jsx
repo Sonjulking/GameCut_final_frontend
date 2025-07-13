@@ -73,11 +73,17 @@ const BoardDetail = () => {
   };
   // 좋아요 여부 체크
   const checkLikeStatus = async () => {
+    if (!isLoggedIn) {
+      setIsLiked(false); // 비로그인 시 좋아요 상태는 false
+      return;
+    }
+
     try {
       const response = await axiosInstance.post(`/board/isLike/${boardNo}`);
-      setIsLiked(response.data); // true/false 값 설정
+      setIsLiked(response.data);
     } catch (error) {
       console.error("좋아요 상태 확인 실패:", error);
+      setIsLiked(false); // 에러 시 기본값
     }
   };
 
@@ -87,16 +93,38 @@ const BoardDetail = () => {
       return;
     }
     try {
+      const wasLiked = isLiked; // 이전 상태 저장
+      
       {
         isLiked
           ? await axiosInstance.post(`/board/unlike/${boardNo}`)
           : await axiosInstance.post(`/board/like/${boardNo}`);
       }
+      
       setIsLiked(!isLiked);
       setBoard((prev) => ({
         ...prev,
         boardLike: isLiked ? prev.boardLike - 1 : prev.boardLike + 1,
       }));
+      
+      // 2025-07-10 수정됨 - 게시글 좋아요 포인트 지급 로직 추가
+      if (!wasLiked) { // 새로 좋아요를 누른 경우에만
+        // 본인 게시글에는 포인트 지급 안함
+        if (board && board.user && user && board.user.userNo !== user.userNo) {
+          try {
+            const pointData = new FormData();
+            pointData.append("point", 5);
+            pointData.append("reason", "게시글 좋아요 획득");
+            pointData.append("recievedUserNo", board.user.userNo);
+            
+            await axiosInstance.post("/user/updatePoint", pointData);
+            console.log("게시글 좋아요 포인트 지급 완료:", board.user.userNo);
+          } catch (pointError) {
+            console.error("게시글 좋아요 포인트 지급 실패:", pointError);
+          }
+        }
+      }
+      
       loadBoardDetail();
     } catch (error) {
       console.error("좋아요 처리 실패:", error);
@@ -177,7 +205,6 @@ const BoardDetail = () => {
   };
 
   useEffect(() => {
-    console.log(user);
     if (boardNo) {
       // 모바일에서 페이지 로드 시 상단으로 스크롤
       window.scrollTo(0, 0);
@@ -365,6 +392,7 @@ const BoardDetail = () => {
         comments={comments}
         setComments={setComments}
         onRefresh={loadComments} // loadBoardDetail 대신 loadComments 사용
+        loadAllComments={true}
       />
 
       {/* 유저 프로필 팝업 */}
