@@ -119,7 +119,7 @@ export default function GuessTheRankGame() {
       try {
         const params =
           selectedGameType === "ALL" ? {} : { gameType: selectedGameType };
-        const res = await axiosInstance.get("/game/all", { params });
+        const res = await axiosInstance.get("/api/game/all", { params });
         const questionCount = res.data.length;
 
         setAvailableQuestions(questionCount);
@@ -211,7 +211,7 @@ export default function GuessTheRankGame() {
     try {
       console.log("답안 제출:", { gtrNo: q.gtrNo, tier: selectedAnswer });
 
-      const res = await axiosInstance.post("/game/answer", {
+      const res = await axiosInstance.post("/api/game/answer", {
         gtrNo: q.gtrNo,
         tier: selectedAnswer,
       });

@@ -24,7 +24,7 @@ const MyMessages = () => {
 
   const loadMessages = async () => {
     try {
-      const url = isSentTab ? "/message/sent" : "/message/received";
+      const url = isSentTab ? "/api/message/sent" : "/api/message/received";
       const res = await axiosInstance.get(url);
       isSentTab ? setSentMessages(res.data) : setReceivedMessages(res.data);
     } catch (err) {
@@ -39,7 +39,7 @@ const MyMessages = () => {
   const handleDelete = async (messageNo) => {
     if (!window.confirm("이 쪽지를 삭제하시겠습니까?")) return;
     try {
-      await axiosInstance.delete(`/message/${messageNo}`);
+      await axiosInstance.delete(`/api/message/${messageNo}`);
       if (isSentTab) {
         setSentMessages((prev) =>
           prev.filter((msg) => msg.messageNo !== messageNo)

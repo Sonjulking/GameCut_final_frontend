@@ -43,7 +43,7 @@ const VideoItem = ({board, isLoading}) => {
             // 5개 댓글이 있으면 더 많은 댓글이 있을 가능성
             setHasMoreComments(true);
             // 전체 댓글 개수 조회
-            axiosInstance.get(`/comment/board/${board.boardNo}/count`)
+            axiosInstance.get(`/api/comment/board/${board.boardNo}/count`)
                     .then(response => {
                         const total = response.data;
                         setTotalCommentCount(total);

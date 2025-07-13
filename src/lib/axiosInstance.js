@@ -1,3 +1,4 @@
+// 2025-07-12 생성됨
 // src/lib/axiosInstance.js
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -5,7 +6,8 @@ import store from "../store/store";
 import { logout } from "../store/authSlice";
 
 const axiosInstance = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}`,
+  // baseURL 제거하고 상대 경로로 설정
+  // baseURL: `${import.meta.env.VITE_API_URL}`,
   withCredentials: true, // ⭐ 쿠키 자동 포함
 });
 
@@ -37,7 +39,7 @@ axiosInstance.interceptors.response.use(
 
       try {
         const res = await axios.post(
-          "http://localhost:8081/user/refresh",
+          "/api/user/refresh",
           {},
           { withCredentials: true }
         );

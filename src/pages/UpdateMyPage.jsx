@@ -60,7 +60,7 @@ const UpdateMyPage = () => {
         userInfo.photo?.attachFile?.fileUrl // 2025년 7월 7일 수정됨 - userInfo.photo로 수정
       ) {
         setPreviewUrl(
-          `${import.meta.env.VITE_API_URL}${userInfo.photo.attachFile.fileUrl}` // 2025년 7월 7일 수정됨 - userInfo.photo로 수정
+          `/api${userInfo.photo.attachFile.fileUrl}` // 2025년 7월 7일 수정됨 - userInfo.photo로 수정
         );
       } else {
         setPreviewUrl("/src/assets/img/main/icons/profile_icon.png");
@@ -103,7 +103,7 @@ const UpdateMyPage = () => {
     }
 
     try {
-      const response = await axiosInstance.get(`/user/checkUserNickname`, {
+      const response = await axiosInstance.get(`/api/user/checkUserNickname`, {
         params: {
           userNickname: nickname,
         },
@@ -157,7 +157,7 @@ const UpdateMyPage = () => {
         userInfo.photo?.attachFile?.fileUrl // 2025년 7월 7일 수정됨 - userInfo.photo로 수정
       ) {
         setPreviewUrl(
-          `${import.meta.env.VITE_API_URL}${userInfo.photo.attachFile.fileUrl}` // 2025년 7월 7일 수정됨 - userInfo.photo로 수정
+          `/api${userInfo.photo.attachFile.fileUrl}` // 2025년 7월 7일 수정됨 - userInfo.photo로 수정
         );
       } else {
         setPreviewUrl("/src/assets/img/main/icons/profile_icon.png");
@@ -204,7 +204,7 @@ const UpdateMyPage = () => {
 
       // 통합 API 호출
       console.log("통합 API 호출 시작");
-      await axiosInstance.put("/user", formData, {
+      await axiosInstance.put("/api/user", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       console.log("통합 API 호출 성공");

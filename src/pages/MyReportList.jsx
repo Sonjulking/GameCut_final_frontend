@@ -21,7 +21,7 @@ const MyReportList = () => {
 
   useEffect(() => {
     axiosInstance
-      .get("/report/my")
+      .get("/api/report/my")
       .then((res) => setReports(res.data))
       .catch((err) => {
         console.error("신고 내역 불러오기 실패", err);

@@ -12,7 +12,7 @@ export default function TournamentRanking() {
 
   useEffect(() => {
     axios
-      .get(`${VITE_API_URL}/api/worldcup/ranking`)
+      .get(`/api/worldcup/ranking`)
       .then((res) => {
         const adapted = res.data.map((r) => {
           const raw = r.videoRealPath.replace(/\\/g, "/");

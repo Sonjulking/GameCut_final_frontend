@@ -28,7 +28,7 @@ const FindPassword = () => {
     if (mode === "email") {
       try {
         const response = await axiosInstance.post(
-          "/user/findPassword",
+          "/api/user/findPassword",
           {
             userId: formData.userId,
             email: formData.email,

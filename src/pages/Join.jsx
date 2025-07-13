@@ -1,3 +1,4 @@
+// 2025-07-12 생성됨
 import React, { useState } from "react";
 import axiosInstance from "../lib/axiosInstance"; // axiosInstance 사용
 import { useNavigate } from "react-router-dom";
@@ -38,8 +39,9 @@ const Join = () => {
       return;
     }
     try {
+      // 백엔드 엔드포인트에 맞게 /user/checkUserId 사용
       const response = await axiosInstance.get(
-        `/user/checkUserId?userId=${formData.userId}`
+        `/api/user/checkUserId?userId=${encodeURIComponent(formData.userId)}`
       );
       setIdCheckMessage(
         response.data.exists
@@ -47,7 +49,18 @@ const Join = () => {
           : "사용 가능한 아이디입니다."
       );
     } catch (err) {
-      console.error(err);
+      console.error('아이디 중복 확인 에러:', err);
+      if (err.response) {
+        console.error('Response data:', err.response.data);
+        console.error('Response status:', err.response.status);
+        setIdCheckMessage(`서버 오류 (${err.response.status}): 잠시 후 다시 시도해주세요.`);
+      } else if (err.request) {
+        console.error('Request error:', err.request);
+        setIdCheckMessage("네트워크 오류: 연결을 확인해주세요.");
+      } else {
+        console.error('Error message:', err.message);
+        setIdCheckMessage("오류가 발생했습니다. 다시 시도해주세요.");
+      }
     }
   };
 
@@ -58,7 +71,7 @@ const Join = () => {
     }
     try {
       const response = await axiosInstance.get(
-        `/user/checkUserNickname?userNickname=${formData.userNickname}`
+        `/api/user/checkUserNickname?userNickname=${encodeURIComponent(formData.userNickname)}`
       );
       setNicknameCheckMessage(
         response.data.exists
@@ -66,7 +79,18 @@ const Join = () => {
           : "사용 가능한 닉네임입니다."
       );
     } catch (err) {
-      console.error(err);
+      console.error('닉네임 중복 확인 에러:', err);
+      if (err.response) {
+        console.error('Response data:', err.response.data);
+        console.error('Response status:', err.response.status);
+        setNicknameCheckMessage(`서버 오류 (${err.response.status}): 잠시 후 다시 시도해주세요.`);
+      } else if (err.request) {
+        console.error('Request error:', err.request);
+        setNicknameCheckMessage("네트워크 오류: 연결을 확인해주세요.");
+      } else {
+        console.error('Error message:', err.message);
+        setNicknameCheckMessage("오류가 발생했습니다. 다시 시도해주세요.");
+      }
     }
   };
 
@@ -78,7 +102,7 @@ const Join = () => {
     }
     try {
       const response = await axiosInstance.post(
-        `/user/email/send`,
+        `/api/user/email/send`,
         { email: formData.email }
       );
       if (response.data.success) {
@@ -89,8 +113,18 @@ const Join = () => {
         setEmailVerifyMessage("이메일 전송 실패.");
       }
     } catch (err) {
-      console.error(err);
-      setEmailVerifyMessage("서버 오류 발생.");
+      console.error('이메일 전송 에러:', err);
+      if (err.response) {
+        console.error('Response data:', err.response.data);
+        console.error('Response status:', err.response.status);
+        setEmailVerifyMessage(`서버 오류 (${err.response.status}): 잠시 후 다시 시도해주세요.`);
+      } else if (err.request) {
+        console.error('Request error:', err.request);
+        setEmailVerifyMessage("네트워크 오류: 연결을 확인해주세요.");
+      } else {
+        console.error('Error message:', err.message);
+        setEmailVerifyMessage("서버 오류 발생.");
+      }
     }
   };
 
@@ -139,7 +173,7 @@ const Join = () => {
     setLoading(true);
     try {
       const response = await axiosInstance.post(
-        "/user/join",
+        "/api/user/join",
         formData
       );
       if (response.data.success) {
@@ -149,8 +183,18 @@ const Join = () => {
         setError("회원가입에 실패했습니다.");
       }
     } catch (err) {
-      console.error(err);
-      setError("서버 오류가 발생했습니다.");
+      console.error('회원가입 에러:', err);
+      if (err.response) {
+        console.error('Response data:', err.response.data);
+        console.error('Response status:', err.response.status);
+        setError(`서버 오류 (${err.response.status}): ${err.response.data.message || '잠시 후 다시 시도해주세요.'}`);
+      } else if (err.request) {
+        console.error('Request error:', err.request);
+        setError("네트워크 오류: 연결을 확인해주세요.");
+      } else {
+        console.error('Error message:', err.message);
+        setError("서버 오류가 발생했습니다.");
+      }
     }
     setLoading(false);
   };

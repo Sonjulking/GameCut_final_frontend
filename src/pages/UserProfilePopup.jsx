@@ -25,25 +25,19 @@ const UserProfilePopup = ({ open, onClose, user }) => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const navigate = useNavigate();
 
-  // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
-  useEffect(() => {
-    if (!isLoggedIn) {
-      alert("로그인이 필요한 페이지입니다.");
-      navigate("/login");
-    }
-  }, [isLoggedIn, navigate]);
+  // 🔐 로그인 체크 제거 - BoardDetail에서 사용하므로 항상 접근 가능해야 함
 
   useEffect(() => {
     const checkStatuses = async () => {
       if (user?.userNo) {
         try {
           const followRes = await axiosInstance.get(
-            `/follow/check?toUserNo=${user.userNo}`
+            `/api/follow/check?toUserNo=${user.userNo}`
           );
           setIsFollowing(followRes.data.isFollowing);
 
           const blockRes = await axiosInstance.get(
-            `/block/check?blockedUserNo=${user.userNo}`
+            `/api/block/check?blockedUserNo=${user.userNo}`
           );
           setIsBlocked(blockRes.data.isBlocked);
         } catch (err) {
@@ -60,7 +54,7 @@ const UserProfilePopup = ({ open, onClose, user }) => {
 
   const handleFollowToggle = async () => {
     try {
-      const res = await axiosInstance.post(`/follow`, {
+      const res = await axiosInstance.post(`/api/follow`, {
         toUserNo: user.userNo,
       });
 
@@ -76,13 +70,13 @@ const UserProfilePopup = ({ open, onClose, user }) => {
   const handleBlockToggle = async () => {
     try {
       if (isBlocked) {
-        await axiosInstance.delete(`/block`, {
+        await axiosInstance.delete(`/api/block`, {
           data: { blockedUserNo: user.userNo },
         });
         alert("차단을 해제했습니다.");
         setIsBlocked(false);
       } else {
-        await axiosInstance.post(`/block`, {
+        await axiosInstance.post(`/api/block`, {
           blockedUserNo: user.userNo,
         });
         alert("사용자를 차단했습니다.");
@@ -101,7 +95,7 @@ const UserProfilePopup = ({ open, onClose, user }) => {
     }
 
     try {
-      const res = await axiosInstance.post("/message/send", {
+      const res = await axiosInstance.post("/api/message/send", {
         receiveUserNo: user.userNo,
         messageContent: messageContent.trim(),
       });
@@ -122,7 +116,7 @@ const UserProfilePopup = ({ open, onClose, user }) => {
     if (!window.confirm("정말로 이 사용자를 탈퇴시키겠습니까?")) return;
 
     try {
-      const res = await axiosInstance.post(`/admin/user/delete/${user.userNo}`);
+      const res = await axiosInstance.post(`/api/admin/user/delete/${user.userNo}`);
       if (res.data.success) {
         alert("유저가 탈퇴 처리되었습니다.");
         onClose();

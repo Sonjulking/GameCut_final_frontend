@@ -1,3 +1,4 @@
+// 2025-07-11 생성됨
 import {defineConfig} from "vite";
 import react from "@vitejs/plugin-react";
 import {VitePWA} from "vite-plugin-pwa";
@@ -39,6 +40,22 @@ export default defineConfig({
     ],
     server: {
         host: true,
-        port: 5173
+        port: 5173,
+        // 프록시 설정 - 백엔드 혼재 상황 대응
+        proxy: {
+            // /api로 시작하는 요청 - 백엔드에 /api가 있는 경우
+            '/api': {
+                target: 'http://server:8081',
+                changeOrigin: true,
+                secure: false,
+                // rewrite 없음 - /api를 그대로 백엔드로 전달
+            },
+            // WebSocket 지원 (필요시)
+            '/ws': {
+                target: 'http://server:8081',
+                changeOrigin: true,
+                ws: true
+            }
+        }
     }
 });

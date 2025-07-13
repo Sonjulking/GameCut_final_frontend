@@ -42,7 +42,7 @@ export default function TournamentGame() {
             const rel = encodeURI(relUnencoded);
             return {
               videoNo: b.video.videoNo,
-              url: `${VITE_API_URL}${rel}`,
+              url: `/api/${rel}`,
             };
           });
         setVideos(vids);

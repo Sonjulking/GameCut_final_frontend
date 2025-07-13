@@ -27,8 +27,8 @@ const MyFollow = () => {
   const loadFollowData = async () => {
     try {
       const [followersRes, followingRes] = await Promise.all([
-        axiosInstance.get("/follow/followers"),
-        axiosInstance.get("/follow/following"),
+        axiosInstance.get("/api/follow/followers"),
+        axiosInstance.get("/api/follow/following"),
       ]);
       setFollowerList(followersRes.data);
       setFollowingList(followingRes.data);

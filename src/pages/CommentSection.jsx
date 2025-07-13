@@ -44,8 +44,15 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
 
   //닉네임클릭핸들러
   const handleProfileClick = async (userNo) => {
+    // 2025-07-13 16:10 생성됨
+    // 로그인 상태 확인 후 API 호출
+    if (!isLoggedIn) {
+      alert("로그인 후 프로필을 확인할 수 있습니다.");
+      return;
+    }
+    
     try {
-      const res = await axiosInstance.get(`/user/${userNo}`);
+      const res = await axiosInstance.get(`/api/user/${userNo}`);
       setSelectedUser(res.data);
       setProfileOpen(true);
     } catch (err) {
@@ -113,7 +120,7 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
       return;
     }
     try {
-      const response = await axiosInstance.post(`/comment`, inputComment);
+      const response = await axiosInstance.post(`/api/comment`, inputComment);
       setComments([...comments, response.data]);
       setInputComment({ boardNo, commentContent: "" });
     } catch (error) {
@@ -139,7 +146,7 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
         },
       };
 
-      const response = await axiosInstance.put(`/comment/${commentNo}`, {
+      const response = await axiosInstance.put(`/api/comment/${commentNo}`, {
         commentContent: newContent,
       });
 
@@ -202,7 +209,7 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
 
       console.log("대댓글 요청 데이터:", requestData);
 
-      const response = await axiosInstance.post(`/comment`, requestData);
+      const response = await axiosInstance.post(`/api/comment`, requestData);
 
       setComments([...comments, response.data]);
 
@@ -243,7 +250,7 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
   const deleteComment = async (commentNo) => {
     if (window.confirm("댓글을 정말 삭제하시겠습니까?")) {
       try {
-        await axiosInstance.delete(`/comment/${commentNo}`);
+        await axiosInstance.delete(`/api/comment/${commentNo}`);
         alert("댓글이 삭제되었습니다.");
 
         // 🔥 부모 컴포넌트의 새로고침 함수 호출
@@ -263,9 +270,9 @@ const CommentSection = ({ boardNo, comments, setComments, onRefresh }) => {
       const isCurrentlyLiked = commentLikeStates[commentNo] || false;
       // API 호출 - 좋아요 상태에 따라 다른 엔드포인트 호출
       if (isCurrentlyLiked) {
-        await axiosInstance.post(`/comment/unlike/${commentNo}`);
+        await axiosInstance.post(`/api/comment/unlike/${commentNo}`);
       } else {
-        await axiosInstance.post(`/comment/like/${commentNo}`);
+        await axiosInstance.post(`/api/comment/like/${commentNo}`);
       }
 
       // 로컬 상태 업데이트

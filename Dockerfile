@@ -1,23 +1,20 @@
-FROM node:18 AS build
+# 생성됨 - 2025-07-11 생성됨
+FROM node:20.18-alpine
 
+# 작업 디렉토리 설정
 WORKDIR /app
-COPY . .
-COPY .env .env
 
-# 의존성 설치 (peer 문제 우회)
+# package.json과 package-lock.json 복사 (캐시 최적화)
+COPY package*.json ./
+
+# 의존성 설치 (peer dependency 충돌 해결)
 RUN npm install --legacy-peer-deps
 
-# 빌드
-RUN npm run build
+# 소스 코드 복사
+COPY . .
 
-# 정식 Nginx 이미지로 배포
-FROM nginx:alpine
+# 포트 노출
+EXPOSE 5173
 
-# dist를 Nginx가 제공할 수 있도록 복사
-COPY --from=build /app/dist /usr/share/nginx/html
-
-# 필요시 nginx 설정도
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# 개발 서버 실행 (호스트를 0.0.0.0으로 설정해야 컨테이너 외부에서 접근 가능)
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"]
