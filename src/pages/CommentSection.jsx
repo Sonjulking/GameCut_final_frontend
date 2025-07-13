@@ -54,7 +54,9 @@ const CommentSection = ({
     if (!loadAllComments) return; // loadAllComments가 true일 때만 실행
 
     try {
-      const response = await axiosInstance.get(`/comment/board/${boardNo}/all`);
+      const response = await axiosInstance.get(
+        `/api/comment/board/${boardNo}/all`
+      );
       setComments(response.data);
       console.log(`모든 댓글 로드 완료: ${response.data.length}개`);
     } catch (error) {
