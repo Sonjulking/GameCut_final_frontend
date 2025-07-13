@@ -892,6 +892,27 @@
   transition: width 0.6s, height 0.6s, opacity 0.6s;
 }
 
+/* 2025년 7월 10일 추가됨 - CSS 애니메이션 */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.load-more-btn:hover {
+  background-color: #0056b3 !important;
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+.loading-container {
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
 /* 반응형 - 모바일에서 좋아요 버튼 위치 조정 */
 @media (max-width: 48rem) {
   .bd-comment-actions {

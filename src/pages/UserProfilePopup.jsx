@@ -25,7 +25,14 @@ const UserProfilePopup = ({ open, onClose, user }) => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const navigate = useNavigate();
 
-  // 🔐 로그인 체크 제거 - BoardDetail에서 사용하므로 항상 접근 가능해야 함
+  // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
+  useEffect(() => {
+    if (open && !isLoggedIn) {
+      // open 조건 추가
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    }
+  }, [open, isLoggedIn, navigate]); // open 의존성 추가
 
   useEffect(() => {
     const checkStatuses = async () => {
@@ -116,7 +123,9 @@ const UserProfilePopup = ({ open, onClose, user }) => {
     if (!window.confirm("정말로 이 사용자를 탈퇴시키겠습니까?")) return;
 
     try {
-      const res = await axiosInstance.post(`/api/admin/user/delete/${user.userNo}`);
+      const res = await axiosInstance.post(
+        `/api/admin/user/delete/${user.userNo}`
+      );
       if (res.data.success) {
         alert("유저가 탈퇴 처리되었습니다.");
         onClose();
