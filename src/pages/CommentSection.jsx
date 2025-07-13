@@ -217,7 +217,7 @@ const CommentSection = ({
       const pointData = new FormData();
       pointData.append("point", 10);
       pointData.append("reason", "댓글작성");
-      const res2 = await axiosInstance.post("/user/updatePoint", pointData);
+      await axiosInstance.post("/api/user/updatePoint", pointData);
     } catch (error) {
       console.error("댓글 등록 실패:", error);
       alert("댓글 등록에 실패했습니다.");
@@ -404,7 +404,7 @@ const CommentSection = ({
             pointData.append("reason", "댓글 좋아요 획득");
             pointData.append("recievedUserNo", targetComment.user.userNo);
 
-            await axiosInstance.post("/user/updatePoint", pointData);
+            await axiosInstance.post("/api/user/updatePoint", pointData);
             console.log(
               "댓글 좋아요 포인트 지급 완료:",
               targetComment.user.userNo
