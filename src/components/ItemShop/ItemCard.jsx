@@ -1,7 +1,25 @@
+// 2025-07-10 생성됨
 import React from "react";
 import { useDispatch } from "react-redux";
 import { buyItem, deleteItem, fetchItems } from "../../store/itemSlice";
 import { fetchUser } from "../../store/userSlice";
+
+// 환경에 따른 이미지 URL 처리
+const getImageUrl = (fileUrl) => {
+  if (!fileUrl) return '';
+  
+  // 이미 전체 URL인 경우
+  if (fileUrl.startsWith('http')) return fileUrl;
+  
+  // 현재 환경에 따라 URL 구성
+  if (window.location.port === '' || window.location.port === '80') {
+    // nginx 환경
+    return `/api${fileUrl}`;
+  } else {
+    // 개발 환경
+    return `http://localhost:8081${fileUrl}`;
+  }
+};
 
 const ItemCard = ({ item, userInfo }) => {
   const dispatch = useDispatch();
@@ -43,7 +61,7 @@ const ItemCard = ({ item, userInfo }) => {
   return (
     <div className="itemcard">
       <img
-        src={`http://localhost:8081${item.itemImage?.fileUrl}`}
+        src={getImageUrl(item.itemImage?.fileUrl)}
         alt={item.itemName}
       />
       <div>아이템명 : {item.itemName}</div>

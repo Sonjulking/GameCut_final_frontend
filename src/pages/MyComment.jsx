@@ -3,7 +3,7 @@ import axios from "../lib/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
-import "../styles/MyBoard.css";
+import "../styles/myBoard.css";
 
 const MyComments = () => {
   const [comments, setComments] = useState([]);

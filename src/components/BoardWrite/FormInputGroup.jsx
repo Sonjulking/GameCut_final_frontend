@@ -146,7 +146,7 @@ const FormInputGroup = ({form, handleChange, isEdit, existingTags}) => {
 
         try {
             const res = await axiosInstance.post(
-                    "/ai/tag",
+                    "/api/ai/tag",
                     {},
                     {
                         params: {
@@ -357,7 +357,7 @@ const FormInputGroup = ({form, handleChange, isEdit, existingTags}) => {
 
                                             try {
                                                 const res = await axiosInstance.post(
-                                                        "/board/img", // baseURL이 설정되어 있으므로 상대 경로만 사용
+                                                        "/api/board/img", // baseURL이 설정되어 있으므로 상대 경로만 사용
                                                         formData
                                                         // Authorization 헤더는 인터셉터에서 자동 추가됨
                                                 );

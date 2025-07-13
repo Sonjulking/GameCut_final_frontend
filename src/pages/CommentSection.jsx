@@ -113,8 +113,15 @@ const CommentSection = ({
 
   //닉네임클릭핸들러
   const handleProfileClick = async (userNo) => {
+    // 2025-07-13 16:10 생성됨
+    // 로그인 상태 확인 후 API 호출
+    if (!isLoggedIn) {
+      alert("로그인 후 프로필을 확인할 수 있습니다.");
+      return;
+    }
+
     try {
-      const res = await axiosInstance.get(`/user/${userNo}`);
+      const res = await axiosInstance.get(`/api/user/${userNo}`);
       setSelectedUser(res.data);
       setProfileOpen(true);
     } catch (err) {
@@ -182,7 +189,7 @@ const CommentSection = ({
       return;
     }
     try {
-      const response = await axiosInstance.post(`/comment`, inputComment);
+      const response = await axiosInstance.post(`/api/comment`, inputComment);
 
       // 2025년 7월 10일 수정됨 - loadAllComments에 따라 다르게 처리
       if (loadAllComments) {
@@ -202,7 +209,6 @@ const CommentSection = ({
           setDisplayedParentComments(newDisplayed);
         }
       }
-
       setInputComment({ boardNo, commentContent: "" });
 
       // 포인트 지급 로직
@@ -233,7 +239,7 @@ const CommentSection = ({
         },
       };
 
-      const response = await axiosInstance.put(`/comment/${commentNo}`, {
+      const response = await axiosInstance.put(`/api/comment/${commentNo}`, {
         commentContent: newContent,
       });
 
@@ -296,7 +302,7 @@ const CommentSection = ({
 
       console.log("대댓글 요청 데이터:", requestData);
 
-      const response = await axiosInstance.post(`/comment`, requestData);
+      const response = await axiosInstance.post(`/api/comment`, requestData);
 
       // 2025년 7월 10일 수정됨 - loadAllComments에 따라 다르게 처리
       if (loadAllComments) {
@@ -347,7 +353,7 @@ const CommentSection = ({
   const deleteComment = async (commentNo) => {
     if (window.confirm("댓글을 정말 삭제하시겠습니까?")) {
       try {
-        await axiosInstance.delete(`/comment/${commentNo}`);
+        await axiosInstance.delete(`/api/comment/${commentNo}`);
         alert("댓글이 삭제되었습니다.");
 
         // 🔥 부모 컴포넌트의 새로고침 함수 호출
@@ -367,30 +373,40 @@ const CommentSection = ({
       alert("로그인 후 좋아요가 가능합니다.");
       return;
     }
-    
+
     try {
       const isCurrentlyLiked = commentLikeStates[commentNo] || false;
-      
+
       // 해당 댓글 정보 찾기 (포인트 지급용)
-      const targetComment = comments.find(comment => comment.commentNo === commentNo);
-      
+      const targetComment = comments.find(
+        (comment) => comment.commentNo === commentNo
+      );
+
       // API 호출 - 좋아요 상태에 따라 다른 엔드포인트 호출
       if (isCurrentlyLiked) {
-        await axiosInstance.post(`/comment/unlike/${commentNo}`);
+        await axiosInstance.post(`/api/comment/unlike/${commentNo}`);
       } else {
-        await axiosInstance.post(`/comment/like/${commentNo}`);
-        
+        await axiosInstance.post(`/api/comment/like/${commentNo}`);
+
         // 2025-07-10 수정됨 - 댓글 좋아요 포인트 지급 로직 추가
         // 새로 좋아요를 누른 경우에만 포인트 지급
-        if (targetComment && targetComment.user && user && targetComment.user.userNo !== user.userNo) {
+        if (
+          targetComment &&
+          targetComment.user &&
+          user &&
+          targetComment.user.userNo !== user.userNo
+        ) {
           try {
             const pointData = new FormData();
             pointData.append("point", 3);
             pointData.append("reason", "댓글 좋아요 획득");
             pointData.append("recievedUserNo", targetComment.user.userNo);
-            
+
             await axiosInstance.post("/user/updatePoint", pointData);
-            console.log("댓글 좋아요 포인트 지급 완료:", targetComment.user.userNo);
+            console.log(
+              "댓글 좋아요 포인트 지급 완료:",
+              targetComment.user.userNo
+            );
           } catch (pointError) {
             console.error("댓글 좋아요 포인트 지급 실패:", pointError);
           }

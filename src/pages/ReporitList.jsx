@@ -23,7 +23,7 @@ const ReportList = () => {
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        const res = await axiosInstance.get("/report/admin/list");
+        const res = await axiosInstance.get("/api/report/admin/list");
         setReports(res.data);
       } catch (err) {
         alert("접근권한이 없습니다.");

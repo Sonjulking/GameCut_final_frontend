@@ -35,7 +35,7 @@ const VideoList = () => {
                 isFirstLoadRef.current = false;
             }
 
-            const res = await axiosInstance.post("/board/one", excludeList);
+            const res = await axiosInstance.post("/api/board/one", excludeList);
             const data = res.data;
             
             // 데이터가 없으면 더 이상 불러올 영상이 없다는 뜻 isEnd 처리

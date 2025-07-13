@@ -72,7 +72,7 @@ const BoardList = () => {
     }
 
     const res = await axios.get(
-      `${import.meta.env.VITE_API_URL}/board/listAll`,
+      `/api/board/listAll`,
       {
         params,
       }
@@ -111,7 +111,7 @@ const BoardList = () => {
     if (window.confirm(`"${boardTitle}" 게시글을 정말 삭제하시겠습니까?`)) {
       try {
         await axiosInstance.delete(
-          `${import.meta.env.VITE_API_URL}/board/${boardNo}`
+          `/api/board/${boardNo}`
         );
         alert("게시글이 삭제되었습니다.");
         // 삭제 후 목록 새로고침

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../lib/axiosInstance";
-import "../styles/MyBoard.css";
-import "../styles/MyMessage.css";
+import "../styles/myBoard.css";
+import "../styles/myMessage.css";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom"; // ✅ 추가
@@ -24,7 +24,7 @@ const MyMessages = () => {
 
   const loadMessages = async () => {
     try {
-      const url = isSentTab ? "/message/sent" : "/message/received";
+      const url = isSentTab ? "/api/message/sent" : "/api/message/received";
       const res = await axiosInstance.get(url);
       isSentTab ? setSentMessages(res.data) : setReceivedMessages(res.data);
     } catch (err) {
@@ -39,7 +39,7 @@ const MyMessages = () => {
   const handleDelete = async (messageNo) => {
     if (!window.confirm("이 쪽지를 삭제하시겠습니까?")) return;
     try {
-      await axiosInstance.delete(`/message/${messageNo}`);
+      await axiosInstance.delete(`/api/message/${messageNo}`);
       if (isSentTab) {
         setSentMessages((prev) =>
           prev.filter((msg) => msg.messageNo !== messageNo)

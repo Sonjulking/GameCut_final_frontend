@@ -161,7 +161,7 @@ const CommentSection = ({
       // detail.jsx와 동일한 방식으로 API 호출
       if (isCurrentlyLiked) {
         // 좋아요 취소
-        await axiosInstance.post(`/comment/unlike/${commentNo}`);
+        await axiosInstance.post(`/api/comment/unlike/${commentNo}`);
         setLikedComments((prev) => {
           const newSet = new Set(prev);
           newSet.delete(commentNo);
@@ -173,7 +173,7 @@ const CommentSection = ({
         }));
       } else {
         // 좋아요 추가
-        await axiosInstance.post(`/comment/like/${commentNo}`);
+        await axiosInstance.post(`/api/comment/like/${commentNo}`);
         setLikedComments((prev) => new Set(prev).add(commentNo));
         setCommentLikes((prev) => ({
           ...prev,
@@ -208,7 +208,7 @@ const CommentSection = ({
       // 에러 발생 시 상태 재확인
       try {
         const response = await axiosInstance.post(
-          `/comment/isLike/${commentNo}`
+          `/api/comment/isLike/${commentNo}`
         );
         if (response.data !== likedComments.has(commentNo)) {
           if (response.data) {
@@ -259,7 +259,7 @@ const CommentSection = ({
         parentComment: parentComment, // comments 배열에서 찾은 부모 댓글 객체
       };
 
-      const response = await axiosInstance.post(`/comment`, requestData);
+      const response = await axiosInstance.post(`/api/comment`, requestData);
 
       onAddComment(response.data); // 댓글 추가!
 
@@ -296,7 +296,7 @@ const CommentSection = ({
     }
 
     axiosInstance
-      .post(`/comment`, inputComment)
+      .post(`/api/comment`, inputComment)
       .then((res) => {
         setIsNewCommentAdded(true); // 새 댓글 작성 플래그 설정
         onAddComment(res.data); // 댓글 추가!

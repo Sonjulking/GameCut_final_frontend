@@ -48,7 +48,7 @@ const BoardDetail = () => {
   const loadBoardDetail = async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get(`/board/detail/${boardNo}`); // axiosInstance 사용으로 변경
+      const response = await axiosInstance.get(`/api/board/detail/${boardNo}`); // axiosInstance 사용으로 변경
       setBoard(response.data);
       // 댓글은 별도로 로드
       await loadComments();
@@ -64,7 +64,7 @@ const BoardDetail = () => {
   // 댓글 로드 함수 추가
   const loadComments = async () => {
     try {
-      const response = await axiosInstance.get(`/comment/board/${boardNo}`);
+      const response = await axiosInstance.get(`/api/comment/board/${boardNo}`);
       console.log("받은 댓글 데이터:", response.data);
       setComments(response.data);
     } catch (error) {
@@ -79,8 +79,8 @@ const BoardDetail = () => {
     }
 
     try {
-      const response = await axiosInstance.post(`/board/isLike/${boardNo}`);
-      setIsLiked(response.data);
+      const response = await axiosInstance.post(`/api/board/isLike/${boardNo}`);
+      setIsLiked(response.data); // true/false 값 설정
     } catch (error) {
       console.error("좋아요 상태 확인 실패:", error);
       setIsLiked(false); // 에러 시 기본값
@@ -94,21 +94,22 @@ const BoardDetail = () => {
     }
     try {
       const wasLiked = isLiked; // 이전 상태 저장
-      
+
       {
         isLiked
-          ? await axiosInstance.post(`/board/unlike/${boardNo}`)
-          : await axiosInstance.post(`/board/like/${boardNo}`);
+          ? await axiosInstance.post(`/api/board/unlike/${boardNo}`)
+          : await axiosInstance.post(`/api/board/like/${boardNo}`);
       }
-      
+
       setIsLiked(!isLiked);
       setBoard((prev) => ({
         ...prev,
         boardLike: isLiked ? prev.boardLike - 1 : prev.boardLike + 1,
       }));
-      
+
       // 2025-07-10 수정됨 - 게시글 좋아요 포인트 지급 로직 추가
-      if (!wasLiked) { // 새로 좋아요를 누른 경우에만
+      if (!wasLiked) {
+        // 새로 좋아요를 누른 경우에만
         // 본인 게시글에는 포인트 지급 안함
         if (board && board.user && user && board.user.userNo !== user.userNo) {
           try {
@@ -116,7 +117,7 @@ const BoardDetail = () => {
             pointData.append("point", 5);
             pointData.append("reason", "게시글 좋아요 획득");
             pointData.append("recievedUserNo", board.user.userNo);
-            
+
             await axiosInstance.post("/user/updatePoint", pointData);
             console.log("게시글 좋아요 포인트 지급 완료:", board.user.userNo);
           } catch (pointError) {
@@ -124,7 +125,7 @@ const BoardDetail = () => {
           }
         }
       }
-      
+
       loadBoardDetail();
     } catch (error) {
       console.error("좋아요 처리 실패:", error);
@@ -134,9 +135,7 @@ const BoardDetail = () => {
   const handleDelete = async () => {
     if (window.confirm("정말로 이 게시글을 삭제하시겠습니까?")) {
       try {
-        await axiosInstance.delete(
-          `${import.meta.env.VITE_API_URL}/board/${boardNo}`
-        );
+        await axiosInstance.delete(`/api/board/${boardNo}`);
         alert("게시글이 삭제되었습니다.");
         navigate("/board/list");
       } catch (error) {
@@ -162,7 +161,7 @@ const BoardDetail = () => {
   // ✅ 신고 제출
   const handleReportSubmit = async (content) => {
     try {
-      const res = await axiosInstance.post("/report", {
+      const res = await axiosInstance.post("/api/report", {
         boardNo: board.boardNo,
         reportContent: content,
         reportType: "게시글",
@@ -195,8 +194,15 @@ const BoardDetail = () => {
   };
 
   const handleProfileClick = async () => {
+    // 2025-07-13 16:10 생성됨
+    // 로그인 상태 확인 후 API 호출
+    if (!isLoggedIn) {
+      alert("로그인 후 프로필을 확인할 수 있습니다.");
+      return;
+    }
+
     try {
-      const res = await axiosInstance.get(`/user/${board.user.userNo}`);
+      const res = await axiosInstance.get(`/api/user/${board.user.userNo}`);
       setSelectedUser(res.data);
       setProfileOpen(true);
     } catch (error) {

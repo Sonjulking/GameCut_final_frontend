@@ -40,7 +40,7 @@ const ChatWindow = ({onClose}) => {
         setInput("");
 
         try {
-            const res = await axiosInstance.post(`/ai/chat`, {message: trimmed}); // ✅ Spring Boot API로 요청
+            const res = await axiosInstance.post(`/api/ai/chat`, {message: trimmed}); // ✅ Spring Boot API로 요청
             const gptMsg = {
                 id: Date.now() + 1,
                 text: res.data,

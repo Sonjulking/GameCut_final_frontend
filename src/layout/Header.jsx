@@ -8,7 +8,7 @@ import Cookies from "js-cookie";
 import logoImg from "../assets/img/main/logo/gamecut_logo.png";
 import searchIcon from "../assets/img/main/icons/search_icon.png";
 import loginIcon from "../assets/img/main/icons/login_icon.png";
-import logoutIcon from "../assets/img/main/icons/logout_Icon.png";
+import logoutIcon from "../assets/img/main/icons/logout_icon.png";
 import hamburgerIcon from "../assets/img/main/icons/hamburger_icon.png";
 
 const Header = () => {

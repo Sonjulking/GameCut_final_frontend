@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axiosInstance from "../../lib/axiosInstance";
-import "../../styles/MyPageSidebar.css";
+import "../../styles/myPageSidebar.css";
 
 const MyPageSidebar = () => {
   const navigate = useNavigate();

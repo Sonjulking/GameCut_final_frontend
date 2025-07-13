@@ -28,7 +28,7 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "/user/login",
+        "/api/user/login",
         { userId, pwd },
         {
           withCredentials: true,
