@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../lib/axiosInstance"; // ✅ axiosInstance 사용
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import "../styles/myBoard.css";
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import axiosInstance from "../lib/axiosInstance";
 
 const ChangePassword = () => {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ const ChangePassword = () => {
     }
 
     try {
-      const response = await axios.put("/user/change-password", {
+      const response = await axiosInstance.put("/api/user/change-password", {
         currentPassword: form.currentPassword,
         newPassword: form.newPassword,
       });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "../lib/axiosInstance";
+import axiosInstance from "../lib/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
@@ -27,7 +27,7 @@ const MyComments = () => {
     const fetchComments = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("/comment/my");
+        const res = await axiosInstance.get("/api/comment/my");
         setComments(res.data);
         setError(null);
       } catch (err) {

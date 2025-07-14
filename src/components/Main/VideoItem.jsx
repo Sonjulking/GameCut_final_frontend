@@ -42,8 +42,8 @@ const VideoItem = ({board, isLoading}) => {
         if (initComments.length === 5) {
             // 5개 댓글이 있으면 더 많은 댓글이 있을 가능성
             setHasMoreComments(true);
-            // 전체 댓글 개수 조회
-            axiosInstance.get(`/api/comment/board/${board.boardNo}/count`)
+            // 2025-07-14 수정됨 - 삭제된 댓글도 포함한 전체 댓글 개수 조회
+            axiosInstance.get(`/api/comment/board/${board.boardNo}/count-including-deleted`)
                     .then(response => {
                         const total = response.data;
                         setTotalCommentCount(total);
@@ -141,7 +141,8 @@ const VideoItem = ({board, isLoading}) => {
         setIsLoadingComments(true);
         try {
             const nextPage = currentPage + 1;
-            const response = await axiosInstance.get(`/comment/board/${board.boardNo}`, {
+            // 2025-07-14 수정됨 - 삭제된 댓글도 포함한 API 사용
+            const response = await axiosInstance.get(`/api/comment/board/${board.boardNo}`, {
                 params: {
                     page: nextPage,
                     size: 5 // 10에서 5로 변경

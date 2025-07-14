@@ -43,7 +43,7 @@ const MyFollow = () => {
 
   const handleUnfollow = async (userNo) => {
     try {
-      await axiosInstance.post("/follow", { toUserNo: userNo });
+      await axiosInstance.post("/api/follow", { toUserNo: userNo });
       loadFollowData(); // 갱신
     } catch (err) {
       console.error("팔로우 해제 실패", err);

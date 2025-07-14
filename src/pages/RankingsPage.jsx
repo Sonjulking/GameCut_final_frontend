@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "../lib/axiosInstance.js";
+import axiosInstance from "../lib/axiosInstance.js";
 import "../styles/RankingsPage.css";
 
 const RankingsPage = () => {
@@ -12,9 +12,9 @@ const RankingsPage = () => {
       setLoading(true);
       try {
         const endpoint =
-          mode === "monthly" ? "/ranking/monthly" : "/ranking/total";
+          mode === "monthly" ? "/api/ranking/monthly" : "/api/ranking/total";
 
-        const response = await axios.get(endpoint);
+        const response = await axiosInstance.get(endpoint);
         const data = response.data;
 
         if (Array.isArray(data)) {

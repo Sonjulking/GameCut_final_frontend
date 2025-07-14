@@ -1,6 +1,6 @@
 // src/pages/AdminUserBoard.jsx
 import React, { useEffect, useState } from "react";
-import axios from "../lib/axiosInstance";
+import axiosInstance from "../lib/axiosInstance";
 import {
   Box,
   Typography,
@@ -41,7 +41,7 @@ const AdminUserBoard = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("/user/listUser");
+      const res = await axiosInstance.get("/api/user/listUser");
       setUsers(res.data);
     } catch (err) {
       console.error("회원 목록 불러오기 실패", err);

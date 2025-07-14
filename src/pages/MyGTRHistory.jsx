@@ -1,6 +1,6 @@
 // 2025-07-09 수정됨 - 내 게스더랭크 기록 페이지 생성
 import React, { useEffect, useState } from "react";
-import axios from "../lib/axiosInstance"; // 인증 포함된 인스턴스
+import axiosInstance from "../lib/axiosInstance"; // 인증 포함된 인스턴스
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import "../styles/myBoard.css";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +13,7 @@ const MyGTRHistory = () => {
     totalGames: 0,
     totalCorrect: 0,
     correctRate: 0,
-    gameTypeStats: {}
+    gameTypeStats: {},
   });
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -31,7 +31,7 @@ const MyGTRHistory = () => {
   useEffect(() => {
     const fetchGTRHistory = async () => {
       try {
-        const res = await axios.get("/game/my-history");
+        const res = await axiosInstance.get("/api/game/my-history");
         const sorted = res.data.sort(
           (a, b) => new Date(b.playDate) - new Date(a.playDate)
         );
@@ -39,12 +39,13 @@ const MyGTRHistory = () => {
 
         // 통계 계산
         const totalGames = sorted.length;
-        const totalCorrect = sorted.filter(item => item.isCorrect).length;
-        const correctRate = totalGames > 0 ? ((totalCorrect / totalGames) * 100).toFixed(1) : 0;
+        const totalCorrect = sorted.filter((item) => item.isCorrect).length;
+        const correctRate =
+          totalGames > 0 ? ((totalCorrect / totalGames) * 100).toFixed(1) : 0;
 
         // 게임타입별 통계
         const gameTypeStats = sorted.reduce((acc, item) => {
-          const gameType = item.gameType || '기타';
+          const gameType = item.gameType || "기타";
           if (!acc[gameType]) {
             acc[gameType] = { total: 0, correct: 0 };
           }
@@ -59,9 +60,8 @@ const MyGTRHistory = () => {
           totalGames,
           totalCorrect,
           correctRate,
-          gameTypeStats
+          gameTypeStats,
         });
-
       } catch (err) {
         console.error("게스더랭크 기록 조회 실패", err);
       } finally {
@@ -107,93 +107,152 @@ const MyGTRHistory = () => {
               </div>
 
               {/* 2025-07-09 수정됨 - 통계 섹션 */}
-              <div className="gtr-stats-section" style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                padding: '1.5rem',
-                borderRadius: '0.5rem',
-                marginBottom: '1.5rem',
-                border: '1px solid rgba(255, 255, 255, 0.1)'
-              }}>
-                <h3 style={{ 
-                  color: '#f1f5f9', 
-                  marginBottom: '1rem',
-                  fontSize: '1.125rem',
-                  fontWeight: '600'
-                }}>
+              <div
+                className="gtr-stats-section"
+                style={{
+                  background: "rgba(255, 255, 255, 0.05)",
+                  padding: "1.5rem",
+                  borderRadius: "0.5rem",
+                  marginBottom: "1.5rem",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                }}
+              >
+                <h3
+                  style={{
+                    color: "#f1f5f9",
+                    marginBottom: "1rem",
+                    fontSize: "1.125rem",
+                    fontWeight: "600",
+                  }}
+                >
                   📊 나의 게임 통계
                 </h3>
-                
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                  gap: '1rem',
-                  marginBottom: '1rem'
-                }}>
-                  <div style={{
-                    background: 'rgba(59, 130, 246, 0.1)',
-                    padding: '1rem',
-                    borderRadius: '0.375rem',
-                    textAlign: 'center',
-                    border: '1px solid rgba(59, 130, 246, 0.2)'
-                  }}>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#3b82f6' }}>
+
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                    gap: "1rem",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      background: "rgba(59, 130, 246, 0.1)",
+                      padding: "1rem",
+                      borderRadius: "0.375rem",
+                      textAlign: "center",
+                      border: "1px solid rgba(59, 130, 246, 0.2)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "1.5rem",
+                        fontWeight: "bold",
+                        color: "#3b82f6",
+                      }}
+                    >
                       {stats.totalGames}
                     </div>
-                    <div style={{ fontSize: '0.875rem', color: '#94a3b8' }}>총 게임 수</div>
+                    <div style={{ fontSize: "0.875rem", color: "#94a3b8" }}>
+                      총 게임 수
+                    </div>
                   </div>
 
-                  <div style={{
-                    background: 'rgba(16, 185, 129, 0.1)',
-                    padding: '1rem',
-                    borderRadius: '0.375rem',
-                    textAlign: 'center',
-                    border: '1px solid rgba(16, 185, 129, 0.2)'
-                  }}>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#10b981' }}>
+                  <div
+                    style={{
+                      background: "rgba(16, 185, 129, 0.1)",
+                      padding: "1rem",
+                      borderRadius: "0.375rem",
+                      textAlign: "center",
+                      border: "1px solid rgba(16, 185, 129, 0.2)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "1.5rem",
+                        fontWeight: "bold",
+                        color: "#10b981",
+                      }}
+                    >
                       {stats.totalCorrect}
                     </div>
-                    <div style={{ fontSize: '0.875rem', color: '#94a3b8' }}>정답 수</div>
+                    <div style={{ fontSize: "0.875rem", color: "#94a3b8" }}>
+                      정답 수
+                    </div>
                   </div>
 
-                  <div style={{
-                    background: 'rgba(245, 158, 11, 0.1)',
-                    padding: '1rem',
-                    borderRadius: '0.375rem',
-                    textAlign: 'center',
-                    border: '1px solid rgba(245, 158, 11, 0.2)'
-                  }}>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#f59e0b' }}>
+                  <div
+                    style={{
+                      background: "rgba(245, 158, 11, 0.1)",
+                      padding: "1rem",
+                      borderRadius: "0.375rem",
+                      textAlign: "center",
+                      border: "1px solid rgba(245, 158, 11, 0.2)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "1.5rem",
+                        fontWeight: "bold",
+                        color: "#f59e0b",
+                      }}
+                    >
                       {stats.correctRate}%
                     </div>
-                    <div style={{ fontSize: '0.875rem', color: '#94a3b8' }}>정답률</div>
+                    <div style={{ fontSize: "0.875rem", color: "#94a3b8" }}>
+                      정답률
+                    </div>
                   </div>
                 </div>
 
                 {/* 게임타입별 통계 */}
                 {Object.keys(stats.gameTypeStats).length > 0 && (
                   <div>
-                    <h4 style={{ color: '#e2e8f0', marginBottom: '0.5rem', fontSize: '1rem' }}>
+                    <h4
+                      style={{
+                        color: "#e2e8f0",
+                        marginBottom: "0.5rem",
+                        fontSize: "1rem",
+                      }}
+                    >
                       🎮 게임별 성과
                     </h4>
-                    <div style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                      gap: '0.75rem'
-                    }}>
-                      {Object.entries(stats.gameTypeStats).map(([gameType, stat]) => (
-                        <div key={gameType} style={{
-                          background: 'rgba(255, 255, 255, 0.05)',
-                          padding: '0.75rem',
-                          borderRadius: '0.25rem',
-                          textAlign: 'center',
-                          fontSize: '0.875rem'
-                        }}>
-                          <div style={{ fontWeight: 'bold', color: '#f1f5f9' }}>{gameType}</div>
-                          <div style={{ color: '#94a3b8' }}>
-                            {stat.correct}/{stat.total} ({stat.total > 0 ? ((stat.correct / stat.total) * 100).toFixed(1) : 0}%)
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns:
+                          "repeat(auto-fit, minmax(150px, 1fr))",
+                        gap: "0.75rem",
+                      }}
+                    >
+                      {Object.entries(stats.gameTypeStats).map(
+                        ([gameType, stat]) => (
+                          <div
+                            key={gameType}
+                            style={{
+                              background: "rgba(255, 255, 255, 0.05)",
+                              padding: "0.75rem",
+                              borderRadius: "0.25rem",
+                              textAlign: "center",
+                              fontSize: "0.875rem",
+                            }}
+                          >
+                            <div
+                              style={{ fontWeight: "bold", color: "#f1f5f9" }}
+                            >
+                              {gameType}
+                            </div>
+                            <div style={{ color: "#94a3b8" }}>
+                              {stat.correct}/{stat.total} (
+                              {stat.total > 0
+                                ? ((stat.correct / stat.total) * 100).toFixed(1)
+                                : 0}
+                              %)
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        )
+                      )}
                     </div>
                   </div>
                 )}
@@ -220,29 +279,35 @@ const MyGTRHistory = () => {
                     ) : history.length > 0 ? (
                       history.map((item, index) => (
                         <tr key={`${item.gtrNo}-${index}`}>
-                          <td style={{ textAlign: "center", fontWeight: "500" }}>
-                            {item.gameType || '기타'}
+                          <td
+                            style={{ textAlign: "center", fontWeight: "500" }}
+                          >
+                            {item.gameType || "기타"}
                           </td>
                           <td style={{ textAlign: "center" }}>
-                            <span style={{ 
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.25rem',
-                              color: '#10b981',
-                              fontWeight: 'bold'
-                            }}>
+                            <span
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "0.25rem",
+                                color: "#10b981",
+                                fontWeight: "bold",
+                              }}
+                            >
                               {getTierIcon(item.correctTier)}
                               {item.correctTier}
                             </span>
                           </td>
                           <td style={{ textAlign: "center" }}>
-                            <span style={{ 
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.25rem',
-                              color: item.isCorrect ? '#10b981' : '#ef4444',
-                              fontWeight: 'bold'
-                            }}>
+                            <span
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "0.25rem",
+                                color: item.isCorrect ? "#10b981" : "#ef4444",
+                                fontWeight: "bold",
+                              }}
+                            >
                               {getTierIcon(item.userAnswer)}
                               {item.userAnswer}
                             </span>
@@ -250,22 +315,30 @@ const MyGTRHistory = () => {
                           <td style={{ textAlign: "center" }}>
                             <span
                               style={{
-                                display: 'inline-block',
-                                padding: '0.25rem 0.5rem',
-                                borderRadius: '0.25rem',
-                                fontSize: '0.875rem',
-                                fontWeight: 'bold',
-                                background: item.isCorrect 
-                                  ? 'rgba(16, 185, 129, 0.2)' 
-                                  : 'rgba(239, 68, 68, 0.2)',
-                                color: item.isCorrect ? '#10b981' : '#ef4444',
-                                border: `1px solid ${item.isCorrect ? '#10b981' : '#ef4444'}`,
+                                display: "inline-block",
+                                padding: "0.25rem 0.5rem",
+                                borderRadius: "0.25rem",
+                                fontSize: "0.875rem",
+                                fontWeight: "bold",
+                                background: item.isCorrect
+                                  ? "rgba(16, 185, 129, 0.2)"
+                                  : "rgba(239, 68, 68, 0.2)",
+                                color: item.isCorrect ? "#10b981" : "#ef4444",
+                                border: `1px solid ${
+                                  item.isCorrect ? "#10b981" : "#ef4444"
+                                }`,
                               }}
                             >
-                              {item.isCorrect ? '✅ 정답' : '❌ 오답'}
+                              {item.isCorrect ? "✅ 정답" : "❌ 오답"}
                             </span>
                           </td>
-                          <td style={{ textAlign: "center", fontSize: '0.875rem', color: '#94a3b8' }}>
+                          <td
+                            style={{
+                              textAlign: "center",
+                              fontSize: "0.875rem",
+                              color: "#94a3b8",
+                            }}
+                          >
                             {new Date(item.playDate).toLocaleString("ko-KR", {
                               year: "numeric",
                               month: "2-digit",
@@ -281,7 +354,7 @@ const MyGTRHistory = () => {
                         <td colSpan="5" style={{ textAlign: "center" }}>
                           게스더랭크 기록이 없습니다.
                           <br />
-                          <small style={{ color: '#94a3b8' }}>
+                          <small style={{ color: "#94a3b8" }}>
                             게임을 플레이하면 여기에 기록이 나타납니다.
                           </small>
                         </td>

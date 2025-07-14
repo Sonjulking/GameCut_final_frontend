@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../lib/axiosInstance";
+import axiosInstance from "../lib/axiosInstance";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../store/authSlice";
@@ -27,7 +27,7 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         "/api/user/login",
         { userId, pwd },
         {
@@ -78,8 +78,8 @@ const Login = () => {
 
       try {
         // ✅ withCredentials 추가
-        const res = await axios.post(
-          "/user/oauth/google",
+        const res = await axiosInstance.post(
+          "/api/user/oauth/google",
           { accessToken },
           {
             withCredentials: true,
@@ -264,6 +264,5 @@ const styles = {
     textDecoration: "underline",
   },
 };
-
 
 export default Login;

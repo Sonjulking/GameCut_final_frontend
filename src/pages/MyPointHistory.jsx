@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "../lib/axiosInstance"; // 인증 포함된 인스턴스
+import axiosInstance from "../lib/axiosInstance"; // 인증 포함된 인스턴스
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import "../styles/myBoard.css";
 import { useNavigate } from "react-router-dom"; // ✅ 추가
@@ -20,8 +20,8 @@ const MyPointHistory = () => {
   }, [isLoggedIn, navigate]);
 
   useEffect(() => {
-    axios
-      .get("/point/my")
+    axiosInstance
+      .get("/api/point/my")
       .then((res) => {
         const sorted = res.data.sort(
           (a, b) => new Date(b.pointDate) - new Date(a.pointDate)

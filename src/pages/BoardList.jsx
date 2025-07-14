@@ -5,6 +5,8 @@ import "../styles/boardList.css";
 import { Button, Stack } from "@mui/material";
 import axiosInstance from "../lib/axiosInstance";
 import { useSelector } from "react-redux";
+// 2025-07-14 수정됨 - 시간 표시 포맷 유틸리티 추가
+import { formatRelativeTimeKo } from "../util/timeFormatUtil.js";
 
 const BoardList = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -186,7 +188,10 @@ const BoardList = () => {
                 <td>{board.user.userNickname}</td>
                 <td>{board.boardCount}</td>
                 <td>{board.boardLike}</td>
-                <td>{new Date(board.boardCreateDate).toLocaleString()}</td>
+                <td>
+                  {/* 2025-07-14 수정됨 - 상대적 시간 표시로 변경 */}
+                  {formatRelativeTimeKo(board.boardCreateDate)}
+                </td>
                 <td>
                   {user && user.userNo == board.user.userNo ? (
                     <div className="action-buttons">
@@ -275,7 +280,8 @@ const BoardList = () => {
                     </span>
                   </div>
                   <p className="board-date">
-                    {new Date(board.boardCreateDate).toLocaleString()}
+                    {/* 2025-07-14 수정됨 - 카드뷰 상대적 시간 표시로 변경 */}
+                    {formatRelativeTimeKo(board.boardCreateDate)}
                   </p>
                 </div>
               </div>
