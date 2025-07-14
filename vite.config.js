@@ -1,20 +1,20 @@
 // 2025-07-11 생성됨
-import { defineConfig } from "vite";
+import {defineConfig} from "vite";
 import react from "@vitejs/plugin-react";
-import { VitePWA } from "vite-plugin-pwa";
+import {VitePWA} from "vite-plugin-pwa";
 
 export default defineConfig({
-  plugins: [
-    react(),
-    VitePWA({
-      registerType: "autoUpdate",
-      devOptions: {
-        enabled: true,
-      },
+    plugins: [
+        react(),
+        VitePWA({
+            registerType: "autoUpdate",
+            devOptions: {
+                enabled: true
+            },
 
-      workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
-      },
+            workbox: {
+                globPatterns: ["**/*.{js,css,html,ico,png,svg}"]
+            },
 
       includeAssets: ["apple-touch-icon.png"],
       manifest: {
@@ -61,3 +61,4 @@ export default defineConfig({
     },
   },
 });
+
