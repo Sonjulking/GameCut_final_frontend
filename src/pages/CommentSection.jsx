@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../lib/axiosInstance";
 import UserProfilePopup from "../pages/UserProfilePopup";
 import { useSelector } from "react-redux";
+// 2025-07-14 수정됨 - 시간 표시 포맷 유틸리티 추가
+import { formatRelativeTimeKo } from "../util/timeFormatUtil.js";
+// 2025-07-14 수정됨 - 기본 프로필 아이콘 import 추가
+import profileIconImg from "../assets/img/main/icons/profile_icon.png";
 
 const CommentSection = ({
   boardNo,
@@ -39,16 +43,18 @@ const CommentSection = ({
 
   const COMMENTS_PER_PAGE = 5;
 
-  // 2025년 7월 10일 추가됨 - 모든 댓글 로드 함수
+  // 2025-07-14 수정됨 - 삭제된 댓글도 포함하여 모든 댓글 로드 함수 (pages용)
   const loadAllCommentsFromAPI = async () => {
     if (!loadAllComments) return;
 
     try {
       const response = await axiosInstance.get(
-        `/api/comment/board/${boardNo}/all`
+        `/api/comment/board/${boardNo}/all-including-deleted`
       );
       setComments(response.data);
-      console.log(`모든 댓글 로드 완료: ${response.data.length}개`);
+      console.log(
+        `모든 댓글 로드 완료 (삭제된 댓글 포함): ${response.data.length}개`
+      );
     } catch (error) {
       console.error("모든 댓글 로드 실패:", error);
     }
@@ -183,14 +189,13 @@ const CommentSection = ({
       if (loadAllComments) {
         await loadAllCommentsFromAPI();
       } else {
-        const updatedComments = [response.data, ...comments];
+        // 2025년 7월 14일 수정됨 - 시간순 정렬을 위해 맨 뒤에 추가
+        const updatedComments = [...comments, response.data];
         setComments(updatedComments);
 
         if (!response.data.parentComment) {
-          const newDisplayed = [
-            response.data,
-            ...displayedParentComments.slice(0, displayedParentComments.length),
-          ];
+          // 2025년 7월 14일 수정됨 - 시간순 정렬을 위해 맨 뒤에 추가
+          const newDisplayed = [...displayedParentComments, response.data];
           setDisplayedParentComments(newDisplayed);
         }
       }
@@ -412,34 +417,45 @@ const CommentSection = ({
             <div key={comment.commentNo} className="bd-comment-item">
               <div className="bd-comment-user-info">
                 <div className="bd-user-left">
-                  {comment.commentDeleteDate ? (
-                    <img
-                      src="/src/assets/img/main/icons/profile_icon.png"
-                      alt="profile"
-                      className="bd-comment-profile-img"
-                    />
-                  ) : (
-                    <img
-                      src="/src/assets/img/main/icons/admin.jpg"
-                      alt="profile"
-                      className="bd-comment-profile-img"
-                    />
-                  )}
+                  <img
+                    src={
+                      // 2025-07-14 수정됨 - 프로필 사진 표시 로직 수정 및 import한 이미지 사용
+                      !comment.commentDeleteDate &&
+                      comment.user.photo &&
+                      comment.user.photo.attachFile
+                        ? import.meta.env.VITE_API_URL +
+                          comment.user.photo.attachFile.fileUrl
+                        : profileIconImg
+                    }
+                    alt="profile"
+                    className="bd-comment-profile-img"
+                  />
+
                   <div className="bd-comment-info">
                     <span
                       className="bd-comment-nickname"
-                      onClick={() => handleProfileClick(comment.user.userNo)}
+                      onClick={() => {
+                        // 2025-07-14 수정됨 - 삭제된 댓글인 경우 클릭 방지
+                        if (!comment.commentDeleteDate) {
+                          handleProfileClick(comment.user.userNo);
+                        }
+                      }}
                       style={{
-                        cursor: "pointer",
-                        textDecoration: "underline",
+                        cursor: comment.commentDeleteDate
+                          ? "default"
+                          : "pointer",
+                        textDecoration: comment.commentDeleteDate
+                          ? "none"
+                          : "underline",
                       }}
                     >
                       {comment.commentDeleteDate
-                        ? ""
+                        ? "삭제된 댓글"
                         : comment.user.userNickname}
                     </span>
                     <span className="bd-comment-date">
-                      {new Date(comment.commentCreateDate).toLocaleString()}
+                      {/* 2025-07-14 수정됨 - 상대적 시간 표시로 변경 */}
+                      {formatRelativeTimeKo(comment.commentCreateDate)}
                     </span>
                   </div>
                 </div>
@@ -604,38 +620,49 @@ const CommentSection = ({
                                 <div className="bd-comment-user-info">
                                   <div className="bd-user-left">
                                     <span className="bd-reply-arrow">↳</span>
-                                    {reply.commentDeleteDate ? (
-                                      <img
-                                        src="/src/assets/img/main/icons/profile_icon.png"
-                                        alt="profile"
-                                        className="bd-comment-profile-img"
-                                      />
-                                    ) : (
-                                      <img
-                                        src="/src/assets/img/main/icons/admin.jpg"
-                                        alt="profile"
-                                        className="bd-comment-profile-img bd-small"
-                                      />
-                                    )}
+                                    <img
+                                      src={
+                                        // 2025-07-14 수정됨 - 대댓글 프로필 사진 표시 로직 수정 및 import한 이미지 사용
+                                        !reply.commentDeleteDate &&
+                                        reply.user.photo &&
+                                        reply.user.photo.attachFile
+                                          ? import.meta.env.VITE_API_URL +
+                                            reply.user.photo.attachFile.fileUrl
+                                          : profileIconImg
+                                      }
+                                      alt="profile"
+                                      className="bd-comment-profile-img"
+                                    />
                                     <div className="bd-comment-info">
                                       <span
                                         className="bd-comment-nickname"
-                                        onClick={() =>
-                                          handleProfileClick(reply.user.userNo)
-                                        }
+                                        onClick={() => {
+                                          // 2025-07-14 수정됨 - 삭제된 댓글인 경우 클릭 방지
+                                          if (!reply.commentDeleteDate) {
+                                            handleProfileClick(
+                                              reply.user.userNo
+                                            );
+                                          }
+                                        }}
                                         style={{
-                                          cursor: "pointer",
-                                          textDecoration: "underline",
+                                          cursor: reply.commentDeleteDate
+                                            ? "default"
+                                            : "pointer",
+                                          textDecoration:
+                                            reply.commentDeleteDate
+                                              ? "none"
+                                              : "underline",
                                         }}
                                       >
                                         {reply.commentDeleteDate
-                                          ? ""
+                                          ? "삭제된 대댓글"
                                           : reply.user.userNickname}
                                       </span>
                                       <span className="bd-comment-date">
-                                        {new Date(
+                                        {/* 2025-07-14 수정됨 - 대댓글 상대적 시간 표시로 변경 */}
+                                        {formatRelativeTimeKo(
                                           reply.commentCreateDate
-                                        ).toLocaleString()}
+                                        )}
                                       </span>
                                     </div>
                                   </div>

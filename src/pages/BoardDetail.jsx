@@ -9,6 +9,8 @@ import "../styles/boardDetail.css";
 import axiosInstance from "../lib/axiosInstance.js";
 import ReportModal from "./ReportModal.jsx";
 import { useSelector } from "react-redux";
+// 2025-07-14 수정됨 - 시간 표시 포맷 유틸리티 추가
+import { formatRelativeTimeKo } from "../util/timeFormatUtil.js";
 
 const BoardDetail = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -272,7 +274,10 @@ const BoardDetail = () => {
               >
                 {board.user.userNickname}
               </span>
-              <span className="create-date">{board.boardCreateDate}</span>
+              <span className="create-date">
+                {/* 2025-07-14 수정됨 - 상대적 시간 표시로 변경 */}
+                {formatRelativeTimeKo(board.boardCreateDate)}
+              </span>
             </div>
             <div className="board-stats">
               <span className="stat-item">조회수: {board.boardCount}</span>
