@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import "../styles/updateMyPage.css";
 // 2025년 7월 7일 수정됨 - updateProfilePhoto import 제거 (통합 API 사용), 불필요한 API 호출 제거
 // 2025년 7월 8일 수정됨 - JSP 파일 구조 참고하여 레이아웃 변경
+// 2025년 7월 14일 수정됨 - 클래스명 충돌 방지를 위해 고유한 클래스명 사용
 
 const UpdateMyPage = () => {
   const navigate = useNavigate();
@@ -214,8 +215,8 @@ const UpdateMyPage = () => {
   // 2025년 7월 8일 수정됨 - auth.user 사용으로 로딩 처리 개선
   if (!userInfo) {
     return (
-      <div className="main_container">
-        <div className="main_content">
+      <div className="update-my-page-container">
+        <div className="update-my-page-content">
           <div style={{ textAlign: "center", padding: "2rem" }}>
             사용자 정보를 불러오는 중...
           </div>
@@ -225,17 +226,17 @@ const UpdateMyPage = () => {
   }
 
   return (
-    <div className="main_container">
-      <div className="main_content">
-        <h2 className="joinUserTitle">내 정보 수정</h2>
-        <hr />
+    <div className="update-my-page-container">
+      <div className="update-my-page-content">
+        <h2 className="update-my-page-title">내 정보 수정</h2>
+        <hr className="update-my-page-divider" />
         <form onSubmit={onSubmit}>
-          <div className="form-container">
+          <div className="update-my-page-form-container">
             {/* 2025년 7월 8일 수정됨 - JSP 구조 참고하여 좌측 컬럼 (프로필 이미지) 추가 */}
-            <div className="left-column">
-              <div className="profile-image-container">
+            <div className="update-my-page-left-column">
+              <div className="update-my-page-profile-image-container">
                 <img
-                  id="previewImage"
+                  id="update-my-page-preview-image"
                   src={previewUrl}
                   width="200"
                   height="200"
@@ -244,19 +245,19 @@ const UpdateMyPage = () => {
                 />
               </div>
 
-              <div className="form-group file-group">
-                <label htmlFor="originalFileName">프로필 이미지:</label>
-                <div className="file-controls">
+              <div className="update-my-page-form-group update-my-page-file-group">
+                <label htmlFor="update-my-page-original-filename">프로필 이미지:</label>
+                <div className="update-my-page-file-controls">
                   <input
                     type="file"
                     name="originalFileName"
-                    id="originalFileName"
+                    id="update-my-page-original-filename"
                     accept="image/*"
                     onChange={handleFileChange}
                   />
                   <button
                     type="button"
-                    id="deleteFile"
+                    id="update-my-page-delete-file"
                     onClick={handleDeletePhoto}
                   >
                     {deletePhoto ? "삭제 취소" : "사진 삭제"}
@@ -266,45 +267,45 @@ const UpdateMyPage = () => {
             </div>
 
             {/* 2025년 7월 8일 수정됨 - JSP 구조 참고하여 우측 컬럼 (입력 필드들) 추가 */}
-            <div className="right-column">
-              <div className="form-group">
-                <label htmlFor="userName">이름:</label>
+            <div className="update-my-page-right-column">
+              <div className="update-my-page-form-group">
+                <label htmlFor="update-my-page-user-name">이름:</label>
                 <input
                   type="text"
                   name="userName"
-                  id="userName"
+                  id="update-my-page-user-name"
                   value={form.userName}
                   onChange={onChange}
                   required
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="userId">아이디:</label>
+              <div className="update-my-page-form-group">
+                <label htmlFor="update-my-page-user-id">아이디:</label>
                 <input
                   type="text"
                   name="userId"
-                  id="userId"
+                  id="update-my-page-user-id"
                   value={form.userId}
                   onChange={onChange}
                   disabled
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="userNickname">닉네임:</label>
-                <div className="input-with-button">
+              <div className="update-my-page-form-group">
+                <label htmlFor="update-my-page-user-nickname">닉네임:</label>
+                <div className="update-my-page-input-with-button">
                   <input
                     type="text"
                     name="userNickname"
-                    id="userNickname"
+                    id="update-my-page-user-nickname"
                     value={form.userNickname}
                     onChange={onChange}
                     required
                   />
                   <button
                     type="button"
-                    id="checkNickname"
+                    id="update-my-page-check-nickname"
                     onClick={handleNicknameCheck}
                   >
                     중복확인
@@ -312,24 +313,24 @@ const UpdateMyPage = () => {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="phone">연락처:</label>
+              <div className="update-my-page-form-group">
+                <label htmlFor="update-my-page-phone">연락처:</label>
                 <input
                   type="tel"
                   name="phone"
-                  id="phone"
+                  id="update-my-page-phone"
                   value={form.phone}
                   onChange={onChange}
                   disabled
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="email">이메일:</label>
+              <div className="update-my-page-form-group">
+                <label htmlFor="update-my-page-email">이메일:</label>
                 <input
                   type="email"
                   name="email"
-                  id="email"
+                  id="update-my-page-email"
                   value={form.email}
                   onChange={onChange}
                   placeholder="example@email.com"
@@ -339,11 +340,11 @@ const UpdateMyPage = () => {
             </div>
           </div>
 
-          <div className="button-group">
-            <button type="submit" id="btnOK">
+          <div className="update-my-page-button-group">
+            <button type="submit" id="update-my-page-btn-ok">
               수정 완료
             </button>
-            <button type="button" id="btnReset" onClick={() => navigate(-1)}>
+            <button type="button" id="update-my-page-btn-reset" onClick={() => navigate(-1)}>
               취소
             </button>
           </div>

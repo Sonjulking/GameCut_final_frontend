@@ -1,8 +1,5 @@
-import axios from "axios";
-import React, { useState } from "react";
-import Cookie from "js-cookie";
+import React, { useState, useEffect } from "react";
 import axiosInstance from "../lib/axiosInstance";
-import { useEffect } from "react";
 import UserProfilePopup from "../pages/UserProfilePopup";
 import { useSelector } from "react-redux";
 
@@ -14,13 +11,13 @@ const CommentSection = ({
   loadAllComments = false,
 }) => {
   const [showReplies, setShowReplies] = useState({});
-  const [showReplyInput, setShowReplyInput] = useState({}); // 대댓글 입력창 표시 상태
+  const [showReplyInput, setShowReplyInput] = useState({});
   const [profileOpen, setProfileOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
   // 수정 모드 상태 관리
-  const [editMode, setEditMode] = useState({}); // 어떤 댓글이 수정 모드인지
-  const [editContent, setEditContent] = useState({}); // 수정 중인 댓글 내용
+  const [editMode, setEditMode] = useState({});
+  const [editContent, setEditContent] = useState({});
 
   const user = useSelector((state) => state.auth.user);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -30,13 +27,6 @@ const CommentSection = ({
     boardNo: boardNo,
     commentContent: "",
   });
-  const [inputCoComment, setInputCoComment] = useState({
-    boardNo: boardNo,
-    commentContent: "",
-    parentComment: null, // 객체로 변경 (숫자가 아닌 전체 댓글 객체를 저장)
-  });
-
-  const [commentLikeStates, setCommentLikeStates] = useState({});
 
   // 각 댓글별 대댓글 입력 상태를 객체로 관리
   const [replyInputs, setReplyInputs] = useState({});
@@ -47,11 +37,11 @@ const CommentSection = ({
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const COMMENTS_PER_PAGE = 5; // 한 번에 보여줄 부모댓글 수
+  const COMMENTS_PER_PAGE = 5;
 
   // 2025년 7월 10일 추가됨 - 모든 댓글 로드 함수
   const loadAllCommentsFromAPI = async () => {
-    if (!loadAllComments) return; // loadAllComments가 true일 때만 실행
+    if (!loadAllComments) return;
 
     try {
       const response = await axiosInstance.get(
@@ -103,7 +93,7 @@ const CommentSection = ({
       setCurrentPage(nextPage + 1);
       setHasMore(endIndex < parentComments.length);
       setLoading(false);
-    }, 300); // 약간의 로딩 효과
+    }, 300);
   };
 
   const toggleReplies = (commentNo) => {
@@ -113,10 +103,9 @@ const CommentSection = ({
     }));
   };
 
-  //닉네임클릭핸들러
+  // 닉네임 클릭 핸들러
   const handleProfileClick = async (userNo) => {
     // 2025-07-13 16:10 생성됨
-    // 로그인 상태 확인 후 API 호출
     if (!isLoggedIn) {
       alert("로그인 후 프로필을 확인할 수 있습니다.");
       return;
@@ -139,7 +128,6 @@ const CommentSection = ({
       [commentNo]: !prev[commentNo],
     }));
 
-    // 입력창을 열 때 해당 댓글의 입력 상태 초기화
     if (!showReplyInput[commentNo]) {
       setReplyInputs((prev) => ({
         ...prev,
@@ -155,7 +143,6 @@ const CommentSection = ({
       [commentNo]: !prev[commentNo],
     }));
 
-    // 수정 모드로 진입할 때 현재 댓글 내용을 설정
     if (!editMode[commentNo]) {
       setEditContent((prev) => ({
         ...prev,
@@ -193,16 +180,12 @@ const CommentSection = ({
     try {
       const response = await axiosInstance.post(`/api/comment`, inputComment);
 
-      // 2025년 7월 10일 수정됨 - loadAllComments에 따라 다르게 처리
       if (loadAllComments) {
-        // 모든 댓글 다시 로드
         await loadAllCommentsFromAPI();
       } else {
-        // 2025년 7월 10일 수정됨 - 부모댓글 기준 페이징 업데이트
-        const updatedComments = [response.data, ...comments]; // 맨 앞에 추가
+        const updatedComments = [response.data, ...comments];
         setComments(updatedComments);
 
-        // 부모댓글이라면 페이징도 업데이트
         if (!response.data.parentComment) {
           const newDisplayed = [
             response.data,
@@ -234,18 +217,10 @@ const CommentSection = ({
     }
 
     try {
-      const token = Cookie.get("accessToken");
-      const axiosConfig = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      const response = await axiosInstance.put(`/api/comment/${commentNo}`, {
+      await axiosInstance.put(`/api/comment/${commentNo}`, {
         commentContent: newContent,
       });
 
-      // 성공 시 댓글 목록 업데이트
       const updatedComments = comments.map((comment) =>
         comment.commentNo === commentNo
           ? { ...comment, commentContent: newContent }
@@ -253,7 +228,6 @@ const CommentSection = ({
       );
       setComments(updatedComments);
 
-      // 수정 모드 해제
       setEditMode((prev) => ({
         ...prev,
         [commentNo]: false,
@@ -276,14 +250,6 @@ const CommentSection = ({
     }
 
     try {
-      const token = Cookie.get("accessToken");
-      const axiosConfig = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      // 기존 comments 배열에서 부모 댓글 찾기
       const parentComment = comments.find(
         (comment) => comment.commentNo === commentNo
       );
@@ -293,32 +259,21 @@ const CommentSection = ({
         return;
       }
 
-      console.log("찾은 부모 댓글:", parentComment);
-
-      // 부모 댓글 정보를 포함한 대댓글 데이터 구성
       const requestData = {
         boardNo: boardNo,
         commentContent: replyContent,
-        parentComment: parentComment, // comments 배열에서 찾은 부모 댓글 객체
+        parentComment: parentComment,
       };
-
-      console.log("대댓글 요청 데이터:", requestData);
 
       const response = await axiosInstance.post(`/api/comment`, requestData);
 
-      // 2025년 7월 10일 수정됨 - loadAllComments에 따라 다르게 처리
       if (loadAllComments) {
-        // 모든 댓글 다시 로드
         await loadAllCommentsFromAPI();
       } else {
-        // 2025년 7월 10일 수정됨 - 대댓글은 페이징에 영향주지 않음
-        const updatedComments = [...comments, response.data]; // 맨 뒤에 추가
+        const updatedComments = [...comments, response.data];
         setComments(updatedComments);
-
-        // 대댓글은 displayedParentComments에 영향주지 않음 (부모댓글만 페이징대상)
       }
 
-      // 성공 후 해당 댓글의 입력창 초기화 및 숨기기
       setReplyInputs((prev) => ({
         ...prev,
         [commentNo]: "",
@@ -345,7 +300,6 @@ const CommentSection = ({
     }
   };
 
-  // 수정 모드에서 Enter 키 처리
   const handleEditKeyPress = (e, commentNo) => {
     if (e.key === "Enter") {
       handleEditComment(commentNo);
@@ -358,9 +312,7 @@ const CommentSection = ({
         await axiosInstance.delete(`/api/comment/${commentNo}`);
         alert("댓글이 삭제되었습니다.");
 
-        // 🔥 부모 컴포넌트의 새로고침 함수 호출
         if (onRefresh) {
-          console.log("실행은됨");
           await onRefresh();
         }
       } catch (error) {
@@ -370,56 +322,42 @@ const CommentSection = ({
     }
   };
 
+  // 2025년 7월 14일 수정됨 - 좋아요 취소 기능 제거, 단순화
   const handleCommentLike = async (commentNo) => {
     if (!isLoggedIn) {
       alert("로그인 후 좋아요가 가능합니다.");
       return;
     }
 
+    const targetComment = comments.find(
+      (comment) => comment.commentNo === commentNo
+    );
+
+    if (targetComment?.isLikedByCurrentUser) {
+      alert("이미 좋아요를 누르셨습니다.");
+      return;
+    }
+
     try {
-      const isCurrentlyLiked = commentLikeStates[commentNo] || false;
+      await axiosInstance.post(`/api/comment/like/${commentNo}`);
 
-      // 해당 댓글 정보 찾기 (포인트 지급용)
-      const targetComment = comments.find(
-        (comment) => comment.commentNo === commentNo
-      );
-
-      // API 호출 - 좋아요 상태에 따라 다른 엔드포인트 호출
-      if (isCurrentlyLiked) {
-        await axiosInstance.post(`/api/comment/unlike/${commentNo}`);
-      } else {
-        await axiosInstance.post(`/api/comment/like/${commentNo}`);
-
-        // 2025-07-10 수정됨 - 댓글 좋아요 포인트 지급 로직 추가
-        // 새로 좋아요를 누른 경우에만 포인트 지급
-        if (
-          targetComment &&
-          targetComment.user &&
-          user &&
-          targetComment.user.userNo !== user.userNo
-        ) {
-          try {
-            const pointData = new FormData();
-            pointData.append("point", 3);
-            pointData.append("reason", "댓글 좋아요 획득");
-            pointData.append("recievedUserNo", targetComment.user.userNo);
-
-            await axiosInstance.post("/api/user/updatePoint", pointData);
-            console.log(
-              "댓글 좋아요 포인트 지급 완료:",
-              targetComment.user.userNo
-            );
-          } catch (pointError) {
-            console.error("댓글 좋아요 포인트 지급 실패:", pointError);
-          }
+      // 포인트 지급 (본인 댓글이 아닌 경우에만)
+      if (
+        targetComment &&
+        targetComment.user &&
+        user &&
+        targetComment.user.userNo !== user.userNo
+      ) {
+        try {
+          const pointData = new FormData();
+          pointData.append("point", 3);
+          pointData.append("reason", "댓글 좋아요 획득");
+          pointData.append("recievedUserNo", targetComment.user.userNo);
+          await axiosInstance.post("/api/user/updatePoint", pointData);
+        } catch (pointError) {
+          console.error("댓글 좋아요 포인트 지급 실패:", pointError);
         }
       }
-
-      // 로컬 상태 업데이트
-      setCommentLikeStates((prev) => ({
-        ...prev,
-        [commentNo]: !isCurrentlyLiked,
-      }));
 
       // 댓글 목록의 좋아요 수 업데이트
       setComments((prev) =>
@@ -427,45 +365,17 @@ const CommentSection = ({
           comment.commentNo === commentNo
             ? {
                 ...comment,
-                commentLike: isCurrentlyLiked // likeCount → commentLike
-                  ? (comment.commentLike || 1) - 1
-                  : (comment.commentLike || 0) + 1,
-                isLikedByCurrentUser: !isCurrentlyLiked, // isLiked → isLikedByCurrentUser
+                commentLike: (comment.commentLike || 0) + 1,
+                isLikedByCurrentUser: true,
               }
             : comment
         )
-      );
-
-      console.log(
-        `댓글 ${commentNo} 좋아요 ${isCurrentlyLiked ? "취소" : "추가"} 완료`
       );
     } catch (error) {
       console.error("댓글 좋아요 처리 실패:", error);
       alert("좋아요 처리 중 오류가 발생했습니다.");
     }
   };
-
-  const initializeCommentLikeStates = () => {
-    console.log("댓글 좋아요 상태 초기화:", comments);
-
-    const likeStates = {};
-    comments.forEach((comment) => {
-      console.log(
-        `댓글 ${comment.commentNo} 좋아요 상태:`,
-        comment.isLikedByCurrentUser
-      );
-      likeStates[comment.commentNo] = comment.isLikedByCurrentUser || false;
-    });
-
-    console.log("최종 좋아요 상태:", likeStates);
-    setCommentLikeStates(likeStates);
-  };
-
-  useEffect(() => {
-    if (comments.length > 0) {
-      initializeCommentLikeStates();
-    }
-  }, [comments]);
 
   return (
     <div className="bd-comment-section">
@@ -510,7 +420,7 @@ const CommentSection = ({
                     />
                   ) : (
                     <img
-                      src="/src/assets/img/main/icons/admin.jpg" // 이거 나중에 유저사진으로 바꿔야함
+                      src="/src/assets/img/main/icons/admin.jpg"
                       alt="profile"
                       className="bd-comment-profile-img"
                     />
@@ -524,7 +434,6 @@ const CommentSection = ({
                         textDecoration: "underline",
                       }}
                     >
-                      {/* 🔥 삭제된 댓글인지 확인 */}
                       {comment.commentDeleteDate
                         ? ""
                         : comment.user.userNickname}
@@ -535,7 +444,6 @@ const CommentSection = ({
                   </div>
                 </div>
 
-                {/* 🔥 삭제되지 않은 댓글만 버튼 표시 */}
                 {!comment.commentDeleteDate && (
                   <div className="bd-actions-right">
                     {user && user.userNo == comment.user.userNo ? (
@@ -573,8 +481,7 @@ const CommentSection = ({
                 )}
               </div>
 
-              {/* 🔥 댓글 내용 - 수정 모드에 따라 다르게 표시 */}
-              {/* 기존 댓글 내용 부분을 이렇게 수정 */}
+              {/* 댓글 내용 */}
               {editMode[comment.commentNo] ? (
                 <div className="bd-comment-edit-area">
                   <input
@@ -600,20 +507,21 @@ const CommentSection = ({
                     )}
                   </p>
 
-                  {/* 삭제되지 않은 댓글에만 좋아요 버튼 표시 */}
+                  {/* 2025년 7월 14일 수정됨 - 좋아요 버튼 단순화 */}
                   {!comment.commentDeleteDate && (
                     <div className="bd-comment-actions">
                       <button
                         className={`bd-like-button ${
-                          commentLikeStates[comment.commentNo] ? "liked" : ""
+                          comment.isLikedByCurrentUser ? "liked" : ""
                         }`}
                         onClick={() => handleCommentLike(comment.commentNo)}
+                        disabled={comment.isLikedByCurrentUser}
                       >
                         <svg
                           className="bd-like-icon"
                           viewBox="0 0 24 24"
                           fill={
-                            commentLikeStates[comment.commentNo]
+                            comment.isLikedByCurrentUser
                               ? "currentColor"
                               : "none"
                           }
@@ -623,8 +531,7 @@ const CommentSection = ({
                           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                         </svg>
                         <span className="bd-like-count">
-                          {comment.commentLike || 0}{" "}
-                          {/* likeCount → commentLike */}
+                          {comment.commentLike || 0}
                         </span>
                       </button>
                     </div>
@@ -632,7 +539,7 @@ const CommentSection = ({
                 </>
               )}
 
-              {/* 🔥 삭제되지 않은 댓글만 대댓글 입력창 표시 */}
+              {/* 대댓글 입력창 */}
               {!comment.commentDeleteDate &&
                 showReplyInput[comment.commentNo] && (
                   <div className="bd-reply-input-area">
@@ -662,7 +569,7 @@ const CommentSection = ({
                   </div>
                 )}
 
-              {/* 대댓글 부분도 동일하게 수정 기능 추가 */}
+              {/* 대댓글 목록 */}
               {(() => {
                 const replyCount = comments.filter(
                   (reply) =>
@@ -721,7 +628,6 @@ const CommentSection = ({
                                           textDecoration: "underline",
                                         }}
                                       >
-                                        {/* 🔥 대댓글도 동일하게 */}
                                         {reply.commentDeleteDate
                                           ? ""
                                           : reply.user.userNickname}
@@ -734,7 +640,6 @@ const CommentSection = ({
                                     </div>
                                   </div>
 
-                                  {/* 🔥 대댓글도 삭제되지 않은 경우만 버튼 표시 */}
                                   {!reply.commentDeleteDate && (
                                     <div className="bd-actions-right">
                                       <div
@@ -766,8 +671,7 @@ const CommentSection = ({
                                   )}
                                 </div>
 
-                                {/* 🔥 대댓글 내용도 수정 모드에 따라 다르게 표시 */}
-                                {/* 대댓글 내용 부분 */}
+                                {/* 대댓글 내용 */}
                                 {editMode[reply.commentNo] ? (
                                   <div className="bd-comment-edit-area">
                                     <input
@@ -798,24 +702,25 @@ const CommentSection = ({
                                       )}
                                     </p>
 
-                                    {/* 삭제되지 않은 대댓글에만 좋아요 버튼 표시 */}
+                                    {/* 2025년 7월 14일 수정됨 - 대댓글 좋아요 버튼 단순화 */}
                                     {!reply.commentDeleteDate && (
                                       <div className="bd-reply-actions">
                                         <button
                                           className={`bd-like-button ${
-                                            commentLikeStates[reply.commentNo]
+                                            reply.isLikedByCurrentUser
                                               ? "liked"
                                               : ""
                                           }`}
                                           onClick={() =>
                                             handleCommentLike(reply.commentNo)
                                           }
+                                          disabled={reply.isLikedByCurrentUser}
                                         >
                                           <svg
                                             className="bd-like-icon"
                                             viewBox="0 0 24 24"
                                             fill={
-                                              commentLikeStates[reply.commentNo]
+                                              reply.isLikedByCurrentUser
                                                 ? "currentColor"
                                                 : "none"
                                             }
@@ -825,8 +730,7 @@ const CommentSection = ({
                                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                                           </svg>
                                           <span className="bd-like-count">
-                                            {reply.commentLike || 0}{" "}
-                                            {/* likeCount → commentLike */}
+                                            {reply.commentLike || 0}
                                           </span>
                                         </button>
                                       </div>
@@ -850,7 +754,7 @@ const CommentSection = ({
         )}
       </div>
 
-      {/* 2025년 7월 10일 추가됨 - 더보기 버튼 및 로딩 */}
+      {/* 로딩 및 더보기 버튼 */}
       {loading && (
         <div
           className="loading-container"
@@ -891,7 +795,6 @@ const CommentSection = ({
               fontWeight: "bold",
             }}
           >
-            {/* 2025-07-10 수정됨 - 부모댓글 기준으로 남은 개수 계산 */}
             더보기 (
             {comments.filter((c) => !c.parentComment).length -
               displayedParentComments.length}
@@ -909,7 +812,6 @@ const CommentSection = ({
         </div>
       )}
 
-      {/* ✅ 유저 프로필 팝업 추가 */}
       <UserProfilePopup
         open={profileOpen}
         onClose={() => setProfileOpen(false)}

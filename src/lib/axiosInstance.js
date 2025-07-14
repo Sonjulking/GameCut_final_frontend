@@ -15,12 +15,8 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = Cookies.get("accessToken");
-    console.log(' 토큰 확인:', token); // 디버깅용
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log(' Authorization 헤더 설정:', config.headers.Authorization); // 디버깅용
-    } else {
-      console.log('토큰이 없음!'); // 디버깅용
     }
     return config;
   },

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../lib/axiosInstance";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import "../styles/myBoard.css";
 import { useSelector } from "react-redux";
@@ -102,9 +102,7 @@ const MyBoard = () => {
       try {
         // 선택된 게시글들을 순차적으로 삭제
         const deletePromises = Array.from(selectedBoards).map((boardNo) =>
-          axios.delete(
-            `/api/board/delete/${boardNo}`
-          )
+          axiosInstance.delete(`/api/board/delete/${boardNo}`)
         );
 
         await Promise.all(deletePromises);
@@ -128,9 +126,7 @@ const MyBoard = () => {
   // 내 게시글 로드
   const loadMyBoards = async () => {
     try {
-      const response = await axios.get(
-        `/api/board/listAll`
-      );
+      const response = await axiosInstance.get(`/api/board/listAll`);
       console.log("사용자 : ", user);
 
       // 현재 사용자가 작성한 게시글만 필터링
@@ -178,9 +174,7 @@ const MyBoard = () => {
 
     if (window.confirm(`"${boardTitle}" 게시글을 정말 삭제하시겠습니까?`)) {
       try {
-        await axios.delete(
-          `/api/board/delete/${boardNo}`
-        );
+        await axiosInstance.delete(`/api/board/delete/${boardNo}`);
         alert("게시글이 삭제되었습니다.");
 
         // 삭제 후 목록 새로고침

@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../lib/axiosInstance";
 import "../styles/webgame.css";
-
-const VITE_API_URL = import.meta.env.VITE_API_URL;
 
 export default function TournamentGame() {
   const [videos, setVideos] = useState([]);
@@ -22,7 +20,7 @@ export default function TournamentGame() {
   useEffect(() => {
     async function fetchBoards() {
       try {
-        const res = await axios.get(`${VITE_API_URL}/board/listAll`, {
+        const res = await axiosInstance.get(`/api/board/listAll`, {
           params: { page: 0, size: 1000, boardTypeNo: 3 },
         });
         const list = res.data.content || [];
@@ -109,12 +107,8 @@ export default function TournamentGame() {
       setFinished(true);
       const champIdx = next[0];
       const videoNo = videos[champIdx].videoNo;
-      axios
-        .post(
-          `${VITE_API_URL}/api/worldcup/result`,
-          {},
-          { params: { userNo: 1, videoNo } }
-        )
+      axiosInstance
+        .post(`/api/worldcup/result`, {}, { params: { userNo: 1, videoNo } })
         .then((res) => setSavedResult(res.data))
         .catch((e) => console.error("챔피언 저장 실패:", e));
     }

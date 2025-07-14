@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "../lib/axiosInstance";
 import {
   Box,
   Typography,
@@ -17,6 +16,7 @@ import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import "../styles/myBoard.css";
 import { useNavigate } from "react-router-dom"; // ✅ 추가
 import { useSelector } from "react-redux";
+import axiosInstance from "../lib/axiosInstance";
 
 const MyItemList = () => {
   const [myItems, setMyItems] = useState([]);
@@ -48,8 +48,8 @@ const MyItemList = () => {
   };
 
   useEffect(() => {
-    axios
-      .get("/items/my")
+    axiosInstance
+      .get("/api/items/my")
       .then((res) => {
         setMyItems(res.data);
       })
@@ -64,7 +64,7 @@ const MyItemList = () => {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`/items/delete?itemNo=${itemNo}`);
+      await axiosInstance.delete(`/api/items/delete?itemNo=${itemNo}`);
       setMyItems((prev) => prev.filter((item) => item.itemNo !== itemNo));
       showSnackbar("아이템이 삭제되었습니다.", "success");
     } catch (err) {
