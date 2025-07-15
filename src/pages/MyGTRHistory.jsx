@@ -1,10 +1,12 @@
-// 2025-07-09 수정됨 - 내 게스더랭크 기록 페이지 생성
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../lib/axiosInstance"; // 인증 포함된 인스턴스
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
-import "../styles/myBoard.css";
+import "../styles/myGtrHistory.css";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+
+// 2025-07-15 수정됨 - 모바일 사이드바 토글 기능 추가
+import hamburgerIcon from "../assets/img/main/icons/hamburger_icon.png";
 
 const MyGTRHistory = () => {
   const [history, setHistory] = useState([]);
@@ -16,6 +18,9 @@ const MyGTRHistory = () => {
     gameTypeStats: {},
   });
 
+  // 2025-07-15 수정됨 - 사이드바 상태 관리 추가
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const navigate = useNavigate();
 
@@ -26,6 +31,22 @@ const MyGTRHistory = () => {
       navigate("/login");
     }
   }, [isLoggedIn, navigate]);
+
+  // 2025-07-15 수정됨 - 사이드바 토글 기능 추가
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prev) => !prev);
+  };
+
+  const closeSidebar = () => {
+    setIsSidebarOpen(false);
+  };
+
+  // 2025-07-15 수정됨 - 모바일에서 오버레이 클릭 시 사이드바 닫기
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) {
+      closeSidebar();
+    }
+  };
 
   // 2025-07-09 수정됨 - 게스더랭크 기록 불러오기
   useEffect(() => {
@@ -95,155 +116,55 @@ const MyGTRHistory = () => {
   };
 
   return (
-    <div className="mypage-container">
-      <div className="mypage-content">
-        <div className="content-wrapper">
-          <div className="mypage-user-section">
-            <div className="board-container">
-              <div className="board-header">
-                <h2 className="board-title-header">
+    <div className="gtr-container">
+      <div className="gtr-content">
+        <div className="gtr-wrapper">
+          <div className="gtr-section">
+            <div className="gtr-board-container">
+              <div className="gtr-board-header">
+                <h2 className="gtr-board-title-header">
                   내 게스더랭크 기록 ({history.length}건)
                 </h2>
               </div>
 
               {/* 2025-07-09 수정됨 - 통계 섹션 */}
-              <div
-                className="gtr-stats-section"
-                style={{
-                  background: "rgba(255, 255, 255, 0.05)",
-                  padding: "1.5rem",
-                  borderRadius: "0.5rem",
-                  marginBottom: "1.5rem",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
-                }}
-              >
-                <h3
-                  style={{
-                    color: "#f1f5f9",
-                    marginBottom: "1rem",
-                    fontSize: "1.125rem",
-                    fontWeight: "600",
-                  }}
+              <div className="gtr-stats-section">
+                <button
+                  className="mypage-mobile-menu-toggle"
+                  onClick={toggleSidebar}
+                  aria-label="마이페이지 메뉴 토글"
                 >
-                  📊 나의 게임 통계
-                </h3>
+                  <img src={hamburgerIcon} alt="마이페이지 메뉴" />
+                </button>
+                <h3 className="gtr-stats-title">📊 나의 게임 통계</h3>
 
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                    gap: "1rem",
-                    marginBottom: "1rem",
-                  }}
-                >
-                  <div
-                    style={{
-                      background: "rgba(59, 130, 246, 0.1)",
-                      padding: "1rem",
-                      borderRadius: "0.375rem",
-                      textAlign: "center",
-                      border: "1px solid rgba(59, 130, 246, 0.2)",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: "1.5rem",
-                        fontWeight: "bold",
-                        color: "#3b82f6",
-                      }}
-                    >
-                      {stats.totalGames}
-                    </div>
-                    <div style={{ fontSize: "0.875rem", color: "#94a3b8" }}>
-                      총 게임 수
-                    </div>
+                <div className="gtr-stats-grid">
+                  <div className="gtr-stat-box total">
+                    <div className="value">{stats.totalGames}</div>
+                    <div className="label">총 게임 수</div>
                   </div>
 
-                  <div
-                    style={{
-                      background: "rgba(16, 185, 129, 0.1)",
-                      padding: "1rem",
-                      borderRadius: "0.375rem",
-                      textAlign: "center",
-                      border: "1px solid rgba(16, 185, 129, 0.2)",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: "1.5rem",
-                        fontWeight: "bold",
-                        color: "#10b981",
-                      }}
-                    >
-                      {stats.totalCorrect}
-                    </div>
-                    <div style={{ fontSize: "0.875rem", color: "#94a3b8" }}>
-                      정답 수
-                    </div>
+                  <div className="gtr-stat-box correct">
+                    <div className="value">{stats.totalCorrect}</div>
+                    <div className="label">정답 수</div>
                   </div>
 
-                  <div
-                    style={{
-                      background: "rgba(245, 158, 11, 0.1)",
-                      padding: "1rem",
-                      borderRadius: "0.375rem",
-                      textAlign: "center",
-                      border: "1px solid rgba(245, 158, 11, 0.2)",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: "1.5rem",
-                        fontWeight: "bold",
-                        color: "#f59e0b",
-                      }}
-                    >
-                      {stats.correctRate}%
-                    </div>
-                    <div style={{ fontSize: "0.875rem", color: "#94a3b8" }}>
-                      정답률
-                    </div>
+                  <div className="gtr-stat-box rate">
+                    <div className="value">{stats.correctRate}%</div>
+                    <div className="label">정답률</div>
                   </div>
                 </div>
 
                 {/* 게임타입별 통계 */}
                 {Object.keys(stats.gameTypeStats).length > 0 && (
-                  <div>
-                    <h4
-                      style={{
-                        color: "#e2e8f0",
-                        marginBottom: "0.5rem",
-                        fontSize: "1rem",
-                      }}
-                    >
-                      🎮 게임별 성과
-                    </h4>
-                    <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns:
-                          "repeat(auto-fit, minmax(150px, 1fr))",
-                        gap: "0.75rem",
-                      }}
-                    >
+                  <div className="gtr-type-stats">
+                    <h4 className="gtr-type-stats-title">🎮 게임별 성과</h4>
+                    <div className="gtr-type-stats-grid">
                       {Object.entries(stats.gameTypeStats).map(
                         ([gameType, stat]) => (
-                          <div
-                            key={gameType}
-                            style={{
-                              background: "rgba(255, 255, 255, 0.05)",
-                              padding: "0.75rem",
-                              borderRadius: "0.25rem",
-                              textAlign: "center",
-                              fontSize: "0.875rem",
-                            }}
-                          >
-                            <div
-                              style={{ fontWeight: "bold", color: "#f1f5f9" }}
-                            >
-                              {gameType}
-                            </div>
-                            <div style={{ color: "#94a3b8" }}>
+                          <div key={gameType} className="gtr-type-box">
+                            <div className="game-type">{gameType}</div>
+                            <div className="stat">
                               {stat.correct}/{stat.total} (
                               {stat.total > 0
                                 ? ((stat.correct / stat.total) * 100).toFixed(1)
@@ -258,87 +179,56 @@ const MyGTRHistory = () => {
                 )}
               </div>
 
-              <div className="list-view-container">
-                <table className="mypage_board_table">
+              <div className="gtr-list-view">
+                <table className="gtr-table">
                   <thead>
                     <tr>
-                      <th style={{ textAlign: "center" }}>게임</th>
-                      <th style={{ textAlign: "center" }}>정답</th>
-                      <th style={{ textAlign: "center" }}>내 답안</th>
-                      <th style={{ textAlign: "center" }}>결과</th>
-                      <th style={{ textAlign: "center" }}>플레이 날짜</th>
+                      <th>게임</th>
+                      <th>정답</th>
+                      <th>내 답안</th>
+                      <th>결과</th>
+                      <th>플레이 날짜</th>
                     </tr>
                   </thead>
                   <tbody>
                     {loading ? (
                       <tr>
-                        <td colSpan="5" style={{ textAlign: "center" }}>
+                        <td colSpan="5" className="gtr-empty">
                           불러오는 중...
                         </td>
                       </tr>
                     ) : history.length > 0 ? (
                       history.map((item, index) => (
                         <tr key={`${item.gtrNo}-${index}`}>
-                          <td
-                            style={{ textAlign: "center", fontWeight: "500" }}
-                          >
+                          <td className="gtr-game">
                             {item.gameType || "기타"}
                           </td>
-                          <td style={{ textAlign: "center" }}>
-                            <span
-                              style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: "0.25rem",
-                                color: "#10b981",
-                                fontWeight: "bold",
-                              }}
-                            >
+                          <td className="gtr-correct">
+                            <span className="tier correct">
                               {getTierIcon(item.correctTier)}
                               {item.correctTier}
                             </span>
                           </td>
-                          <td style={{ textAlign: "center" }}>
+                          <td className="gtr-user-answer">
                             <span
-                              style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: "0.25rem",
-                                color: item.isCorrect ? "#10b981" : "#ef4444",
-                                fontWeight: "bold",
-                              }}
+                              className={`tier ${
+                                item.isCorrect ? "correct" : "wrong"
+                              }`}
                             >
                               {getTierIcon(item.userAnswer)}
                               {item.userAnswer}
                             </span>
                           </td>
-                          <td style={{ textAlign: "center" }}>
+                          <td className="gtr-result">
                             <span
-                              style={{
-                                display: "inline-block",
-                                padding: "0.25rem 0.5rem",
-                                borderRadius: "0.25rem",
-                                fontSize: "0.875rem",
-                                fontWeight: "bold",
-                                background: item.isCorrect
-                                  ? "rgba(16, 185, 129, 0.2)"
-                                  : "rgba(239, 68, 68, 0.2)",
-                                color: item.isCorrect ? "#10b981" : "#ef4444",
-                                border: `1px solid ${
-                                  item.isCorrect ? "#10b981" : "#ef4444"
-                                }`,
-                              }}
+                              className={`result-badge ${
+                                item.isCorrect ? "correct" : "wrong"
+                              }`}
                             >
                               {item.isCorrect ? "✅ 정답" : "❌ 오답"}
                             </span>
                           </td>
-                          <td
-                            style={{
-                              textAlign: "center",
-                              fontSize: "0.875rem",
-                              color: "#94a3b8",
-                            }}
-                          >
+                          <td className="gtr-date">
                             {new Date(item.playDate).toLocaleString("ko-KR", {
                               year: "numeric",
                               month: "2-digit",
@@ -350,11 +240,11 @@ const MyGTRHistory = () => {
                         </tr>
                       ))
                     ) : (
-                      <tr className="mypage_empty_row">
-                        <td colSpan="5" style={{ textAlign: "center" }}>
+                      <tr className="gtr-empty-row">
+                        <td colSpan="5" className="gtr-empty">
                           게스더랭크 기록이 없습니다.
                           <br />
-                          <small style={{ color: "#94a3b8" }}>
+                          <small>
                             게임을 플레이하면 여기에 기록이 나타납니다.
                           </small>
                         </td>
@@ -365,7 +255,16 @@ const MyGTRHistory = () => {
               </div>
             </div>
           </div>
-          <MyPageSidebar />
+          {/* 2025-07-15 수정됨 - 모바일 오버레이 추가 */}
+          {isSidebarOpen && (
+            <div
+              className="mobile-sidebar-overlay"
+              onClick={handleOverlayClick}
+            />
+          )}
+
+          {/* 2025-07-15 수정됨 - 사이드바에 상태 props 전달 */}
+          <MyPageSidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
         </div>
       </div>
     </div>

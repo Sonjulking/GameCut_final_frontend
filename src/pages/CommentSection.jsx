@@ -450,7 +450,7 @@ const CommentSection = ({
                       }}
                     >
                       {comment.commentDeleteDate
-                        ? "삭제된 댓글"
+                        ? ""
                         : comment.user.userNickname}
                     </span>
                     <span className="bd-comment-date">
@@ -655,7 +655,7 @@ const CommentSection = ({
                                         }}
                                       >
                                         {reply.commentDeleteDate
-                                          ? "삭제된 대댓글"
+                                          ? ""
                                           : reply.user.userNickname}
                                       </span>
                                       <span className="bd-comment-date">

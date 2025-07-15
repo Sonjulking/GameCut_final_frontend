@@ -5,6 +5,11 @@ import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import "../styles/myBoard.css";
 import { useSelector } from "react-redux";
 
+// 2025-07-15 수정됨 - 모바일 사이드바 토글 기능 추가
+import hamburgerIcon from "../assets/img/main/icons/hamburger_icon.png";
+// 2025-07-15 수정됨 - 시간 표시 포맷 유틸리티 추가 (boardList와 동일)
+import { formatRelativeTimeKo } from "../util/timeFormatUtil.js";
+
 const MyBoard = () => {
   const navigate = useNavigate();
   const [myBoards, setMyBoards] = useState([]);
@@ -17,6 +22,9 @@ const MyBoard = () => {
   // 체크박스 관련 상태 추가
   const [selectedBoards, setSelectedBoards] = useState(new Set());
   const [isAllSelected, setIsAllSelected] = useState(false);
+
+  // 2025-07-15 수정됨 - 사이드바 상태 관리 추가
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const boardTypes = ["전체", "자유", "공략", "영상"];
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -40,6 +48,22 @@ const MyBoard = () => {
         return "영상";
       default:
         return "기타";
+    }
+  };
+
+  // 2025-07-15 수정됨 - 사이드바 토글 기능 추가
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prev) => !prev);
+  };
+
+  const closeSidebar = () => {
+    setIsSidebarOpen(false);
+  };
+
+  // 2025-07-15 수정됨 - 모바일에서 오버레이 클릭 시 사이드바 닫기
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) {
+      closeSidebar();
     }
   };
 
@@ -288,7 +312,10 @@ const MyBoard = () => {
                   </td>
                   <td>{board.boardCount}</td>
                   <td>{board.boardLike}</td>
-                  <td>{new Date(board.boardCreateDate).toLocaleString()}</td>
+                  <td>
+                    {/* 2025-07-15 수정됨 - 상대적 시간 표시로 변경 (boardList와 동일) */}
+                    {formatRelativeTimeKo(board.boardCreateDate)}
+                  </td>
                   <td>
                     <div className="action-buttons">
                       <button
@@ -374,7 +401,8 @@ const MyBoard = () => {
                     </span>
                   </div>
                   <p className="board-date">
-                    {new Date(board.boardCreateDate).toLocaleString()}
+                    {/* 2025-07-15 수정됨 - 상대적 시간 표시로 변경 (boardList와 동일) */}
+                    {formatRelativeTimeKo(board.boardCreateDate)}
                   </p>
                 </div>
               </div>
@@ -401,12 +429,23 @@ const MyBoard = () => {
         <div className="content-wrapper">
           {/* 메인 내용 영역 */}
           <div className="mypage-user-section">
+            {/* 2025-07-15 수정됨 - 사용자 섹션 내부에 햄버거 버튼 추가 */}
+            <button
+              className="mypage-mobile-menu-toggle"
+              onClick={toggleSidebar}
+              aria-label="마이페이지 메뉴 토글"
+            >
+              <img src={hamburgerIcon} alt="마이페이지 메뉴" />
+            </button>
+
             <div className="board-container">
-              {/* 헤더와 토글 버튼 */}
+              {/* 2025-07-15 수정됨 - 헤더 스타일 통일 */}
               <div className="board-header">
-                <h2 className="board-title-header">
-                  내 게시글 ({myBoards.length}개)
-                </h2>
+                <div className="board-header-content">
+                  <h2 className="myboard-title-header">
+                    📝 내 게시글 ({myBoards.length}개)
+                  </h2>
+                </div>
                 <div className="view-toggle">
                   <button
                     className={`toggle-btn ${
@@ -507,8 +546,17 @@ const MyBoard = () => {
               </div>
             </div>
           </div>
-          {/* 재사용 사이드바 컴포넌트 */}
-          <MyPageSidebar />
+
+          {/* 2025-07-15 수정됨 - 모바일 오버레이 추가 */}
+          {isSidebarOpen && (
+            <div
+              className="mobile-sidebar-overlay"
+              onClick={handleOverlayClick}
+            />
+          )}
+
+          {/* 2025-07-15 수정됨 - 사이드바에 상태 props 전달 */}
+          <MyPageSidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
         </div>
       </div>
     </div>

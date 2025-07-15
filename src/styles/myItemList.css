@@ -1,0 +1,87 @@
+/* 📦 내 아이템 목록 전용 스타일 */
+
+.item-container {
+  min-height: 100vh;
+  background-color: #0d1117;
+  color: #e6edf3;
+  padding: 1.25rem;
+}
+
+.item-content {
+  max-width: 87.5rem;
+  margin: 0 auto;
+}
+
+.item-wrapper {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.item-section {
+  width: 100%;
+  flex: 1;
+  background-color: #161b22;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid #30363d;
+  position: relative;
+}
+
+.item-section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f0f6fc;
+  margin-bottom: 1rem;
+}
+
+/* 카드 */
+.item-card {
+  background-color: #2a2a2a;
+  color: #fff;
+  border-radius: 0.75rem;
+}
+
+.item-card img {
+  object-fit: cover;
+}
+
+.item-card-content {
+  padding: 1rem;
+}
+
+.item-card .item-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.item-card .item-price {
+  color: #ccc;
+}
+
+/* 📱 모바일 대응 */
+@media (max-width: 64rem) {
+  .item-wrapper {
+    flex-direction: column;
+  }
+
+  .item-section-title {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 48rem) {
+  .item-container {
+    padding: 1rem;
+  }
+
+  .item-section-title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 30rem) {
+  .item-section-title {
+    font-size: 1.25rem;
+  }
+}

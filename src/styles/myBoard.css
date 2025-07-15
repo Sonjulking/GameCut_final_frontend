@@ -1,4 +1,117 @@
-/* MyBoard.css - 카드 레이아웃 개선 (rem 단위 적용) */
+/* 2025-07-15 수정됨 - 포인트내역 반응형 스타일 */
+@media (max-width: 64rem) {
+  .point-header {
+    margin-bottom: 1.5rem;
+    padding-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    min-height: 2.5rem;
+  }
+  
+  .point-title-header {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 48rem) {
+  .point-header {
+    padding-top: 0.25rem;
+  }
+  
+  .point-title-header {
+    font-size: 1.5rem;
+  }
+  
+  .point-subtitle {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 30rem) {
+  .point-title-header {
+    font-size: 1.25rem;
+  }
+  
+  .point-subtitle {
+    font-size: 0.8125rem;
+  }
+  
+  /* 포인트 테이블 모바일 최적화 */
+  .point-amount {
+    font-size: 0.875rem;
+  }
+  
+  .point-source {
+    font-size: 0.875rem;
+    max-width: 150px;
+  }
+  
+  .point-date {
+    font-size: 0.8125rem;
+  }
+}/* MyBoard.css - 카드 레이아웃 개선 (rem 단위 적용) */
+
+/* =========================== */
+/* 포인트내역 전용 스타일 (2025-07-15 수정됨) */
+/* =========================== */
+.point-container {
+  width: 100%;
+}
+
+.point-header {
+  margin-bottom: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.point-header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.point-title-header {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f0f6fc;
+  background: linear-gradient(135deg, #58a6ff, #79c0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.point-subtitle {
+  margin: 0;
+  font-size: 1rem;
+  color: #8b949e;
+  font-weight: 400;
+}
+
+/* 포인트 테이블 전용 스타일 */
+.point-amount {
+  text-align: center;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 0.9375rem;
+}
+
+.point-source {
+  text-align: center;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.point-date {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #8b949e;
+}
 
 /* =========================== */
 /* 마이페이지 컨테이너 수정 */
@@ -28,6 +141,35 @@
   padding: 1.5rem;
   border: 0.0625rem solid #30363d;
   min-width: 0; /* 플렉스 아이템이 축소될 수 있도록 */
+  position: relative; /* 2025-07-15 수정됨 - 햄버거 버튼 위치 기준 */
+}
+
+/* 2025-07-15 수정됨 - 햄버거 메뉴 버튼 (내 댓글과 동일한 스타일) */
+.mypage-mobile-menu-toggle {
+  display: none; /* 데스크톱에서는 숨김 */
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+  z-index: 10;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.mypage-mobile-menu-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
+}
+
+.mypage-mobile-menu-toggle img {
+  width: 100%;
+  height: 100%;
+  /* 다크모드에 맞게 필터 제거 */
 }
 
 /* 마이페이지 안에서 board-container 스타일 재정의 */
@@ -243,24 +385,15 @@
 /* 기존 스타일들 유지 */
 /* =========================== */
 
+/* 2025-07-15 수정됨 - boardList.css 기준으로 통일 */
 /* 전체 컨테이너 */
 .board-container {
-  max-width: 75rem;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 1.25rem;
+  padding: 20px;
   background-color: #0d1117;
   color: #e6edf3;
   min-height: 100vh;
-}
-
-/* 헤더 영역 */
-.board-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.25rem;
-  padding-bottom: 1rem;
-  /*border-bottom: 0.125rem solid #30363d;*/
 }
 
 /* 필터와 글쓰기 버튼 컨테이너 */
@@ -346,14 +479,43 @@
   box-shadow: 0 0.375rem 1rem rgba(31, 111, 235, 0.6);
 }
 
-.board-title-header {
-  margin: 0;
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #f0f6fc;
+/* 2025-07-15 수정됨 - myComment 헤더 스타일로 통일 (마이페이지 세부페이지 디자인 통일성) */
+.board-header {
+  margin-bottom: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* view-toggle 버튼 위치 조정을 위해 */
 }
 
-/* 토글 버튼 영역 */
+.board-header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.board-header-content .myboard-title-header {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f0f6fc;
+  background: linear-gradient(135deg, #58a6ff, #79c0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.board-subtitle {
+  margin: 0;
+  font-size: 1rem;
+  color: #8b949e;
+  font-weight: 400;
+}
+
+/* 2025-07-15 수정됨 - 토글 버튼 영역 위치 조정 */
 .view-toggle {
   display: flex;
   gap: 0.5rem;
@@ -361,6 +523,9 @@
   padding: 0.25rem;
   border-radius: 0.5rem;
   border: 0.0625rem solid #30363d;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .toggle-btn {
@@ -617,24 +782,40 @@
   }
 }
 
-@media (max-width: 48rem) {
+@media (max-width: 64rem) {
   .content-wrapper {
     flex-direction: column;
   }
 
+  .mypage-mobile-menu-toggle {
+    display: block; /* 태블릿/모바일에서만 표시 */
+  }
+
+  .board-header-content {
+    padding-top: 0.5rem; /* 2025-07-15 수정땨 - 햄버거 버튼과 같은 높이로 조정 */
+    display: flex;
+    align-items: center;
+    min-height: 2.5rem; /* 햄버거 버튼 높이와 맞춤 */
+  }
+
+  .board-header-content .myboard-title-header {
+    font-size: 1.75rem; /* 2025-07-15 수정됨 - 태블릿에 맞는 크기로 복원 (!important 추가) */
+  }
+}
+
+@media (max-width: 48rem) {
   .board-container {
     padding: 1rem;
+  }
+
+  .board-header-content {
+    padding-top: 0.25rem; /* 2025-07-15 수정됨 - 모바일에서 더 작은 패딩 */
   }
 
   .board-header {
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
-  }
-
-  .board-title-header {
-    font-size: 1.5rem;
-    text-align: center;
   }
 
   .view-toggle {
@@ -688,6 +869,11 @@
 
   .thumbnail-container {
     height: 12.5rem;
+  }
+
+  /* 2025-07-15 수정됨 - myComment 헤더 스타일로 통일 */
+  .board-header-content .myboard-title-header {
+    font-size: 1.25rem;
   }
 }
 
@@ -1024,4 +1210,91 @@
 .mypage_board_table td:nth-child(1),
 .mypage_board_table td:nth-child(2) {
   text-align: center !important;
+}
+
+/* 2025-07-15 수정됨 - 댓글 테이블 모바일 반응형 개선 */
+/* 댓글 테이블 전용 모바일 스타일 */
+@media (max-width: 900px) {
+  /* 댓글 테이블 레이아웃 개선 */
+  .mypage_board_table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mypage_board_table thead,
+  .mypage_board_table tbody,
+  .mypage_board_table tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .mypage_board_table th,
+  .mypage_board_table td {
+    padding: 0.5rem 0.375rem;
+    font-size: 0.875rem;
+    word-break: break-word;
+  }
+
+  /* 댓글 테이블 열 너비 최적화 */
+  .mypage_board_table th:nth-child(1),
+  .mypage_board_table td:nth-child(1) {
+    width: 65%; /* 댓글 내용 */
+    text-align: left !important;
+  }
+
+  .mypage_board_table th:nth-child(2),
+  .mypage_board_table td:nth-child(2) {
+    width: 35%; /* 작성일 */
+    text-align: center !important;
+    font-size: 0.8125rem;
+  }
+
+  /* 댓글 내용 말줄임 처리 */
+  .mypage_board_table td:nth-child(1) {
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .mypage_board_table th,
+  .mypage_board_table td {
+    padding: 0.375rem 0.25rem;
+    font-size: 0.8125rem;
+  }
+
+  /* 작은 화면에서 날짜 더 간단하게 */
+  .mypage_board_table th:nth-child(2),
+  .mypage_board_table td:nth-child(2) {
+    font-size: 0.75rem;
+  }
+
+  /* 댓글 내용 더 작게 */
+  .mypage_board_table td:nth-child(1) {
+    font-size: 0.8125rem;
+    padding: 0.5rem 0.375rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .mypage_board_table th,
+  .mypage_board_table td {
+    padding: 0.25rem 0.125rem;
+    font-size: 0.75rem;
+  }
+
+  .mypage_board_table th:nth-child(2),
+  .mypage_board_table td:nth-child(2) {
+    font-size: 0.6875rem;
+  }
+
+  .mypage_board_table td:nth-child(1) {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.25rem;
+  }
 }
