@@ -154,10 +154,16 @@ const CommentSection = ({
     try {
       const isCurrentlyLiked = likedComments.has(commentNo);
 
+      // 해당 댓글 정보 찾기 (포인트 지급용)
+      const targetComment = comments.find(
+        (comment) => comment.commentNo === commentNo
+      );
+      const user = useSelector((state) => state.auth.user); // 올바른 useSelector 사용
+
       // detail.jsx와 동일한 방식으로 API 호출
       if (isCurrentlyLiked) {
         // 좋아요 취소
-        await axiosInstance.post(`/comment/unlike/${commentNo}`);
+        await axiosInstance.post(`/api/comment/unlike/${commentNo}`);
         setLikedComments((prev) => {
           const newSet = new Set(prev);
           newSet.delete(commentNo);
@@ -169,12 +175,36 @@ const CommentSection = ({
         }));
       } else {
         // 좋아요 추가
-        await axiosInstance.post(`/comment/like/${commentNo}`);
+        await axiosInstance.post(`/api/comment/like/${commentNo}`);
         setLikedComments((prev) => new Set(prev).add(commentNo));
         setCommentLikes((prev) => ({
           ...prev,
           [commentNo]: (prev[commentNo] || 0) + 1,
         }));
+
+        // 2025-07-10 수정됨 - 댓글 좋아요 포인트 지급 로직 추가
+        // 새로 좋아요를 누른 경우에만 포인트 지급
+        if (
+          targetComment &&
+          targetComment.user &&
+          user &&
+          targetComment.user.userNo !== user.userNo
+        ) {
+          try {
+            const pointData = new FormData();
+            pointData.append("point", 3);
+            pointData.append("reason", "댓글 좋아요 획득");
+            pointData.append("recievedUserNo", targetComment.user.userNo);
+
+            await axiosInstance.post("/user/updatePoint", pointData);
+            console.log(
+              "댓글 좋아요 포인트 지급 완료:",
+              targetComment.user.userNo
+            );
+          } catch (pointError) {
+            console.error("댓글 좋아요 포인트 지급 실패:", pointError);
+          }
+        }
       }
 
       // 서버 상태 재확인을 위한 알림 (선택사항)
@@ -188,7 +218,7 @@ const CommentSection = ({
       // 에러 발생 시 상태 재확인
       try {
         const response = await axiosInstance.post(
-          `/comment/isLike/${commentNo}`
+          `/api/comment/isLike/${commentNo}`
         );
         if (response.data !== likedComments.has(commentNo)) {
           if (response.data) {
@@ -239,7 +269,7 @@ const CommentSection = ({
         parentComment: parentComment, // comments 배열에서 찾은 부모 댓글 객체
       };
 
-      const response = await axiosInstance.post(`/comment`, requestData);
+      const response = await axiosInstance.post(`/api/comment`, requestData);
 
       onAddComment(response.data); // 댓글 추가!
 
@@ -276,7 +306,7 @@ const CommentSection = ({
     }
 
     axiosInstance
-      .post(`/comment`, inputComment)
+      .post(`/api/comment`, inputComment)
       .then((res) => {
         setIsNewCommentAdded(true); // 새 댓글 작성 플래그 설정
         onAddComment(res.data); // 댓글 추가!
@@ -331,72 +361,90 @@ const CommentSection = ({
                 <div className="comment" key={c.commentNo || idx}>
                   <div className="comment-header">
                     <img
-                            src={
-                              c.user.photo && c.user.photo.attachFile
-                                      ? import.meta.env.VITE_API_URL + c.user.photo.attachFile.fileUrl
-                                      : "/common/empty.png"
-                            }
+                      src={
+                        // 2025-07-14 수정됨 - 삭제된 댓글 처리 추가
+                        !c.commentDeleteDate &&
+                        c.user.photo &&
+                        c.user.photo.attachFile
+                          ? import.meta.env.VITE_API_URL +
+                            c.user.photo.attachFile.fileUrl
+                          : "/common/empty.png"
+                      }
                       alt="profile"
                       className="comment-profile-img"
                     />
                     <div className="comment-info">
                       <span className="nickname">
-                        {c.user.userNickname}
+                        {/* 2025-07-14 수정됨 - 삭제된 댓글 닉네임 처리 */}
+                        {c.commentDeleteDate ? "" : c.user.userNickname}
                         <span className="comment_write_date">
                           {formatRelativeTimeKo(c.commentCreateDate)}
                         </span>
                       </span>
                     </div>
                   </div>
-                  <p className="comment-content">{c.commentContent}</p>
-                  <div className="comment-actions">
-                    <Button
-                      variant="text"
-                      onClick={() => handleCommentLike(c.commentNo)}
-                      sx={{
-                        color: likedComments.has(c.commentNo)
-                          ? "#90caf9"
-                          : "rgba(255, 255, 255, 0.6)",
-                        minWidth: 0,
-                        padding: "4px 8px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "4px",
-                        "&:hover": {
-                          color: "#90caf9",
-                          backgroundColor: "rgba(144, 202, 249, 0.1)",
-                        },
-                      }}
-                    >
-                      {likedComments.has(c.commentNo) ? (
-                        <ThumbUpIcon fontSize="small" />
-                      ) : (
-                        <ThumbUpAltOutlinedIcon fontSize="small" />
-                      )}
-                      <span style={{ fontSize: "0.8rem", marginLeft: "2px" }}>
-                        {commentLikes[c.commentNo] || 0}
+                  <p className="comment-content">
+                    {/* 2025-07-14 수정됨 - 삭제된 댓글 내용 처리 */}
+                    {c.commentDeleteDate ? (
+                      <span className="deleted-comment">
+                        삭제된 댓글입니다.
                       </span>
-                    </Button>
+                    ) : (
+                      c.commentContent
+                    )}
+                  </p>
+                  {/* 2025-07-14 수정됨 - 삭제된 댓글에는 액션 버튼 숨김 */}
+                  {!c.commentDeleteDate && (
+                    <div className="comment-actions">
+                      <Button
+                        variant="text"
+                        onClick={() => handleCommentLike(c.commentNo)}
+                        sx={{
+                          color: likedComments.has(c.commentNo)
+                            ? "#90caf9"
+                            : "rgba(255, 255, 255, 0.6)",
+                          minWidth: 0,
+                          padding: "4px 8px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                          "&:hover": {
+                            color: "#90caf9",
+                            backgroundColor: "rgba(144, 202, 249, 0.1)",
+                          },
+                        }}
+                      >
+                        {likedComments.has(c.commentNo) ? (
+                          <ThumbUpIcon fontSize="small" />
+                        ) : (
+                          <ThumbUpAltOutlinedIcon fontSize="small" />
+                        )}
+                        <span style={{ fontSize: "0.8rem", marginLeft: "2px" }}>
+                          {commentLikes[c.commentNo] || 0}
+                        </span>
+                      </Button>
 
-                    {/* 답글달기 버튼 */}
-                    <Button
-                      variant="text"
-                      size="small"
-                      onClick={() => toggleReplyInput(c.commentNo)}
-                      sx={{
-                        minWidth: "auto",
-                        padding: "2px 6px",
-                        lineHeight: 1.2,
-                      }}
-                    >
-                      <Typography fontSize="1rem">
-                        {showReplyInput[c.commentNo] ? "취소" : "답글달기"}
-                      </Typography>
-                    </Button>
-                  </div>
+                      {/* 답글달기 버튼 */}
+                      <Button
+                        variant="text"
+                        size="small"
+                        onClick={() => toggleReplyInput(c.commentNo)}
+                        sx={{
+                          minWidth: "auto",
+                          padding: "2px 6px",
+                          lineHeight: 1.2,
+                        }}
+                      >
+                        <Typography fontSize="1rem">
+                          {showReplyInput[c.commentNo] ? "취소" : "답글달기"}
+                        </Typography>
+                      </Button>
+                    </div>
+                  )}
 
                   {/* 대댓글 입력창 */}
-                  {showReplyInput[c.commentNo] && (
+                  {/* 2025-07-14 수정됨 - 삭제된 댓글에는 대댓글 입력창 숨김 */}
+                  {!c.commentDeleteDate && showReplyInput[c.commentNo] && (
                     <div
                       className="reply-input"
                       style={{
@@ -500,11 +548,15 @@ const CommentSection = ({
                                 >
                                   <div className="comment-header">
                                     <img
-                                            src={
-                                              c.user.photo && c.user.photo.attachFile
-                                                      ? import.meta.env.VITE_API_URL + c.user.photo.attachFile.fileUrl
-                                                      : "/common/empty.png"
-                                            }
+                                      src={
+                                        // 2025-07-14 수정됨 - 대댓글 삭제된 댓글 처리 추가
+                                        !reply.commentDeleteDate &&
+                                        reply.user.photo &&
+                                        reply.user.photo.attachFile
+                                          ? import.meta.env.VITE_API_URL +
+                                            reply.user.photo.attachFile.fileUrl
+                                          : "/common/empty.png"
+                                      }
                                       alt="profile"
                                       className="comment-profile-img"
                                       style={{ width: "24px", height: "24px" }}
@@ -514,7 +566,10 @@ const CommentSection = ({
                                         className="nickname"
                                         style={{ fontSize: "0.9rem" }}
                                       >
-                                        {reply.user.userNickname}
+                                        {/* 2025-07-14 수정됨 - 대댓글 삭제된 댓글 닉네임 처리 */}
+                                        {reply.commentDeleteDate
+                                          ? ""
+                                          : reply.user.userNickname}
                                         <span className="comment_write_date">
                                           {formatRelativeTimeKo(
                                             reply.commentCreateDate
@@ -530,50 +585,60 @@ const CommentSection = ({
                                       marginLeft: "32px",
                                     }}
                                   >
-                                    {reply.commentContent}
+                                    {/* 2025-07-14 수정됨 - 대댓글 삭제된 댓글 내용 처리 */}
+                                    {reply.commentDeleteDate ? (
+                                      <span className="deleted-comment">
+                                        삭제된 댓글입니다.
+                                      </span>
+                                    ) : (
+                                      reply.commentContent
+                                    )}
                                   </p>
-                                  <div
-                                    className="comment-actions"
-                                    style={{ marginLeft: "32px" }}
-                                  >
-                                    <Button
-                                      variant="text"
-                                      onClick={() =>
-                                        handleCommentLike(reply.commentNo)
-                                      }
-                                      sx={{
-                                        color: likedComments.has(
-                                          reply.commentNo
-                                        )
-                                          ? "#90caf9"
-                                          : "rgba(255, 255, 255, 0.6)",
-                                        minWidth: 0,
-                                        padding: "4px 8px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: "4px",
-                                        "&:hover": {
-                                          color: "#90caf9",
-                                          backgroundColor:
-                                            "rgba(144, 202, 249, 0.1)",
-                                        },
-                                      }}
+                                  {/* 2025-07-14 수정됨 - 삭제된 대댓글에는 액션 버튼 숨김 */}
+                                  {!reply.commentDeleteDate && (
+                                    <div
+                                      className="comment-actions"
+                                      style={{ marginLeft: "32px" }}
                                     >
-                                      {likedComments.has(reply.commentNo) ? (
-                                        <ThumbUpIcon fontSize="small" />
-                                      ) : (
-                                        <ThumbUpAltOutlinedIcon fontSize="small" />
-                                      )}
-                                      <span
-                                        style={{
-                                          fontSize: "0.8rem",
-                                          marginLeft: "2px",
+                                      <Button
+                                        variant="text"
+                                        onClick={() =>
+                                          handleCommentLike(reply.commentNo)
+                                        }
+                                        sx={{
+                                          color: likedComments.has(
+                                            reply.commentNo
+                                          )
+                                            ? "#90caf9"
+                                            : "rgba(255, 255, 255, 0.6)",
+                                          minWidth: 0,
+                                          padding: "4px 8px",
+                                          display: "flex",
+                                          alignItems: "center",
+                                          gap: "4px",
+                                          "&:hover": {
+                                            color: "#90caf9",
+                                            backgroundColor:
+                                              "rgba(144, 202, 249, 0.1)",
+                                          },
                                         }}
                                       >
-                                        {commentLikes[reply.commentNo] || 0}
-                                      </span>
-                                    </Button>
-                                  </div>
+                                        {likedComments.has(reply.commentNo) ? (
+                                          <ThumbUpIcon fontSize="small" />
+                                        ) : (
+                                          <ThumbUpAltOutlinedIcon fontSize="small" />
+                                        )}
+                                        <span
+                                          style={{
+                                            fontSize: "0.8rem",
+                                            marginLeft: "2px",
+                                          }}
+                                        >
+                                          {commentLikes[reply.commentNo] || 0}
+                                        </span>
+                                      </Button>
+                                    </div>
+                                  )}
                                 </div>
                               ))}
                           </div>

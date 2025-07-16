@@ -1,6 +1,5 @@
-// src/pages/AdminUserBoard.jsx
 import React, { useEffect, useState } from "react";
-import axios from "../lib/axiosInstance";
+import axiosInstance from "../lib/axiosInstance";
 import {
   Box,
   Typography,
@@ -14,6 +13,9 @@ import {
   Avatar,
   CircularProgress,
   TextField,
+  Grid,
+  Card,
+  CardContent,
 } from "@mui/material";
 import UserProfilePopup from "./UserProfilePopup";
 import "../styles/AdminUserBoard.css";
@@ -29,6 +31,7 @@ const AdminUserBoard = () => {
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
   useEffect(() => {
     if (!isLoggedIn) {
       alert("로그인이 필요한 페이지입니다.");
@@ -41,7 +44,7 @@ const AdminUserBoard = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("/user/listUser");
+      const res = await axiosInstance.get("/api/user/listUser");
       setUsers(res.data);
     } catch (err) {
       console.error("회원 목록 불러오기 실패", err);
@@ -63,6 +66,7 @@ const AdminUserBoard = () => {
   const handleClosePopup = () => {
     setSelectedUser(null);
     setPopupAnchor(null);
+    fetchUsers();
   };
 
   const filteredUsers = users.filter((user) =>
@@ -101,67 +105,118 @@ const AdminUserBoard = () => {
         />
       </Box>
 
-      <TableContainer component={Paper} className="admin-table-container">
-        <Table className="admin-user-table">
-          <TableHead>
-            <TableRow>
-              <TableCell>번호</TableCell>
-              <TableCell>프로필</TableCell>
-              <TableCell>아이디</TableCell>
-              <TableCell>닉네임</TableCell>
-              <TableCell>이름</TableCell>
-              <TableCell>전화번호</TableCell>
-              <TableCell>포인트</TableCell>
-              <TableCell>가입일</TableCell>
-              <TableCell>탈퇴일</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+      {/* 테이블을 모바일에서 스크롤 가능하게 만들기 */}
+      <div className="admin-table-container">
+        <div className="admin-table-scroll">
+          <TableContainer component={Paper}>
+            <Table className="admin-user-table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>번호</TableCell>
+                  <TableCell>프로필</TableCell>
+                  <TableCell>아이디</TableCell>
+                  <TableCell>닉네임</TableCell>
+                  <TableCell>이름</TableCell>
+                  <TableCell>전화번호</TableCell>
+                  <TableCell>포인트</TableCell>
+                  <TableCell>가입일</TableCell>
+                  <TableCell>탈퇴일</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredUsers.map((user) => (
+                  <TableRow key={user.userNo}>
+                    <TableCell>{user.userNo}</TableCell>
+                    <TableCell>
+                      <Avatar
+                        src={
+                          user.photo?.photoNo &&
+                          user.photo.photoNo !== 0 &&
+                          user.photo.attachFile?.fileUrl
+                            ? `${import.meta.env.VITE_API_URL}${
+                                user.photo.attachFile.fileUrl
+                              }`
+                            : "/src/assets/img/main/icons/profile_icon.png"
+                        }
+                        alt={user.userNickname}
+                        sx={{ width: 32, height: 32, margin: "0 auto" }}
+                      />
+                    </TableCell>
+                    <TableCell>{user.userId}</TableCell>
+                    <TableCell>
+                      <span
+                        className="nickname-link"
+                        onClick={(e) => handleNicknameClick(user, e)}
+                      >
+                        {user.userNickname}
+                      </span>
+                    </TableCell>
+                    <TableCell>{user.userName}</TableCell>
+                    <TableCell>{user.phone}</TableCell>
+                    <TableCell>{user.userPoint?.toLocaleString()}P</TableCell>
+                    <TableCell>
+                      {user.userCreateDate
+                        ? new Date(user.userCreateDate).toLocaleDateString()
+                        : "-"}
+                    </TableCell>
+                    <TableCell>
+                      {user.userDeleteDate
+                        ? new Date(user.userDeleteDate).toLocaleDateString()
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
+
+        {/* 모바일에서 카드형 레이아웃 적용 */}
+        <div className="admin-table-card-view">
+          <Grid container spacing={2}>
             {filteredUsers.map((user) => (
-              <TableRow key={user.userNo}>
-                <TableCell>{user.userNo}</TableCell>
-                <TableCell>
-                  <Avatar
-                    src={
-                      user.photo?.photoNo &&
-                      user.photo.photoNo !== 0 &&
-                      user.photo.attachFile?.fileUrl
-                        ? `${import.meta.env.VITE_API_URL}${
-                            user.photo.attachFile.fileUrl
-                          }`
-                        : "/src/assets/img/main/icons/profile_icon.png"
-                    }
-                    alt={user.userNickname}
-                    sx={{ width: 32, height: 32, margin: "0 auto" }}
-                  />
-                </TableCell>
-                <TableCell>{user.userId}</TableCell>
-                <TableCell>
-                  <span
-                    className="nickname-link"
-                    onClick={(e) => handleNicknameClick(user, e)}
-                  >
-                    {user.userNickname}
-                  </span>
-                </TableCell>
-                <TableCell>{user.userName}</TableCell>
-                <TableCell>{user.phone}</TableCell>
-                <TableCell>{user.userPoint?.toLocaleString()}P</TableCell>
-                <TableCell>
-                  {user.userCreateDate
-                    ? new Date(user.userCreateDate).toLocaleDateString()
-                    : "-"}
-                </TableCell>
-                <TableCell>
-                  {user.userDeleteDate
-                    ? new Date(user.userDeleteDate).toLocaleDateString()
-                    : "-"}
-                </TableCell>
-              </TableRow>
+              <Grid item xs={12} sm={6} md={4} key={user.userNo}>
+                <Card className="admin-card">
+                  <CardContent>
+                    <Avatar
+                      src={
+                        user.photo?.photoNo &&
+                        user.photo.photoNo !== 0 &&
+                        user.photo.attachFile?.fileUrl
+                          ? `${import.meta.env.VITE_API_URL}${
+                              user.photo.attachFile.fileUrl
+                            }`
+                          : "/src/assets/img/main/icons/profile_icon.png"
+                      }
+                      alt={user.userNickname}
+                      sx={{ width: 50, height: 50, margin: "0 auto" }}
+                    />
+                    <Typography variant="h6">{user.userNickname}</Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {user.userName}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      아이디: {user.userId}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      전화번호: {user.phone}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      포인트: {user.userPoint?.toLocaleString()}P
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      가입일:{" "}
+                      {user.userCreateDate
+                        ? new Date(user.userCreateDate).toLocaleDateString()
+                        : "-"}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+          </Grid>
+        </div>
+      </div>
 
       {selectedUser && (
         <UserProfilePopup

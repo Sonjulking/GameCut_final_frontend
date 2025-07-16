@@ -1,6 +1,8 @@
 // 2025-07-08 수정됨 - 주관식에서 선택형 방식으로 변경, 게임별 전체 티어 시스템 적용, 문제 수 선택 기능 추가
 // 2025-07-08 수정됨 - 비디오 URL 처리 방식 개선 (백엔드 fileUrl + 프론트엔드 VITE_API_URL 조합)
+// 2025-07-08 수정됨 - 게임 종료 후 네비게이션 개선 및 버튼 텍스트 변경
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "../lib/axiosInstance";
 import { TierCreator } from "./TierCreator.jsx";
 import "../styles/webgame.css";
@@ -92,6 +94,7 @@ const getQuestionCountOptions = (totalQuestions) => {
 };
 
 export default function GuessTheRankGame() {
+  const navigate = useNavigate(); // 2025-07-08 수정됨 - 라우팅을 위한 네비게이션 훅 추가
   const [mode, setMode] = useState("init");
   const [questions, setQuestions] = useState([]);
   const [allQuestions, setAllQuestions] = useState([]); // 2025-07-08 수정됨 - 전체 문제 저장용
@@ -116,7 +119,7 @@ export default function GuessTheRankGame() {
       try {
         const params =
           selectedGameType === "ALL" ? {} : { gameType: selectedGameType };
-        const res = await axiosInstance.get("/game/all", { params });
+        const res = await axiosInstance.get("/api/game/all", { params });
         const questionCount = res.data.length;
 
         setAvailableQuestions(questionCount);
@@ -140,17 +143,21 @@ export default function GuessTheRankGame() {
     fetchQuestionCount();
   }, [selectedGameType, mode]);
 
-  // 2025-07-08 수정됨 - 현재 게임에 맞는 티어 옵션 가져오기
+  // 2025-07-08 수정됨 - 전체 선택 시에도 현재 문제의 게임 타입에 맞는 티어 옵션 표시
   const getCurrentTierOptions = () => {
-    if (!currentQuestion || selectedGameType === "ALL") {
+    // currentQuestion이 없으면 기본 티어 반환
+    if (!currentQuestion) {
       return ["아이언", "브론즈", "실버", "골드", "플래티넘", "다이아몬드"];
     }
 
+    // 현재 문제의 게임 타입 가져오기
     const gameType = currentQuestion.gameType;
+    
+    // 해당 게임 타입의 티어 시스템 반환 (없으면 기본 티어)
     return (
       GAME_TIER_SYSTEMS[gameType] || [
         "아이언",
-        "브론즈",
+        "브론즈", 
         "실버",
         "골드",
         "플래티넘",
@@ -204,7 +211,7 @@ export default function GuessTheRankGame() {
     try {
       console.log("답안 제출:", { gtrNo: q.gtrNo, tier: selectedAnswer });
 
-      const res = await axiosInstance.post("/game/answer", {
+      const res = await axiosInstance.post("/api/game/answer", {
         gtrNo: q.gtrNo,
         tier: selectedAnswer,
       });
@@ -326,7 +333,7 @@ export default function GuessTheRankGame() {
               onClick={() => setMode("create")}
               className="tier-game-btn tier-game-btn--success"
             >
-              게임 생성
+              문제 등록
             </button>
           </div>
         </div>
@@ -346,7 +353,8 @@ export default function GuessTheRankGame() {
           <div className="tier-game-header">
             <h3 className="tier-game-title">티어 맞추기</h3>
             <div className="tier-game-progress">
-              {selectedGameType !== "ALL" && q && (
+              {/* 2025-07-08 수정됨 - 전체 선택 시에도 현재 문제의 게임 타입 표시 */}
+              {q && (
                 <span>게임: {q.gameType || selectedGameType}</span>
               )}
               <span>
@@ -380,7 +388,8 @@ export default function GuessTheRankGame() {
           {/* 문제 */}
           <div className="tier-game-question">
             <h4 className="tier-game-question-title">
-              이 플레이어의 티어를 맞춰보세요!
+              {/* 2025-07-08 수정됨 - 전체 선택 시에도 현재 문제의 게임 타입 표시 */}
+              이 플레이어의 {q?.gameType || selectedGameType} 티어를 맞춰보세요!
             </h4>
 
             {/* 2025-07-08 수정됨 - 티어 선택 옵션들 */}
@@ -494,6 +503,7 @@ export default function GuessTheRankGame() {
           </div>
 
           <div className="tier-game-form-group">
+            {/* 2025-07-08 수정됨 - 게임 종료 후 네비게이션 버튼 개선 */}
             <button
               onClick={() => setMode("init")}
               className="tier-game-btn tier-game-btn--primary"
@@ -501,10 +511,17 @@ export default function GuessTheRankGame() {
               다시하기
             </button>
             <button
+              onClick={() => navigate("/webgame")}
+              className="tier-game-btn"
+              style={{ background: "#6366f1", color: "white" }}
+            >
+              메인으로
+            </button>
+            <button
               onClick={() => setMode("create")}
               className="tier-game-btn tier-game-btn--success"
             >
-              새 게임 만들기
+              문제 등록
             </button>
           </div>
         </div>

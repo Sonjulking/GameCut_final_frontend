@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axiosInstance from "../../lib/axiosInstance";
-import "../../styles/MyPageSidebar.css";
+import "../../styles/myPageSidebar.css";
 
-const MyPageSidebar = () => {
+// 2025-07-15 수정됨 - 모바일 토글 기능을 위한 props 추가
+const MyPageSidebar = ({ isOpen = false, onClose = () => {} }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [unreadCount, setUnreadCount] = useState(0);
@@ -19,7 +20,7 @@ const MyPageSidebar = () => {
     { id: "item", name: "내 아이템", path: "/mypage/item" },
     { id: "point", name: "내 포인트 내역", path: "/mypage/point" },
     { id: "follow", name: "팔로우", path: "/mypage/follow" },
-    { id: "gtr", name: "게스더랭크 기록", path: "/mypage/gtr" },
+    { id: "gtr", name: "내 게스더랭크 기록", path: "/mypage/gtr-history" }, // 2025-07-09 수정됨 - 경로 수정
     { id: "report", name: "신고 기록", path: "/mypage/report" },
   ];
 
@@ -33,7 +34,7 @@ const MyPageSidebar = () => {
     if (path === "/mypage/item") return "item";
     if (path === "/mypage/point") return "point";
     if (path === "/mypage/follow") return "follow";
-    if (path === "/mypage/gtr") return "gtr";
+    if (path === "/mypage/gtr-history") return "gtr"; // 2025-07-09 수정됨 - 경로 수정
     if (path === "/mypage/report") return "report";
     if (path === "/mypage/admin") return "admin";
     return "info";
@@ -54,15 +55,21 @@ const MyPageSidebar = () => {
     fetchUnreadCount();
   }, []);
 
+  // 2025-07-15 수정됨 - 메뉴 클릭 시 모바일에서 사이드바 닫기
+  const handleMenuClick = (path) => {
+    navigate(path);
+    onClose(); // 모바일에서 메뉴 클릭 후 사이드바 닫기
+  };
+
   return (
-    <div className="mypage-sidebar">
+    <div className={`mypage-sidebar ${isOpen ? "mobile-open" : ""}`}>
       <h2 className="mypage-title">마이페이지</h2>
 
       <nav className="mypage-menu">
         {/* ✅ 관리자 전용 메뉴 */}
         {user?.role === "ROLE_ADMIN" && (
           <button
-            onClick={() => navigate("/mypage/admin")}
+            onClick={() => handleMenuClick("/mypage/admin")}
             className="mypage-menu-item admin-button"
             title="관리자 페이지"
           >
@@ -73,7 +80,7 @@ const MyPageSidebar = () => {
         {menuItems.map((item) => (
           <button
             key={item.id}
-            onClick={() => navigate(item.path)}
+            onClick={() => handleMenuClick(item.path)}
             className={`mypage-menu-item ${
               activeMenu === item.id ? "active" : ""
             }`}

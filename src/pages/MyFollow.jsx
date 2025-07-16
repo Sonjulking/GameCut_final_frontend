@@ -6,12 +6,18 @@ import "../styles/myFollow.css";
 import { useNavigate } from "react-router-dom"; // ✅ 추가
 import { useSelector } from "react-redux";
 
+// 2025-07-15 수정됨 - 모바일 사이드바 토글 기능 추가
+import hamburgerIcon from "../assets/img/main/icons/hamburger_icon.png";
+
 const MyFollow = () => {
   const [followingList, setFollowingList] = useState([]);
   const [followerList, setFollowerList] = useState([]);
   const [isFollowingTab, setIsFollowingTab] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  // 2025-07-15 수정됨 - 사이드바 상태 관리 추가
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const navigate = useNavigate();
@@ -27,8 +33,8 @@ const MyFollow = () => {
   const loadFollowData = async () => {
     try {
       const [followersRes, followingRes] = await Promise.all([
-        axiosInstance.get("/follow/followers"),
-        axiosInstance.get("/follow/following"),
+        axiosInstance.get("/api/follow/followers"),
+        axiosInstance.get("/api/follow/following"),
       ]);
       setFollowerList(followersRes.data);
       setFollowingList(followingRes.data);
@@ -41,9 +47,25 @@ const MyFollow = () => {
     loadFollowData();
   }, []);
 
+  // 2025-07-15 수정됨 - 사이드바 토글 기능 추가
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prev) => !prev);
+  };
+
+  const closeSidebar = () => {
+    setIsSidebarOpen(false);
+  };
+
+  // 2025-07-15 수정됨 - 모바일에서 오버레이 클릭 시 사이드바 닫기
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) {
+      closeSidebar();
+    }
+  };
+
   const handleUnfollow = async (userNo) => {
     try {
-      await axiosInstance.post("/follow", { toUserNo: userNo });
+      await axiosInstance.post("/api/follow", { toUserNo: userNo });
       loadFollowData(); // 갱신
     } catch (err) {
       console.error("팔로우 해제 실패", err);
@@ -62,6 +84,14 @@ const MyFollow = () => {
       <div className="mypage-content">
         <div className="content-wrapper">
           <div className="mypage-user-section">
+            {/* 2025-07-15 수정됨 - 사용자 섹션 내부에 햄버거 버튼 추가 */}
+            <button
+              className="mypage-mobile-menu-toggle"
+              onClick={toggleSidebar}
+              aria-label="마이페이지 메뉴 토글"
+            >
+              <img src={hamburgerIcon} alt="마이페이지 메뉴" />
+            </button>
             <div className="board-container">
               <div className="board-header">
                 <h2 className="board-title">
@@ -92,7 +122,6 @@ const MyFollow = () => {
                       <th>닉네임</th>
                       <th>ID</th>
                       <th>프로필</th>
-                      <th>동작</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -121,16 +150,6 @@ const MyFollow = () => {
                             "-"
                           )}
                         </td>
-                        <td>
-                          {isFollowingTab && (
-                            <button
-                              className="delete-button"
-                              onClick={() => handleUnfollow(user.userNo)}
-                            >
-                              팔로우 해제
-                            </button>
-                          )}
-                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -145,7 +164,17 @@ const MyFollow = () => {
               />
             </div>
           </div>
-          <MyPageSidebar />
+
+          {/* 2025-07-15 수정됨 - 모바일 오버레이 추가 */}
+          {isSidebarOpen && (
+            <div
+              className="mobile-sidebar-overlay"
+              onClick={handleOverlayClick}
+            />
+          )}
+
+          {/* 2025-07-15 수정됨 - 사이드바에 상태 props 전달 */}
+          <MyPageSidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
         </div>
       </div>
     </div>

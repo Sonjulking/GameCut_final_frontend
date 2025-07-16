@@ -15,7 +15,7 @@ const useAuthInit = () => {
       }
 
       try {
-        const res = await axios.get("/user/myinfo");
+        const res = await axios.get("/api/user/myinfo");
         dispatch(loginSuccess(res.data));
         console.log("✅ 로그인 상태 복원됨:", res.data);
       } catch (err) {

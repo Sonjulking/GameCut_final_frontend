@@ -1,10 +1,11 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "../styles/boardList.css";
 import { Button, Stack } from "@mui/material";
 import axiosInstance from "../lib/axiosInstance";
 import { useSelector } from "react-redux";
+// 2025-07-14 수정됨 - 시간 표시 포맷 유틸리티 추가
+import { formatRelativeTimeKo } from "../util/timeFormatUtil.js";
 
 const BoardList = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -71,12 +72,9 @@ const BoardList = () => {
       params.keyword = keywordParam;
     }
 
-    const res = await axios.get(
-      `${import.meta.env.VITE_API_URL}/board/listAll`,
-      {
-        params,
-      }
-    );
+    const res = await axiosInstance.get(`/api/board/listAll`, {
+      params,
+    });
 
     setList(res.data.content);
     setTotalPages(res.data.totalPages);
@@ -110,9 +108,7 @@ const BoardList = () => {
     e.stopPropagation();
     if (window.confirm(`"${boardTitle}" 게시글을 정말 삭제하시겠습니까?`)) {
       try {
-        await axiosInstance.delete(
-          `${import.meta.env.VITE_API_URL}/board/${boardNo}`
-        );
+        await axiosInstance.delete(`/api/board/${boardNo}`);
         alert("게시글이 삭제되었습니다.");
         // 삭제 후 목록 새로고침
         const typeNo = getBoardTypeNo(selectedType);
@@ -186,7 +182,10 @@ const BoardList = () => {
                 <td>{board.user.userNickname}</td>
                 <td>{board.boardCount}</td>
                 <td>{board.boardLike}</td>
-                <td>{new Date(board.boardCreateDate).toLocaleString()}</td>
+                <td>
+                  {/* 2025-07-14 수정됨 - 상대적 시간 표시로 변경 */}
+                  {formatRelativeTimeKo(board.boardCreateDate)}
+                </td>
                 <td>
                   {user && user.userNo == board.user.userNo ? (
                     <div className="action-buttons">
@@ -275,7 +274,8 @@ const BoardList = () => {
                     </span>
                   </div>
                   <p className="board-date">
-                    {new Date(board.boardCreateDate).toLocaleString()}
+                    {/* 2025-07-14 수정됨 - 카드뷰 상대적 시간 표시로 변경 */}
+                    {formatRelativeTimeKo(board.boardCreateDate)}
                   </p>
                 </div>
               </div>

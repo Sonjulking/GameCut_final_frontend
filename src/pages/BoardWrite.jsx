@@ -36,7 +36,7 @@ const BoardWrite = ({ isEdit = false }) => {
   useEffect(() => {
     if (isEdit && boardNo) {
       axiosInstance
-        .get(`/board/${boardNo}`)
+        .get(`/api/board/${boardNo}`)
         .then((res) => {
           const data = res.data;
 
@@ -155,7 +155,7 @@ const BoardWrite = ({ isEdit = false }) => {
       console.log("localStorage 토큰:", localStorage_token);
 
       if (isEdit) {
-        await axiosInstance.put(`/board/${boardNo}`, formData, {
+        await axiosInstance.put(`/api/board/${boardNo}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             // 임시로 기존 방식도 추가
@@ -173,7 +173,7 @@ const BoardWrite = ({ isEdit = false }) => {
         });
         alert("게시글이 수정되었습니다.");
       } else {
-        await axiosInstance.post(`/board`, formData, {
+        await axiosInstance.post(`/api/board`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             // 임시로 기존 방식도 추가
@@ -189,6 +189,21 @@ const BoardWrite = ({ isEdit = false }) => {
             setUploadProgress(percent);
           },
         });
+
+        // 2025-07-10 추가됨 - 게시글 작성 시 포인트 차감 로직
+        try {
+          const pointData = new FormData();
+          pointData.append("point", -100);
+          pointData.append("reason", "게시글 작성");
+          // recievedUserNo는 넣지 않음 → 로그인한 사용자에게 적용
+
+          await axiosInstance.post("/api/user/updatePoint", pointData);
+          console.log("게시글 작성 포인트 차감 완료: -100");
+        } catch (pointError) {
+          console.error("게시글 작성 포인트 차감 실패:", pointError);
+          // 포인트 차감 실패해도 게시글 작성은 정상 완료
+        }
+
         alert("게시글이 등록되었습니다.");
       }
       navigate("/board/list");

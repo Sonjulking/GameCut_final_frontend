@@ -32,6 +32,7 @@ import UpdateMyPage from "../pages/UpdateMyPage.jsx";
 import MyMessage from "../pages/MyMessages"; // 🔥 추가
 import MyFollow from "../pages/MyFollow.jsx";
 import ItemShop from "../pages/ItemShop.jsx"; // 아이템샵 페이지
+import MyGTRHistory from "../pages/MyGTRHistory.jsx"; // 2025-07-09 수정됨 - 내 게스더랭크 기록 페이지
 
 //관리자페이지
 import AdminBoard from "../pages/AdminBoard.jsx";
@@ -66,6 +67,7 @@ const router = createBrowserRouter([
       { path: "mypage/follow", element: <MyFollow /> },
       { path: "mypage/report", element: <MyReportList /> },
       { path: "mypage/item", element: <MyItemList /> },
+      { path: "mypage/gtr-history", element: <MyGTRHistory /> }, // 2025-07-09 수정됨 - 내 게스더랭크 기록 페이지
       { path: "mypage/admin", element: <AdminBoard /> },
 
       //관리자페이지

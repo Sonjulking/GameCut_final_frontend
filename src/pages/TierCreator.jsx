@@ -38,7 +38,7 @@ const GAME_TIER_SYSTEMS = {
     "마스터",
     "그랜드마스터",
   ],
-  애이펙스: [
+  에이펙스: [
     "브론즈",
     "실버",
     "골드",
@@ -88,7 +88,7 @@ export function TierCreator({ onDone }) {
         filesCount: files.length,
       });
 
-      const res = await axiosInstance.post("/game/create", form);
+      const res = await axiosInstance.post("/api/game/create", form);
 
       console.log("게임 생성 결과:", res.data);
       alert(`${selectedGameType} 게임이 성공적으로 생성되었습니다!`);

@@ -1,7 +1,29 @@
+// 2025-07-10 생성됨
 import React from "react";
 import { useDispatch } from "react-redux";
-import { buyItem, deleteItem, fetchItems } from "../../store/itemSlice";
+import { buyItem, fetchItems } from "../../store/itemSlice";
 import { fetchUser } from "../../store/userSlice";
+import { useEffect } from "react";
+import axiosInstance from "../../lib/axiosInstance";
+
+// 환경에 따른 이미지 URL 처리
+const getImageUrl = (fileUrl) => {
+  console.log("fileUrl : ", fileUrl);
+  return fileUrl;
+  // if (!fileUrl) return "";
+
+  // // 이미 전체 URL인 경우
+  // if (fileUrl.startsWith("http")) return fileUrl;
+
+  // // 현재 환경에 따라 URL 구성
+  // if (window.location.port === "" || window.location.port === "80") {
+  //   // nginx 환경
+  //   return `/api${fileUrl}`;
+  // } else {
+  //   // 개발 환경
+  //   return `http://localhost:8081${fileUrl}`;
+  // }
+};
 
 const ItemCard = ({ item, userInfo }) => {
   const dispatch = useDispatch();
@@ -24,26 +46,40 @@ const ItemCard = ({ item, userInfo }) => {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (itemNo) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
     try {
-      const result = await dispatch(deleteItem(item.itemNo));
-      if (deleteItem.fulfilled.match(result)) {
-        alert("삭제 성공!");
-        dispatch(fetchItems());
-      } else {
-        alert(result.payload || "삭제 실패");
-      }
+      await axiosInstance.delete(`/api/admin/deleteItem/${itemNo}`);
+      alert("삭제 성공!");
+      dispatch(fetchItems()); // 아이템 목록 새로고침
     } catch (error) {
+      console.error("삭제 에러:", error);
       alert("삭제 중 오류 발생");
     }
   };
+  // const handleDelete = async () => {
+  //   if (!window.confirm("정말 삭제하시겠습니까?")) return;
+  //   try {
+  //     const result = await dispatch(deleteItem(item.itemNo));
+  //     if (deleteItem.fulfilled.match(result)) {
+  //       alert("삭제 성공!");
+  //       dispatch(fetchItems());
+  //     } else {
+  //       alert(result.payload || "삭제 실패");
+  //     }
+  //   } catch (error) {
+  //     alert("삭제 중 오류 발생");
+  //   }
+  // };
 
   return (
     <div className="itemcard">
       <img
-        src={`http://localhost:8081${item.itemImage?.fileUrl}`}
+        src={
+          `${import.meta.env.VITE_API_URL}` +
+          getImageUrl(item.itemImage?.fileUrl)
+        }
         alt={item.itemName}
       />
       <div>아이템명 : {item.itemName}</div>
@@ -67,7 +103,7 @@ const ItemCard = ({ item, userInfo }) => {
           {userInfo?.role === "ROLE_ADMIN" && (
             <button
               className="itemshop-button"
-              onClick={handleDelete}
+              onClick={() => handleDelete(item.itemNo)}
               style={{ backgroundColor: "#d9534f" }}
             >
               삭제

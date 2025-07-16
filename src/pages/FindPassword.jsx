@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../lib/axiosInstance";
 
 const FindPassword = () => {
   const [mode, setMode] = useState("email"); // 'email' 또는 'phone'
@@ -27,8 +27,8 @@ const FindPassword = () => {
 
     if (mode === "email") {
       try {
-        const response = await axios.post(
-          "http://localhost:8081/user/findPassword",
+        const response = await axiosInstance.post(
+          "/api/user/findPassword",
           {
             userId: formData.userId,
             email: formData.email,

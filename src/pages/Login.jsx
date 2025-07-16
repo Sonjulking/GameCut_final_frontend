@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../lib/axiosInstance";
+import axiosInstance from "../lib/axiosInstance";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../store/authSlice";
@@ -27,8 +27,8 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(
-        "/user/login",
+      const response = await axiosInstance.post(
+        "/api/user/login",
         { userId, pwd },
         {
           withCredentials: true,
@@ -78,8 +78,8 @@ const Login = () => {
 
       try {
         // ✅ withCredentials 추가
-        const res = await axios.post(
-          "/user/oauth/google",
+        const res = await axiosInstance.post(
+          "/api/user/oauth/google",
           { accessToken },
           {
             withCredentials: true,
@@ -158,14 +158,14 @@ const Login = () => {
           {error && <p style={styles.error}>{error}</p>}
         </form>
 
-        <div style={styles.socialWrapper}>
+        {/* <div style={styles.socialWrapper}>
           <button onClick={() => googleLogin()} style={styles.googleButton}>
             Google 계정으로 로그인
           </button>
           <button onClick={naverLogin} style={styles.naverButton}>
             네이버 로그인
           </button>
-        </div>
+        </div> */}
 
         <div style={styles.bottomWrapper}>
           <button onClick={() => navigate("/join")} style={styles.linkButton}>
@@ -264,6 +264,5 @@ const styles = {
     textDecoration: "underline",
   },
 };
-
 
 export default Login;
