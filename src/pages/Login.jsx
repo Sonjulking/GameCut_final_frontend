@@ -158,14 +158,14 @@ const Login = () => {
           {error && <p style={styles.error}>{error}</p>}
         </form>
 
-        <div style={styles.socialWrapper}>
+        {/* <div style={styles.socialWrapper}>
           <button onClick={() => googleLogin()} style={styles.googleButton}>
             Google 계정으로 로그인
           </button>
           <button onClick={naverLogin} style={styles.naverButton}>
             네이버 로그인
           </button>
-        </div>
+        </div> */}
 
         <div style={styles.bottomWrapper}>
           <button onClick={() => navigate("/join")} style={styles.linkButton}>

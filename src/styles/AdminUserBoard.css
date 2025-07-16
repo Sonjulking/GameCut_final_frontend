@@ -1,5 +1,6 @@
-/* /src/styles/AdminUserBoard.css */
+/* AdminUserBoard.css - 2025년 7월 16일 통합 수정됨 */
 
+/* 🌟 메인 컨테이너 */
 .admin-user-board-container {
   background-color: #121212;
   color: #ffffff;
@@ -7,6 +8,7 @@
   padding: 2rem;
 }
 
+/* 📝 제목 스타일 */
 .admin-title {
   font-size: 2rem;
   font-weight: bold;
@@ -15,19 +17,34 @@
   text-align: center;
 }
 
-/* 🔧 테이블 container */
+/* 🔍 검색창 스타일 */
+.admin-user-board-container .MuiTextField-root {
+  margin-bottom: 1rem;
+}
+
+/* 📊 테이블 컨테이너 */
 .admin-table-container {
+  width: 100%;
   background-color: #1e1e1e;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
   overflow-x: auto;
 }
 
-/* 📊 테이블 공통 */
+/* 📜 테이블 스크롤 */
+.admin-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* 🔧 테이블 기본 스타일 */
 .admin-user-table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* 🔑 열 너비 일정하게 */
+  table-layout: fixed;
+  background-color: #161b22;
+  border-radius: 0.5rem;
+  overflow: hidden;
 }
 
 /* 🔺 테이블 헤더 스타일 */
@@ -36,12 +53,12 @@
 }
 
 .admin-user-table th {
-  padding: 10px;
+  padding: 1rem 0.75rem;
   text-align: center;
-  font-weight: bold;
-  color: #ffffff;
+  font-weight: 600;
+  color: #f0f6fc;
   background-color: #2a2a2a;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid #30363d;
   font-size: 0.9rem;
   white-space: nowrap;
   overflow: hidden;
@@ -50,12 +67,12 @@
 
 /* 🔻 테이블 데이터 셀 스타일 */
 .admin-user-table td {
-  padding: 10px;
+  padding: 1rem 0.75rem;
   text-align: center;
   color: #eeeeee;
   background-color: #1e1e1e;
-  border-bottom: 1px solid #333;
-  font-size: 0.85rem;
+  border-bottom: 1px solid #30363d;
+  font-size: 0.875rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -71,15 +88,11 @@
   color: #90caf9;
   font-weight: bold;
   cursor: pointer;
+  transition: color 0.3s ease;
 }
 
 .nickname-link:hover {
   color: #64b5f6;
-}
-
-/* 🔍 검색창 여백 */
-.admin-user-board-container .MuiTextField-root {
-  margin-bottom: 1rem;
 }
 
 /* 📐 열 별 너비 고정 (화면에 모두 보이도록) */
@@ -126,4 +139,156 @@
 .admin-user-table th:nth-child(9),
 .admin-user-table td:nth-child(9) {
   width: 13%; /* 탈퇴일 */
+}
+
+/* 📱 카드형 레이아웃 숨김 (사용 안함) */
+.admin-table-card-view {
+  display: none !important;
+}
+
+/* 📱 반응형 모바일 스타일 - 테이블 유지 */
+@media (max-width: 64rem) {
+  .admin-user-board-container {
+    padding: 1rem;
+  }
+
+  .admin-title {
+    font-size: 1.5rem;
+  }
+
+  /* 태블릿에서 일부 컬럼 숨김 */
+  .admin-user-table th:nth-child(5), /* 이름 */
+  .admin-user-table td:nth-child(5),
+  .admin-user-table th:nth-child(6), /* 전화번호 */
+  .admin-user-table td:nth-child(6),
+  .admin-user-table th:nth-child(9), /* 탈퇴일 */
+  .admin-user-table td:nth-child(9) {
+    display: none;
+  }
+
+  /* 남은 컬럼 너비 재조정 */
+  .admin-user-table th:nth-child(1),
+  .admin-user-table td:nth-child(1) {
+    width: 8%; /* 번호 */
+  }
+
+  .admin-user-table th:nth-child(2),
+  .admin-user-table td:nth-child(2) {
+    width: 12%; /* 프로필 */
+  }
+
+  .admin-user-table th:nth-child(3),
+  .admin-user-table td:nth-child(3) {
+    width: 20%; /* 아이디 */
+  }
+
+  .admin-user-table th:nth-child(4),
+  .admin-user-table td:nth-child(4) {
+    width: 20%; /* 닉네임 */
+  }
+
+  .admin-user-table th:nth-child(7),
+  .admin-user-table td:nth-child(7) {
+    width: 20%; /* 포인트 */
+  }
+
+  .admin-user-table th:nth-child(8),
+  .admin-user-table td:nth-child(8) {
+    width: 20%; /* 가입일 */
+  }
+}
+
+@media (max-width: 48rem) {
+  .admin-user-board-container {
+    padding: 0.5rem;
+  }
+
+  .admin-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  /* 모바일에서 더 많은 컬럼 숨김 */
+  .admin-user-table th:nth-child(1), /* 번호 숨김 */
+  .admin-user-table td:nth-child(1),
+  .admin-user-table th:nth-child(7), /* 포인트 숨김 */
+  .admin-user-table td:nth-child(7),
+  .admin-user-table th:nth-child(8), /* 가입일 숨김 */
+  .admin-user-table td:nth-child(8) {
+    display: none;
+  }
+
+  /* 모바일에서 남은 컬럼 너비 재조정 */
+  .admin-user-table th:nth-child(2),
+  .admin-user-table td:nth-child(2) {
+    width: 15%; /* 프로필 */
+  }
+
+  .admin-user-table th:nth-child(3),
+  .admin-user-table td:nth-child(3) {
+    width: 40%; /* 아이디 */
+  }
+
+  .admin-user-table th:nth-child(4),
+  .admin-user-table td:nth-child(4) {
+    width: 45%; /* 닉네임 */
+  }
+
+  /* 폰트 크기 축소 */
+  .admin-user-table th,
+  .admin-user-table td {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* 📱 초소형 모바일 (320px 이하) */
+@media (max-width: 20rem) {
+  .admin-user-board-container {
+    padding: 0.25rem;
+  }
+
+  .admin-title {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* 초소형에서는 프로필도 숨김 */
+  .admin-user-table th:nth-child(2),
+  .admin-user-table td:nth-child(2) {
+    display: none;
+  }
+
+  /* 아이디와 닉네임만 표시 */
+  .admin-user-table th:nth-child(3),
+  .admin-user-table td:nth-child(3) {
+    width: 50%; /* 아이디 */
+  }
+
+  .admin-user-table th:nth-child(4),
+  .admin-user-table td:nth-child(4) {
+    width: 50%; /* 닉네임 */
+  }
+
+  .admin-user-table th,
+  .admin-user-table td {
+    padding: 0.25rem;
+    font-size: 0.7rem;
+  }
+}
+
+/* 🔄 로딩 스타일 */
+.admin-user-board-container .MuiCircularProgress-root {
+  color: #90caf9;
+}
+
+/* 🎨 Material-UI 컴포넌트 커스터마이징 */
+.admin-user-board-container .MuiTableContainer-root {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.admin-user-board-container .MuiPaper-root {
+  background-color: transparent;
+  box-shadow: none;
 }

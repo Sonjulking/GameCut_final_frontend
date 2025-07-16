@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "../styles/boardList.css";
@@ -73,12 +72,9 @@ const BoardList = () => {
       params.keyword = keywordParam;
     }
 
-    const res = await axios.get(
-      `/api/board/listAll`,
-      {
-        params,
-      }
-    );
+    const res = await axiosInstance.get(`/api/board/listAll`, {
+      params,
+    });
 
     setList(res.data.content);
     setTotalPages(res.data.totalPages);
@@ -112,9 +108,7 @@ const BoardList = () => {
     e.stopPropagation();
     if (window.confirm(`"${boardTitle}" 게시글을 정말 삭제하시겠습니까?`)) {
       try {
-        await axiosInstance.delete(
-          `/api/board/${boardNo}`
-        );
+        await axiosInstance.delete(`/api/board/${boardNo}`);
         alert("게시글이 삭제되었습니다.");
         // 삭제 후 목록 새로고침
         const typeNo = getBoardTypeNo(selectedType);

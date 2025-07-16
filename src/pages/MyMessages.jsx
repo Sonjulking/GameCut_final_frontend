@@ -1,3 +1,4 @@
+// 2025-07-16 수정됨 - 내 쪽지함 페이지 스타일 개선 (다른 마이페이지와 통일)
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../lib/axiosInstance";
 import "../styles/myMessage.css"; // ⚠️ 새 CSS 파일
@@ -96,81 +97,86 @@ const MyMessages = () => {
               <img src={hamburgerIcon} alt="마이페이지 메뉴" />
             </button>
 
-            <div className="messages-board-container">
-              <div className="messages-board-header">
-                <h2 className="messages-board-title">
-                  {isSentTab ? "보낸 쪽지함" : "받은 쪽지함"}
-                </h2>
-                <div className="messages-tab-buttons">
-                  <button
-                    className={isSentTab ? "" : "active"}
-                    onClick={() => setIsSentTab(false)}
-                  >
-                    받은 쪽지함
-                  </button>
-                  <button
-                    className={isSentTab ? "active" : ""}
-                    onClick={() => setIsSentTab(true)}
-                  >
-                    보낸 쪽지함
-                  </button>
-                </div>
+            <div className="messages-header">
+              <h2 className="messages-title-header">
+                {isSentTab ? "보낸 쪽지함" : "받은 쪽지함"}
+              </h2>
+              <p className="messages-subtitle">
+                {isSentTab ? "보낸 쪽지들을 확인하고 관리하세요" : "받은 쪽지들을 확인하고 관리하세요"}
+              </p>
+              <div className="messages-tab-buttons">
+                <button
+                  className={isSentTab ? "" : "active"}
+                  onClick={() => setIsSentTab(false)}
+                >
+                  받은 쪽지함
+                </button>
+                <button
+                  className={isSentTab ? "active" : ""}
+                  onClick={() => setIsSentTab(true)}
+                >
+                  보낸 쪽지함
+                </button>
               </div>
-              {messages.length === 0 ? (
-                <p className="messages-empty">
+            </div>
+
+            {messages.length === 0 ? (
+              <div className="messages-empty">
+                <h3>쪽지가 없습니다</h3>
+                <p>
                   {isSentTab
                     ? "보낸 쪽지가 없습니다."
                     : "받은 쪽지가 없습니다."}
                 </p>
-              ) : (
-                <div className="messages-table-container">
-                  <table className="messages-board-table">
-                    <thead>
-                      <tr>
-                        <th>{isSentTab ? "받는 사람" : "보낸 사람"}</th>
-                        <th>내용</th>
-                        <th>날짜</th>
-                        <th>삭제</th>
+              </div>
+            ) : (
+              <div className="messages-table-container">
+                <table className="messages-board-table">
+                  <thead>
+                    <tr>
+                      <th>{isSentTab ? "받는 사람" : "보낸 사람"}</th>
+                      <th>내용</th>
+                      <th>날짜</th>
+                      <th>삭제</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {messages.map((msg) => (
+                      <tr key={msg.messageNo}>
+                        <td>
+                          {isSentTab
+                            ? msg.receiveUserNo
+                            : msg.sendUserNickname || msg.sendUserNo}
+                        </td>
+                        <td>
+                          <span
+                            className="messages-message-content"
+                            onClick={() => handleMessageClick(msg)}
+                            title="클릭하여 전체 내용 보기"
+                          >
+                            {truncateContent(msg.messageContent)}
+                          </span>
+                        </td>
+                        <td>
+                          {format(
+                            new Date(msg.messageDate),
+                            "yyyy-MM-dd HH:mm"
+                          )}
+                        </td>
+                        <td>
+                          <button
+                            className="messages-delete-button"
+                            onClick={() => handleDelete(msg.messageNo)}
+                          >
+                            삭제
+                          </button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {messages.map((msg) => (
-                        <tr key={msg.messageNo}>
-                          <td>
-                            {isSentTab
-                              ? msg.receiveUserNo
-                              : msg.sendUserNickname || msg.sendUserNo}
-                          </td>
-                          <td>
-                            <span
-                              className="messages-message-content"
-                              onClick={() => handleMessageClick(msg)}
-                              title="클릭하여 전체 내용 보기"
-                            >
-                              {truncateContent(msg.messageContent)}
-                            </span>
-                          </td>
-                          <td>
-                            {format(
-                              new Date(msg.messageDate),
-                              "yyyy-MM-dd HH:mm"
-                            )}
-                          </td>
-                          <td>
-                            <button
-                              className="messages-delete-button"
-                              onClick={() => handleDelete(msg.messageNo)}
-                            >
-                              삭제
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
 
           {isSidebarOpen && (

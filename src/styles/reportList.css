@@ -1,0 +1,287 @@
+/* ReportList.css - 2025년 7월 16일 생성됨 */
+
+/* 🌟 메인 컨테이너 */
+.report-list-container {
+  background-color: #121212;
+  color: #ffffff;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+/* 📝 제목 스타일 */
+.report-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  text-align: center;
+}
+
+/* 📊 테이블 컨테이너 */
+.report-table-container {
+  width: 100%;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  overflow-x: auto;
+}
+
+/* 📜 테이블 스크롤 */
+.report-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  /* 스크롤바 스타일링 */
+  scrollbar-width: thin;
+  scrollbar-color: #58a6ff #2a2a2a;
+}
+
+.report-table-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.report-table-scroll::-webkit-scrollbar-track {
+  background: #2a2a2a;
+  border-radius: 10px;
+}
+
+.report-table-scroll::-webkit-scrollbar-thumb {
+  background: #58a6ff;
+  border-radius: 10px;
+}
+
+.report-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: #79c0ff;
+}
+
+/* 🔧 테이블 기본 스타일 */
+.report-table {
+  min-width: 900px; /* 최소 너비 보장 */
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #161b22;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+/* 🔺 테이블 헤더 스타일 */
+.report-table thead {
+  background-color: #2a2a2a;
+}
+
+.report-table th {
+  padding: 1rem 0.75rem;
+  text-align: center;
+  font-weight: 600;
+  color: #f0f6fc;
+  background-color: #2a2a2a;
+  border-bottom: 1px solid #30363d;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 🔻 테이블 데이터 셀 스타일 */
+.report-table td {
+  padding: 1rem 0.75rem;
+  text-align: center;
+  color: #eeeeee;
+  background-color: #1e1e1e;
+  border-bottom: 1px solid #30363d;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 🔁 hover 효과 */
+.report-table tr:hover td {
+  background-color: #2c2c2c;
+}
+
+/* 📎 게시글 제목 링크 스타일 */
+.board-title-link {
+  color: #58a6ff;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.board-title-link:hover {
+  color: #79c0ff;
+}
+
+/* 📐 열 별 너비 고정 (데스크톱) */
+.report-table th:nth-child(1),
+.report-table td:nth-child(1) {
+  min-width: 80px; /* 신고번호 */
+  width: 80px;
+}
+
+.report-table th:nth-child(2),
+.report-table td:nth-child(2) {
+  min-width: 250px; /* 게시글 제목 */
+  width: 250px;
+}
+
+.report-table th:nth-child(3),
+.report-table td:nth-child(3) {
+  min-width: 120px; /* 신고자 */
+  width: 120px;
+}
+
+.report-table th:nth-child(4),
+.report-table td:nth-child(4) {
+  min-width: 200px; /* 신고 사유 */
+  width: 200px;
+}
+
+.report-table th:nth-child(5),
+.report-table td:nth-child(5) {
+  min-width: 150px; /* 신고일자 */
+  width: 150px;
+}
+
+.report-table th:nth-child(6),
+.report-table td:nth-child(6) {
+  min-width: 120px; /* 탈퇴 버튼 */
+  width: 120px;
+}
+
+/* 🔘 버튼 스타일 */
+.delete-button {
+  background-color: #f85149;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.delete-button:hover {
+  background-color: #da3633;
+}
+
+.completed-button {
+  background-color: #238636;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+/* 📱 빈 상태 메시지 */
+.empty-message {
+  color: #888;
+  text-align: center;
+  font-style: italic;
+  padding: 2rem;
+}
+
+/* 🔄 로딩 스타일 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.loading-spinner {
+  color: #58a6ff;
+}
+
+/* 📱 반응형 모바일 스타일 - 가로 스크롤 유지 */
+@media (max-width: 64rem) {
+  .report-list-container {
+    padding: 1rem;
+  }
+
+  .report-title {
+    font-size: 1.5rem;
+  }
+
+  /* 폰트 크기만 조정, 모든 컬럼 유지 */
+  .report-table th,
+  .report-table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 48rem) {
+  .report-list-container {
+    padding: 0.5rem;
+  }
+
+  .report-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  /* 모바일에서 폰트 크기와 패딩 더 축소 */
+  .report-table th,
+  .report-table td {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.75rem;
+  }
+
+  /* 버튼 크기 축소 */
+  .delete-button,
+  .completed-button {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  /* 스크롤 힌트 추가 */
+  .report-table-container::after {
+    content: "← 좌우로 스크롤하여 모든 내용을 확인하세요 →";
+    display: block;
+    text-align: center;
+    color: #888;
+    font-size: 0.75rem;
+    padding: 0.5rem;
+    font-style: italic;
+  }
+}
+
+/* 📱 초소형 모바일 (320px 이하) */
+@media (max-width: 20rem) {
+  .report-list-container {
+    padding: 0.25rem;
+  }
+
+  .report-title {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .report-table th,
+  .report-table td {
+    padding: 0.25rem;
+    font-size: 0.7rem;
+  }
+
+  .delete-button,
+  .completed-button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+  }
+}
+
+/* 🎨 Material-UI 컴포넌트 커스터마이징 */
+.report-list-container .MuiTableContainer-root {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.report-list-container .MuiPaper-root {
+  background-color: transparent;
+  box-shadow: none;
+}

@@ -13,7 +13,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import axiosInstance from "../lib/axiosInstance";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const UserProfilePopup = ({ open, onClose, user }) => {
   const currentUser = useSelector((state) => state.auth.user);

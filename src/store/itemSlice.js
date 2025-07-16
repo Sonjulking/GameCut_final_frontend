@@ -1,10 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  fetchItemList,
-  buyItemApi,
-  uploadItemApi,
-  deleteItemApi, // ✅ 삭제 API 추가
-} from "../store/itemApi";
+import { fetchItemList, buyItemApi, uploadItemApi } from "../store/itemApi";
 
 // 아이템 목록 조회
 export const fetchItems = createAsyncThunk("item/fetchItems", async () => {
@@ -38,18 +33,19 @@ export const uploadItem = createAsyncThunk(
   }
 );
 
-// ✅ 아이템 삭제
-export const deleteItem = createAsyncThunk(
-  "item/deleteItem",
-  async (itemNo, { rejectWithValue }) => {
-    try {
-      const res = await deleteItemApi(itemNo);
-      return itemNo; // 삭제된 itemNo 반환
-    } catch (e) {
-      return rejectWithValue(e.response?.data || "삭제 오류");
-    }
-  }
-);
+// // ✅ 아이템 삭제
+// export const deleteItem = createAsyncThunk(
+//   "item/deleteItem",
+//   async (itemNo, { rejectWithValue }) => {
+//     try {
+//       const res = await deleteItemApi(itemNo);
+//       console.log("itemSlice 에서의 itemNo : ", itemNo);
+//       return itemNo; // 삭제된 itemNo 반환
+//     } catch (e) {
+//       return rejectWithValue(e.response?.data || "삭제 오류");
+//     }
+//   }
+// );
 
 const itemSlice = createSlice({
   name: "item",
@@ -91,18 +87,18 @@ const itemSlice = createSlice({
       })
       .addCase(buyItem.rejected, (state, action) => {
         state.lastBuyResult = action.payload;
-      })
-
-      // ✅ 삭제
-      .addCase(deleteItem.fulfilled, (state, action) => {
-        const deletedItemNo = action.payload;
-        state.itemList = state.itemList.filter(
-          (item) => item.itemNo !== deletedItemNo
-        );
-      })
-      .addCase(deleteItem.rejected, (state, action) => {
-        state.error = action.payload;
       });
+
+    // // ✅ 삭제
+    // .addCase(deleteItem.fulfilled, (state, action) => {
+    //   const deletedItemNo = action.payload;
+    //   state.itemList = state.itemList.filter(
+    //     (item) => item.itemNo !== deletedItemNo
+    //   );
+    // })
+    // .addCase(deleteItem.rejected, (state, action) => {
+    //   state.error = action.payload;
+    // });
   },
 });
 
