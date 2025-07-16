@@ -1,14 +1,8 @@
+// 2025-07-16 수정됨 - 내 아이템 목록 페이지 스타일 개선 (다른 마이페이지와 통일)
 import React, { useEffect, useState } from "react";
 import {
-  Box,
-  Typography,
   Grid,
-  Card,
-  CardMedia,
-  CardContent,
   CircularProgress,
-  Button,
-  Stack,
   Snackbar,
   Alert,
 } from "@mui/material";
@@ -79,9 +73,18 @@ const MyItemList = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
-        <CircularProgress />
-      </Box>
+      <div className="item-container">
+        <div className="item-content">
+          <div className="item-wrapper">
+            <div className="item-section">
+              <div className="loading-container">
+                <CircularProgress sx={{ color: '#58a6ff', mb: 2 }} />
+                <p className="loading-text">아이템 목록을 불러오는 중...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -97,49 +100,58 @@ const MyItemList = () => {
             >
               <img src={hamburgerIcon} alt="마이페이지 메뉴" />
             </button>
-            <h2 className="item-section-title">내 아이템 목록</h2>
+            <div className="item-header">
+              <h2 className="item-section-title">내 아이템 목록</h2>
+              <p className="item-subtitle">구매한 아이템들을 확인하고 관리하세요</p>
+            </div>
             {myItems.length === 0 ? (
-              <Typography variant="body1" sx={{ mt: 2 }}>
-                아직 구매한 아이템이 없습니다.
-              </Typography>
+              <div className="empty-state">
+                <div className="empty-icon">💺</div>
+                <h3 className="empty-title">아직 구매한 아이템이 없습니다</h3>
+                <p className="empty-description">
+                  아이템 샵에서 다양한 아이템들을 구매해보세요!
+                </p>
+                <button 
+                  className="go-to-shop-btn"
+                  onClick={() => navigate('/itemshop')}
+                >
+                  아이템 샵 바로가기
+                </button>
+              </div>
             ) : (
               <Grid container spacing={2}>
                 {myItems.map((item) => (
                   <Grid item xs={12} sm={6} md={4} key={item.itemNo}>
-                    <Card className="item-card">
-                      <CardMedia
-                        component="img"
-                        height="160"
-                        image={`${import.meta.env.VITE_API_URL}${
+                    <div className="item-card">
+                      <img
+                        src={`${import.meta.env.VITE_API_URL}${
                           item.itemImage?.fileUrl
                         }`}
                         alt={item.itemName}
+                        height="160"
+                        style={{ objectFit: 'cover' }}
                       />
-                      <CardContent>
-                        <Typography variant="h6">{item.itemName}</Typography>
-                        <Typography variant="body2" color="#ccc">
+                      <div className="item-card-content">
+                        <h3 className="item-name">{item.itemName}</h3>
+                        <p className="item-price">
                           가격: {item.itemPrice.toLocaleString()}P
-                        </Typography>
-                        <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                          <Button
-                            variant="outlined"
-                            size="small"
-                            color="error"
+                        </p>
+                        <div className="item-button-group">
+                          <button
+                            className="item-button delete"
                             onClick={() => handleDelete(item.itemNo)}
                           >
                             삭제
-                          </Button>
-                          {/* <Button
-                            variant="contained"
-                            size="small"
-                            color="primary"
+                          </button>
+                          {/* <button
+                            className="item-button equip"
                             onClick={handleEquip}
                           >
                             장착
-                          </Button> */}
-                        </Stack>
-                      </CardContent>
-                    </Card>
+                          </button> */}
+                        </div>
+                      </div>
+                    </div>
                   </Grid>
                 ))}
               </Grid>

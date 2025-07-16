@@ -11,7 +11,8 @@ export const fetchUserInfo = () => {
 export const fetchItemList = () => axiosInstance.get("/api/items");
 
 // 아이템 구매 API
-export const buyItemApi = (itemNo) => axiosInstance.post(`/api/items/buy?itemNo=${itemNo}`);
+export const buyItemApi = (itemNo) =>
+  axiosInstance.post(`/api/items/buy?itemNo=${itemNo}`);
 
 // 아이템 업로드 API
 export const uploadItemApi = (itemDTO, file) => {
@@ -26,6 +27,6 @@ export const uploadItemApi = (itemDTO, file) => {
   });
 };
 
-// ✅ 최종: 관리자 아이템 삭제 API 경로에 맞게 수정
-export const deleteItemApi = (itemNo) =>
-  axios.delete(`/admin/admin/delete?itemNo=${itemNo}`);
+// // ✅ 최종: 관리자 아이템 삭제 API 경로에 맞게 수정
+// export const deleteItemApi = (itemNo) =>
+//   axiosInstance.delete(`/admin/admin/delete?itemNo=${itemNo}`);

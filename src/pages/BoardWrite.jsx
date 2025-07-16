@@ -189,21 +189,21 @@ const BoardWrite = ({ isEdit = false }) => {
             setUploadProgress(percent);
           },
         });
-        
+
         // 2025-07-10 추가됨 - 게시글 작성 시 포인트 차감 로직
         try {
           const pointData = new FormData();
           pointData.append("point", -100);
           pointData.append("reason", "게시글 작성");
           // recievedUserNo는 넣지 않음 → 로그인한 사용자에게 적용
-          
-          await axiosInstance.post("/user/updatePoint", pointData);
+
+          await axiosInstance.post("/api/user/updatePoint", pointData);
           console.log("게시글 작성 포인트 차감 완료: -100");
         } catch (pointError) {
           console.error("게시글 작성 포인트 차감 실패:", pointError);
           // 포인트 차감 실패해도 게시글 작성은 정상 완료
         }
-        
+
         alert("게시글이 등록되었습니다.");
       }
       navigate("/board/list");
