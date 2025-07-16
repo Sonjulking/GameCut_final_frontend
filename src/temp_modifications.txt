@@ -1,0 +1,33 @@
+마이페이지 파일들에 추가해야 할 수정사항:
+
+1. import 추가:
+import hamburgerIcon from "../assets/img/main/icons/hamburger_icon.png";
+
+2. useState 추가:
+const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+3. 토글 함수들 추가:
+const toggleSidebar = () => {
+  setIsSidebarOpen(prev => !prev);
+};
+
+const closeSidebar = () => {
+  setIsSidebarOpen(false);
+};
+
+const handleOverlayClick = (e) => {
+  if (e.target === e.currentTarget) {
+    closeSidebar();
+  }
+};
+
+4. JSX 수정:
+- mypage-user-section 시작 부분에 햄버거 버튼 추가
+- MyPageSidebar를 props와 함께 수정
+
+대상 파일들:
+- MyGTRHistory.jsx
+- MyItemList.jsx  
+- MyPointHistory.jsx
+- MyReportList.jsx
+- UpdateMyPage.jsx

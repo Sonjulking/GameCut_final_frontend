@@ -13,15 +13,16 @@ import {
   Alert,
 } from "@mui/material";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
-import "../styles/myBoard.css";
-import { useNavigate } from "react-router-dom"; // ✅ 추가
+import "../styles/myItemList.css"; // ⚠️ 새 CSS 파일
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axiosInstance from "../lib/axiosInstance";
+import hamburgerIcon from "../assets/img/main/icons/hamburger_icon.png";
 
 const MyItemList = () => {
   const [myItems, setMyItems] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   // 알림 상태
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -31,7 +32,6 @@ const MyItemList = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const navigate = useNavigate();
 
-  // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
   useEffect(() => {
     if (!isLoggedIn) {
       alert("로그인이 필요한 페이지입니다.");
@@ -71,9 +71,10 @@ const MyItemList = () => {
       showSnackbar(err.response?.data || "삭제 실패", "error");
     }
   };
-
-  const handleEquip = () => {
-    showSnackbar("장착 기능은 현재 구현 중입니다.", "info");
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  const closeSidebar = () => setIsSidebarOpen(false);
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) closeSidebar();
   };
 
   if (loading) {
@@ -85,11 +86,18 @@ const MyItemList = () => {
   }
 
   return (
-    <div className="mypage-container">
-      <div className="mypage-content">
-        <div className="content-wrapper">
-          <div className="mypage-user-section">
-            <h2 className="mypage-section-title">내 아이템 목록</h2>
+    <div className="item-container">
+      <div className="item-content">
+        <div className="item-wrapper">
+          <div className="item-section">
+            <button
+              className="mypage-mobile-menu-toggle"
+              onClick={toggleSidebar}
+              aria-label="마이페이지 메뉴 토글"
+            >
+              <img src={hamburgerIcon} alt="마이페이지 메뉴" />
+            </button>
+            <h2 className="item-section-title">내 아이템 목록</h2>
             {myItems.length === 0 ? (
               <Typography variant="body1" sx={{ mt: 2 }}>
                 아직 구매한 아이템이 없습니다.
@@ -98,7 +106,7 @@ const MyItemList = () => {
               <Grid container spacing={2}>
                 {myItems.map((item) => (
                   <Grid item xs={12} sm={6} md={4} key={item.itemNo}>
-                    <Card sx={{ backgroundColor: "#2a2a2a", color: "#fff" }}>
+                    <Card className="item-card">
                       <CardMedia
                         component="img"
                         height="160"
@@ -137,7 +145,15 @@ const MyItemList = () => {
               </Grid>
             )}
           </div>
-          <MyPageSidebar />
+          {isSidebarOpen && (
+            <div
+              className="mobile-sidebar-overlay"
+              onClick={handleOverlayClick}
+            />
+          )}
+
+          {/* 2025-07-15 수정됨 - 사이드바에 상태 props 전달 */}
+          <MyPageSidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
         </div>
       </div>
 

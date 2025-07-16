@@ -4,7 +4,8 @@ import { useSelector } from "react-redux";
 import axiosInstance from "../../lib/axiosInstance";
 import "../../styles/myPageSidebar.css";
 
-const MyPageSidebar = () => {
+// 2025-07-15 수정됨 - 모바일 토글 기능을 위한 props 추가
+const MyPageSidebar = ({ isOpen = false, onClose = () => {} }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [unreadCount, setUnreadCount] = useState(0);
@@ -54,15 +55,21 @@ const MyPageSidebar = () => {
     fetchUnreadCount();
   }, []);
 
+  // 2025-07-15 수정됨 - 메뉴 클릭 시 모바일에서 사이드바 닫기
+  const handleMenuClick = (path) => {
+    navigate(path);
+    onClose(); // 모바일에서 메뉴 클릭 후 사이드바 닫기
+  };
+
   return (
-    <div className="mypage-sidebar">
+    <div className={`mypage-sidebar ${isOpen ? "mobile-open" : ""}`}>
       <h2 className="mypage-title">마이페이지</h2>
 
       <nav className="mypage-menu">
         {/* ✅ 관리자 전용 메뉴 */}
         {user?.role === "ROLE_ADMIN" && (
           <button
-            onClick={() => navigate("/mypage/admin")}
+            onClick={() => handleMenuClick("/mypage/admin")}
             className="mypage-menu-item admin-button"
             title="관리자 페이지"
           >
@@ -73,7 +80,7 @@ const MyPageSidebar = () => {
         {menuItems.map((item) => (
           <button
             key={item.id}
-            onClick={() => navigate(item.path)}
+            onClick={() => handleMenuClick(item.path)}
             className={`mypage-menu-item ${
               activeMenu === item.id ? "active" : ""
             }`}

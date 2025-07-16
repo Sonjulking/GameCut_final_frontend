@@ -1,20 +1,20 @@
 // 2025-07-11 생성됨
-import {defineConfig} from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import {VitePWA} from "vite-plugin-pwa";
+import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
-    plugins: [
-        react(),
-        VitePWA({
-            registerType: "autoUpdate",
-            devOptions: {
-                enabled: true
-            },
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: "autoUpdate",
+      devOptions: {
+        enabled: true,
+      },
 
-            workbox: {
-                globPatterns: ["**/*.{js,css,html,ico,png,svg}"]
-            },
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
+      },
 
       includeAssets: ["apple-touch-icon.png"],
       manifest: {
@@ -46,8 +46,8 @@ export default defineConfig({
     proxy: {
       // /api로 시작하는 요청 - 백엔드에 /api가 있는 경우
       "/api": {
-        target: "http://server:8081",
-        // target: "http://localhost:8081",
+        // target: "http://server:8081",
+        target: "http://localhost:8081",
         changeOrigin: true,
         secure: false,
         // rewrite 없음 - /api를 그대로 백엔드로 전달
@@ -61,4 +61,7 @@ export default defineConfig({
     },
   },
 });
+<<<<<<< HEAD
+=======
 
+>>>>>>> aaa8e2940a67540c5ce6e54e4e723d24d3691fe0

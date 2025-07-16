@@ -376,9 +376,7 @@ const CommentSection = ({
                     <div className="comment-info">
                       <span className="nickname">
                         {/* 2025-07-14 수정됨 - 삭제된 댓글 닉네임 처리 */}
-                        {c.commentDeleteDate
-                          ? "삭제된 사용자"
-                          : c.user.userNickname}
+                        {c.commentDeleteDate ? "" : c.user.userNickname}
                         <span className="comment_write_date">
                           {formatRelativeTimeKo(c.commentCreateDate)}
                         </span>
@@ -570,7 +568,7 @@ const CommentSection = ({
                                       >
                                         {/* 2025-07-14 수정됨 - 대댓글 삭제된 댓글 닉네임 처리 */}
                                         {reply.commentDeleteDate
-                                          ? "삭제된 사용자"
+                                          ? ""
                                           : reply.user.userNickname}
                                         <span className="comment_write_date">
                                           {formatRelativeTimeKo(

@@ -1,0 +1,193 @@
+/* 📦 포인트 내역 전용 스타일 */
+
+.point-container {
+  min-height: 100vh;
+  background-color: #0d1117;
+  color: #e6edf3;
+  padding: 1.25rem;
+}
+
+.point-content {
+  max-width: 87.5rem;
+  margin: 0 auto;
+}
+
+.point-wrapper {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.point-section {
+  width: 100%;
+  flex: 1;
+  background-color: #161b22;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid #30363d;
+  position: relative;
+}
+
+/* 모바일 메뉴 버튼 */
+.point-mobile-toggle {
+  display: none;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  z-index: 10;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.point-mobile-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.point-mobile-toggle img {
+  width: 100%;
+  height: 100%;
+}
+
+.point-sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 9;
+}
+
+/* 헤더 */
+.point-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.point-title-header {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f0f6fc;
+  background: linear-gradient(135deg, #58a6ff, #79c0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.point-subtitle {
+  font-size: 1rem;
+  color: #8b949e;
+}
+
+/* 테이블 */
+.point-list-view {
+  width: 100%;
+}
+
+.point-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #161b22;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid #30363d;
+}
+
+.point-table thead {
+  background-color: #21262d;
+}
+
+.point-table th,
+.point-table td {
+  padding: 1rem 0.75rem;
+  text-align: center;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #30363d;
+}
+
+.point-table th {
+  color: #f0f6fc;
+  font-weight: 600;
+}
+
+.point-amount {
+  font-family: "Consolas", "Monaco", monospace;
+  font-weight: bold;
+}
+
+.point-amount.plus {
+  color: #3fb950;
+}
+
+.point-amount.minus {
+  color: #f85149;
+}
+
+.point-source {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #e6edf3;
+}
+
+.point-date {
+  font-size: 0.875rem;
+  color: #94a3b8;
+}
+
+.point-empty {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #8b949e;
+  font-style: italic;
+  font-size: 0.9375rem;
+}
+
+/* 📱 반응형 */
+@media (max-width: 64rem) {
+  .point-wrapper {
+    flex-direction: column;
+  }
+
+  .point-mobile-toggle {
+    display: block;
+  }
+
+  .point-title-header {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 48rem) {
+  .point-container {
+    padding: 1rem;
+  }
+
+  .point-table th,
+  .point-table td {
+    font-size: 0.8125rem;
+    padding: 0.75rem 0.5rem;
+  }
+
+  .point-title-header {
+    font-size: 1.5rem;
+  }
+
+  .point-subtitle {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 30rem) {
+  .point-title-header {
+    font-size: 1.25rem;
+  }
+
+  .point-subtitle {
+    font-size: 0.8125rem;
+  }
+}
