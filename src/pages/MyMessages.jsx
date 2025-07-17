@@ -101,9 +101,6 @@ const MyMessages = () => {
               <h2 className="messages-title-header">
                 {isSentTab ? "보낸 쪽지함" : "받은 쪽지함"}
               </h2>
-              <p className="messages-subtitle">
-                {isSentTab ? "보낸 쪽지들을 확인하고 관리하세요" : "받은 쪽지들을 확인하고 관리하세요"}
-              </p>
               <div className="messages-tab-buttons">
                 <button
                   className={isSentTab ? "" : "active"}

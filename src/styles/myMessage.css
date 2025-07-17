@@ -113,6 +113,7 @@
   padding: 0.25rem;
   border-radius: 0.5rem;
   border: 0.0625rem solid #30363d;
+  margin-top: 3.5rem;
   margin-bottom: 1.5rem;
 }
 
@@ -264,11 +265,11 @@
   .messages-wrapper {
     flex-direction: column;
   }
-  
+
   .mypage-mobile-menu-toggle {
     display: block; /* 태블릿/모바일에서만 표시 */
   }
-  
+
   .messages-header {
     margin-bottom: 1.5rem;
     padding-top: 0.5rem; /* 2025-07-16 수정됨 - 햄버거 버튼과 같은 높이로 조정 */
@@ -276,7 +277,7 @@
     align-items: center;
     min-height: 2.5rem; /* 햄버거 버튼 높이와 맞춤 */
   }
-  
+
   .messages-title-header {
     font-size: 1.75rem;
   }
@@ -295,7 +296,7 @@
   .messages-section {
     padding: 1rem;
   }
-  
+
   .messages-header {
     padding-top: 0.25rem; /* 2025-07-16 수정됨 - 모바일에서 더 작은 패딩 */
   }
@@ -309,7 +310,6 @@
   }
 
   .messages-tab-buttons {
-    flex-direction: column;
     gap: 0.25rem;
   }
 

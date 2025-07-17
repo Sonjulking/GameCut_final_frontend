@@ -221,7 +221,7 @@
 }
 
 .mypage-profile::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -420,7 +420,6 @@
 
   .mypage-profile {
     padding: 1.5rem;
-    max-width: 22rem;
   }
 
   .mypage-img-container {
@@ -442,11 +441,11 @@
   .content-wrapper {
     flex-direction: column;
   }
-  
+
   .mypage-mobile-menu-toggle {
     display: block; /* 태블릿/모바일에서만 표시 */
   }
-  
+
   .mypage-header {
     margin-bottom: 1.5rem;
     padding-top: 0.5rem; /* 2025-07-15 수정됨 - 햄버거 버튼과 같은 높이로 조정 */
@@ -454,7 +453,7 @@
     align-items: center;
     min-height: 2.5rem; /* 햄버거 버튼 높이와 맞춤 */
   }
-  
+
   .mypage-title-header {
     font-size: 1.75rem; /* 2025-07-15 수정됨 - 64rem 이하에 맞는 크기로 복원 */
   }
@@ -479,12 +478,10 @@
     min-height: auto;
     padding: 1.5rem;
     width: 100%;
-    max-width: 28rem;
   }
 
   .mypage-profile {
     padding: 1.5rem;
-    max-width: 20rem;
   }
 
   .mypage-img-container {
@@ -519,11 +516,11 @@
   .mypage-container {
     padding: 1rem;
   }
-  
+
   .mypage-user-section {
     padding: 1rem;
   }
-  
+
   .mypage-header {
     padding-top: 0.25rem; /* 2025-07-15 수정됨 - 모바일에서 더 작은 패딩 */
   }
