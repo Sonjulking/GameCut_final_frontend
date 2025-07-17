@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../lib/axiosInstance";
 import "../styles/webgame.css";
+import { useSelector } from "react-redux";
 
 export default function TournamentGame() {
   const [videos, setVideos] = useState([]);
@@ -15,8 +16,15 @@ export default function TournamentGame() {
   const [gameStarted, setGameStarted] = useState(false);
   const [savedResult, setSavedResult] = useState(null);
 
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
   useEffect(() => {
     async function fetchBoards() {
       try {
@@ -25,24 +33,20 @@ export default function TournamentGame() {
         });
         const list = res.data.content || [];
         const vids = list
-          .filter(
-            (b) =>
-              b.video &&
-              b.video.attachFile &&
-              b.video.attachFile.realPath &&
-              b.video.videoNo
-          )
-          .map((b) => {
-            const rp = b.video.attachFile.realPath;
-            const match = rp.match(/upload[\\/].*/);
-            // encode any spaces, #, (), etc.
-            const relUnencoded = match ? `/${match[0]}` : rp;
-            const rel = encodeURI(relUnencoded);
-            return {
-              videoNo: b.video.videoNo,
-              url: `/api/${rel}`,
-            };
-          });
+        .filter(
+        (b) =>
+        b.video &&
+        b.video.attachFile &&
+        b.video.attachFile.fileUrl && // 2025-07-17 수정됨 - realPath 대신 fileUrl 사용
+        b.video.videoNo
+        )
+        .map((b) => {
+        // 2025-07-17 수정됨 - VITE_API_URL 사용하여 완전한 URL 생성
+        return {
+          videoNo: b.video.videoNo,
+          url: import.meta.env.VITE_API_URL + b.video.attachFile.fileUrl,
+        };
+        });
         setVideos(vids);
       } catch (err) {
         console.error("영상 게시글 로드 실패:", err);

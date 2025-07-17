@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/authSlice";
 
-const useAutoLogout = (timeout = 600000) => {
+const useAutoLogout = (timeout = 3600000) => {
   // 기본: 10분
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -13,7 +13,7 @@ const useAutoLogout = (timeout = 600000) => {
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
       dispatch(logout());
-      alert("10분 이상 활동이 없어 자동 로그아웃되었습니다.");
+      alert("60분 이상 활동이 없어 자동 로그아웃되었습니다.");
       window.location.href = "/login";
     }, timeout);
   };

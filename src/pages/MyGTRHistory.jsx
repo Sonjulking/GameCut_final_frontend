@@ -17,6 +17,16 @@ const MyGTRHistory = () => {
     correctRate: 0,
     gameTypeStats: {},
   });
+  
+  // 2025-07-17 수정됨 - 페이징 상태 추가
+  const [pagination, setPagination] = useState({
+    currentPage: 0,
+    totalPages: 0,
+    totalElements: 0,
+    size: 10,
+    isFirst: true,
+    isLast: true
+  });
 
   // 2025-07-15 수정됨 - 사이드바 상태 관리 추가
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -48,52 +58,165 @@ const MyGTRHistory = () => {
     }
   };
 
+  // 2025-07-17 수정됨 - 게스더랭크 기록 조회 함수를 페이징 지원으로 변경
+  const fetchGTRHistory = async (page = 0) => {
+    try {
+      setLoading(true);
+      
+      // 페이징된 데이터 가져오기
+      const res = await axiosInstance.get("/api/game/my-history-paged", {
+        params: {
+          page: page,
+          size: pagination.size
+        }
+      });
+      
+      const responseData = res.data;
+      console.log('페이징 데이터:', responseData);
+      
+      // 페이징 정보 업데이트
+      setPagination({
+        currentPage: responseData.currentPage,
+        totalPages: responseData.totalPages,
+        totalElements: responseData.totalElements,
+        size: responseData.size,
+        isFirst: responseData.isFirst,
+        isLast: responseData.isLast
+      });
+      
+      const historyData = responseData.content;
+      setHistory(historyData);
+
+      // 전체 통계 계산 (전체 데이터 기반)
+      const totalGames = responseData.totalElements;
+      const totalCorrect = historyData.filter((item) => item.isCorrect).length;
+      
+      // 현재 페이지의 정답률만 계산 (전체 정답률은 전체 데이터가 필요)
+      const currentPageCorrect = historyData.filter((item) => item.isCorrect).length;
+      const currentPageTotal = historyData.length;
+      
+      // 게임타입별 통계 (현재 페이지 데이터만)
+      const gameTypeStats = historyData.reduce((acc, item) => {
+        const gameType = item.gameType || "기타";
+        if (!acc[gameType]) {
+          acc[gameType] = { total: 0, correct: 0 };
+        }
+        acc[gameType].total++;
+        if (item.isCorrect) {
+          acc[gameType].correct++;
+        }
+        return acc;
+      }, {});
+
+      setStats({
+        totalGames,
+        totalCorrect: currentPageCorrect, // 현재 페이지의 정답 수
+        correctRate: currentPageTotal > 0 ? ((currentPageCorrect / currentPageTotal) * 100).toFixed(1) : 0,
+        gameTypeStats,
+      });
+    } catch (err) {
+      console.error("게스더랭크 기록 조회 실패", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // 2025-07-09 수정됨 - 게스더랭크 기록 불러오기
   useEffect(() => {
-    const fetchGTRHistory = async () => {
-      try {
-        const res = await axiosInstance.get("/api/game/my-history");
-        const sorted = res.data.sort(
-          (a, b) => new Date(b.playDate) - new Date(a.playDate)
-        );
-        setHistory(sorted);
-
-        // 통계 계산
-        const totalGames = sorted.length;
-        const totalCorrect = sorted.filter((item) => item.isCorrect).length;
-        const correctRate =
-          totalGames > 0 ? ((totalCorrect / totalGames) * 100).toFixed(1) : 0;
-
-        // 게임타입별 통계
-        const gameTypeStats = sorted.reduce((acc, item) => {
-          const gameType = item.gameType || "기타";
-          if (!acc[gameType]) {
-            acc[gameType] = { total: 0, correct: 0 };
-          }
-          acc[gameType].total++;
-          if (item.isCorrect) {
-            acc[gameType].correct++;
-          }
-          return acc;
-        }, {});
-
-        setStats({
-          totalGames,
-          totalCorrect,
-          correctRate,
-          gameTypeStats,
-        });
-      } catch (err) {
-        console.error("게스더랭크 기록 조회 실패", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (isLoggedIn) {
-      fetchGTRHistory();
+      // 2025-07-17 수정됨 - 초기 로드 시 첫 번째 페이지 가져오기
+      fetchGTRHistory(0);
     }
   }, [isLoggedIn]);
+
+  // 2025-07-17 수정됨 - 페이지 변경 함수
+  const handlePageChange = (newPage) => {
+    if (newPage >= 0 && newPage < pagination.totalPages) {
+      fetchGTRHistory(newPage);
+    }
+  };
+
+  // 2025-07-17 수정됨 - 페이지네이션 컴포넌트
+  const PaginationComponent = () => {
+    if (pagination.totalPages <= 1) return null;
+
+    const maxVisiblePages = 5;
+    let startPage = Math.max(0, pagination.currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(pagination.totalPages - 1, startPage + maxVisiblePages - 1);
+    
+    // 마지막 페이지에 과도하게 달라붙지 않도록 조정
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(0, endPage - maxVisiblePages + 1);
+    }
+
+    const pageNumbers = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    return (
+      <div className="gtr-pagination">
+        {/* 이전 버튼 */}
+        <button
+          className="pagination-btn pagination-prev"
+          onClick={() => handlePageChange(pagination.currentPage - 1)}
+          disabled={pagination.isFirst}
+        >
+          ‹ 이전
+        </button>
+
+        {/* 첫 페이지 버튼 */}
+        {startPage > 0 && (
+          <>
+            <button
+              className="pagination-btn pagination-number"
+              onClick={() => handlePageChange(0)}
+            >
+              1
+            </button>
+            {startPage > 1 && <span className="pagination-ellipsis">...</span>}
+          </>
+        )}
+
+        {/* 페이지 번호 버튼 */}
+        {pageNumbers.map((pageNum) => (
+          <button
+            key={pageNum}
+            className={`pagination-btn pagination-number ${
+              pageNum === pagination.currentPage ? "active" : ""
+            }`}
+            onClick={() => handlePageChange(pageNum)}
+          >
+            {pageNum + 1}
+          </button>
+        ))}
+
+        {/* 마지막 페이지 버튼 */}
+        {endPage < pagination.totalPages - 1 && (
+          <>
+            {endPage < pagination.totalPages - 2 && (
+              <span className="pagination-ellipsis">...</span>
+            )}
+            <button
+              className="pagination-btn pagination-number"
+              onClick={() => handlePageChange(pagination.totalPages - 1)}
+            >
+              {pagination.totalPages}
+            </button>
+          </>
+        )}
+
+        {/* 다음 버튼 */}
+        <button
+          className="pagination-btn pagination-next"
+          onClick={() => handlePageChange(pagination.currentPage + 1)}
+          disabled={pagination.isLast}
+        >
+          다음 ›
+        </button>
+      </div>
+    );
+  };
 
   // 2025-07-09 수정됨 - 티어 아이콘 매핑
   const getTierIcon = (tier) => {
@@ -128,7 +251,13 @@ const MyGTRHistory = () => {
               <img src={hamburgerIcon} alt="마이페이지 메뉴" />
             </button>
             <div className="gtr-header">
-              <h2 className="gtr-section-title">내 게스더랭크 기록</h2>
+              <h2 className="gtr-section-title">내 게스더랭크 기록 ({pagination.totalElements}건)</h2>
+              {/* 2025-07-17 수정됨 - 페이지 정보 표시 */}
+              {pagination.totalElements > 0 && (
+                <p className="gtr-page-info">
+                  {pagination.currentPage + 1} / {pagination.totalPages} 페이지
+                </p>
+              )}
             </div>
             <br />
             <br />
@@ -252,6 +381,9 @@ const MyGTRHistory = () => {
                   </tbody>
                 </table>
               </div>
+              
+              {/* 2025-07-17 수정됨 - 페이지네이션을 테이블 밖으로 이동 */}
+              <PaginationComponent />
             </div>
           </div>
           {/* 2025-07-15 수정됨 - 모바일 오버레이 추가 */}

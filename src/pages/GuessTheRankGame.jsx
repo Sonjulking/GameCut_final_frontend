@@ -98,7 +98,8 @@ export default function GuessTheRankGame() {
   const [mode, setMode] = useState("init");
   const [questions, setQuestions] = useState([]);
   const [allQuestions, setAllQuestions] = useState([]); // 2025-07-08 수정됨 - 전체 문제 저장용
-  const [order, setOrder] = useState([]);
+  // 2025-07-17 수정됨 - order 배열 사용하지 않으므로 제거 (단순히 순차적 인덱스만 사용)
+  // const [order, setOrder] = useState([]);
   const [idx, setIdx] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState("");
@@ -152,12 +153,12 @@ export default function GuessTheRankGame() {
 
     // 현재 문제의 게임 타입 가져오기
     const gameType = currentQuestion.gameType;
-    
+
     // 해당 게임 타입의 티어 시스템 반환 (없으면 기본 티어)
     return (
       GAME_TIER_SYSTEMS[gameType] || [
         "아이언",
-        "브론즈", 
+        "브론즈",
         "실버",
         "골드",
         "플래티넘",
@@ -188,8 +189,7 @@ export default function GuessTheRankGame() {
     });
 
     setQuestions(selectedQuestions);
-    const orderArray = selectedQuestions.map((_, i) => i);
-    setOrder(orderArray);
+    // 2025-07-17 수정됨 - order 배열 사용하지 않으므로 제거 (단순히 순차적 인덱스 사용)
     setIdx(0);
     setScore(0);
     setSelectedAnswer("");
@@ -199,6 +199,7 @@ export default function GuessTheRankGame() {
   };
 
   // 답안 제출
+  // 2025-07-17 수정됨 - 답안 제출 시 order 배열 사용하지 않고 직접 인덱스로 접근
   const submitAnswer = async () => {
     if (!selectedAnswer) {
       alert("티어를 선택해주세요.");
@@ -206,7 +207,7 @@ export default function GuessTheRankGame() {
     }
 
     setIsSubmitting(true);
-    const q = questions[order[idx]];
+    const q = questions[idx]; // order 배열 제거하여 직접 인덱스 사용
 
     try {
       console.log("답안 제출:", { gtrNo: q.gtrNo, tier: selectedAnswer });
@@ -241,11 +242,13 @@ export default function GuessTheRankGame() {
   };
 
   // 다음 문제로 진행
+  // 2025-07-17 수정됨 - 동영상 넘어가지 않는 문제 해결: order 배열 제거 및 상태 업데이트 순서 개선
   const goToNext = () => {
     if (idx + 1 < questions.length) {
       const nextIdx = idx + 1;
+      const nextQuestion = questions[nextIdx]; // order 배열 제거하여 직접 접근
       setIdx(nextIdx);
-      setCurrentQuestion(questions[order[nextIdx]]);
+      setCurrentQuestion(nextQuestion);
       setSelectedAnswer("");
       setResult(null);
     } else {
@@ -354,9 +357,7 @@ export default function GuessTheRankGame() {
             <h3 className="tier-game-title">티어 맞추기</h3>
             <div className="tier-game-progress">
               {/* 2025-07-08 수정됨 - 전체 선택 시에도 현재 문제의 게임 타입 표시 */}
-              {q && (
-                <span>게임: {q.gameType || selectedGameType}</span>
-              )}
+              {q && <span>게임: {q.gameType || selectedGameType}</span>}
               <span>
                 문제 {idx + 1}/{questions.length}
               </span>
@@ -367,7 +368,9 @@ export default function GuessTheRankGame() {
           {/* 비디오 */}
           <div className="tier-game-video-container">
             {/* 2025년 7월 8일 수정됨 - 백엔드에서 fileUrl을 반환하므로 VITE_API_URL과 조합 */}
+            {/* 2025-07-17 수정됨 - 동영상 넘어가지 않는 문제 해결: key 속성 추가로 제대로 리렌더링 */}
             <video
+              key={q?.gtrNo || idx} // 고유한 key 추가로 동영상 변경 시 제대로 리렌더링
               controls
               className="tier-game-video"
               onError={(e) => {

@@ -24,6 +24,7 @@ const BoardWrite = ({ isEdit = false }) => {
   const [existingVideoNo, setExistingVideoNo] = useState({});
   const [existingTags, setExistingTags] = useState([]);
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const user = useSelector((state) => state.auth.user);
 
   // 🔐 로그인하지 않았을 경우 로그인 페이지로 리디렉션
   useEffect(() => {
@@ -96,6 +97,19 @@ const BoardWrite = ({ isEdit = false }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // 2025-07-17 수정됨 - 새 게시글 작성 시 포인트 확인
+    if (!isEdit) {
+      try {
+        if (user.userPoint < 100) {
+          alert("포인트가 부족합니다. 게시글 작성에는 100포인트가 필요합니다.");
+          return; // 게시글 작성 중단
+        }
+      } catch (error) {
+        alert("포인트 확인 중 오류가 발생했습니다. 다시 시도해주세요.");
+        return;
+      }
+    }
 
     // 디버깅: 전송되는 데이터 확인
     console.log("🔍 전송할 폼 데이터:", form);
@@ -190,7 +204,7 @@ const BoardWrite = ({ isEdit = false }) => {
           },
         });
 
-        // 2025-07-10 추가됨 - 게시글 작성 시 포인트 차감 로직
+        // 2025-07-17 수정됨 - 게시글 작성 시 포인트 차감 로직 (포인트 확인 후 실행)
         try {
           const pointData = new FormData();
           pointData.append("point", -100);

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+
 import "../styles/webgame.css";
+import { useSelector } from "react-redux";
+import axiosInstance from "../lib/axiosInstance";
 
 const VITE_API_URL = import.meta.env.VITE_API_URL;
 
@@ -9,27 +11,31 @@ export default function TournamentRanking() {
   const [rankings, setRankings] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   useEffect(() => {
-    axios
-      .get(`/api/worldcup/ranking`)
-      .then((res) => {
-        const adapted = res.data.map((r) => {
-          const raw = r.videoRealPath.replace(/\\/g, "/");
-          const m = raw.match(/upload\/.*/);
-          // encode special chars
-          const relUnencoded = m ? `/${m[0]}` : raw;
-          const rel = encodeURI(relUnencoded);
-          return {
-            ...r,
-            url: `${VITE_API_URL}${rel}`,
-          };
-        });
-        setRankings(adapted);
-      })
-      .catch((e) => console.error("랭킹 로드 실패:", e))
-      .finally(() => setLoading(false));
-  }, []);
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
+  axiosInstance
+    .get(`/api/worldcup/ranking`)
+    .then((res) => {
+      const adapted = res.data.map((r) => {
+        const raw = r.videoRealPath.replace(/\\/g, "/");
+        const m = raw.match(/upload\/.*/);
+        // encode special chars
+        const relUnencoded = m ? `/${m[0]}` : raw;
+        const rel = encodeURI(relUnencoded);
+        return {
+          ...r,
+          url: `${VITE_API_URL}${rel}`,
+        };
+      });
+      setRankings(adapted);
+    })
+    .catch((e) => console.error("랭킹 로드 실패:", e))
+    .finally(() => setLoading(false));
 
   if (loading) return <div className="p-6 text-center">로딩 중…</div>;
 

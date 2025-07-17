@@ -13,9 +13,20 @@ import { formatRelativeTimeKo } from "../util/timeFormatUtil.js";
 const MyBoard = () => {
   const navigate = useNavigate();
   const [myBoards, setMyBoards] = useState([]);
+  const [allMyBoards, setAllMyBoards] = useState([]); // 2025-07-17 수정됨 - 전체 데이터 보관용
   const [filteredList, setFilteredList] = useState([]);
   const [viewMode, setViewMode] = useState("card");
   const [selectedType, setSelectedType] = useState("전체");
+
+  // 2025-07-17 수정됨 - 페이징 상태 추가
+  const [pagination, setPagination] = useState({
+    currentPage: 0,
+    totalPages: 0,
+    totalElements: 0,
+    size: 6, // 2025-07-17 수정됨 - 6개씩 표시
+    isFirst: true,
+    isLast: true,
+  });
 
   const user = useSelector((state) => state.auth.user);
 
@@ -147,38 +158,179 @@ const MyBoard = () => {
     }
   };
 
-  // 내 게시글 로드
-  const loadMyBoards = async () => {
+  // 2025-07-17 수정됨 - 내 게시글 로드 함수를 페이징 지원으로 변경
+  const fetchMyBoards = async (page = 0, typeFilter = null) => {
     try {
-      const response = await axiosInstance.get(`/api/board/listAll`);
-      console.log("사용자 : ", user);
+      console.log("현재 로그인 사용자:", user); // 디버깅용
+      console.log("타입 필터:", typeFilter); // 디버깅용
+      
+      const params = {
+        page: page,
+        size: pagination.size,
+      };
+      
+      // 타입 필터가 있으면 추가
+      if (typeFilter && typeFilter !== "전체") {
+        const typeNo = getBoardTypeNo(typeFilter);
+        if (typeNo) {
+          params.boardTypeNo = typeNo;
+        }
+      }
+      
+      const res = await axiosInstance.get("/api/board/my", {
+        params: params,
+      });
 
-      // 현재 사용자가 작성한 게시글만 필터링
-      const userBoards = response.data.content.filter(
-        (board) => board.user.userNo == user.userNo
-      );
-      setMyBoards(userBoards);
-      setFilteredList(userBoards);
+      const responseData = res.data;
+      console.log("페이징 데이터:", responseData);
+      console.log("받아온 게시글 데이터:", responseData.content);
+
+      // 페이징 정보 업데이트
+      setPagination({
+        currentPage: responseData.currentPage,
+        totalPages: responseData.totalPages,
+        totalElements: responseData.totalElements,
+        size: responseData.size,
+        isFirst: responseData.isFirst,
+        isLast: responseData.isLast,
+      });
+
+      const boardsData = responseData.content;
+      
+      // 2025-07-17 수정됨 - 디버깅: 게시글의 작성자 정보 확인
+      if (boardsData.length > 0) {
+        console.log("첫 번째 게시글 작성자:", boardsData[0].user);
+        console.log("현재 로그인 사용자 번호:", user?.userNo);
+      }
+      
+      setMyBoards(boardsData);
+      setAllMyBoards(boardsData); // 전체 데이터도 보관
+      setFilteredList(boardsData);
+      
+      // 선택 상태 초기화
+      setSelectedBoards(new Set());
+      setIsAllSelected(false);
+      
     } catch (error) {
-      console.error("내 게시글 로드 실패:", error);
-      alert("게시글을 불러오는 중 오류가 발생했습니다.");
+      console.error("❌ 내 게시글 로드 실패:", error);
+      if (error.response?.status === 401) {
+        alert("로그인이 필요합니다.");
+        navigate("/login");
+      } else {
+        alert("게시글 목록을 불러오는 데 실패했습니다.");
+      }
     }
   };
 
-  // 타입별 필터링 함수
+  // 기존 loadMyBoards 함수도 유지 (삭제/수정 후 새로고침용)
+  const loadMyBoards = async () => {
+    await fetchMyBoards(0, selectedType); // 선택된 타입으로 첫 번째 페이지 리셋
+  };
+
+  // 2025-07-17 수정됨 - 페이지 변경 함수 (타입 필터 고려)
+  const handlePageChange = (newPage) => {
+    if (newPage >= 0 && newPage < pagination.totalPages) {
+      fetchMyBoards(newPage, selectedType);
+    }
+  };
+
+  // 2025-07-17 수정됨 - 페이지네이션 컴포넌트
+  const PaginationComponent = () => {
+    if (pagination.totalPages <= 1) return null;
+
+    const maxVisiblePages = 5;
+    let startPage = Math.max(
+      0,
+      pagination.currentPage - Math.floor(maxVisiblePages / 2)
+    );
+    let endPage = Math.min(
+      pagination.totalPages - 1,
+      startPage + maxVisiblePages - 1
+    );
+
+    // 마지막 페이지에 과도하게 달라붙지 않도록 조정
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(0, endPage - maxVisiblePages + 1);
+    }
+
+    const pageNumbers = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    return (
+      <div className="board-pagination">
+        {/* 이전 버튼 */}
+        <button
+          className="pagination-btn pagination-prev"
+          onClick={() => handlePageChange(pagination.currentPage - 1)}
+          disabled={pagination.isFirst}
+        >
+          ‹ 이전
+        </button>
+
+        {/* 첫 페이지 버튼 */}
+        {startPage > 0 && (
+          <>
+            <button
+              className="pagination-btn pagination-number"
+              onClick={() => handlePageChange(0)}
+            >
+              1
+            </button>
+            {startPage > 1 && <span className="pagination-ellipsis">...</span>}
+          </>
+        )}
+
+        {/* 페이지 번호 버튼 */}
+        {pageNumbers.map((pageNum) => (
+          <button
+            key={pageNum}
+            className={`pagination-btn pagination-number ${
+              pageNum === pagination.currentPage ? "active" : ""
+            }`}
+            onClick={() => handlePageChange(pageNum)}
+          >
+            {pageNum + 1}
+          </button>
+        ))}
+
+        {/* 마지막 페이지 버튼 */}
+        {endPage < pagination.totalPages - 1 && (
+          <>
+            {endPage < pagination.totalPages - 2 && (
+              <span className="pagination-ellipsis">...</span>
+            )}
+            <button
+              className="pagination-btn pagination-number"
+              onClick={() => handlePageChange(pagination.totalPages - 1)}
+            >
+              {pagination.totalPages}
+            </button>
+          </>
+        )}
+
+        {/* 다음 버튼 */}
+        <button
+          className="pagination-btn pagination-next"
+          onClick={() => handlePageChange(pagination.currentPage + 1)}
+          disabled={pagination.isLast}
+        >
+          다음 ›
+        </button>
+      </div>
+    );
+  };
+
+  // 2025-07-17 수정됨 - 타입별 필터링 함수 (백엔드에서 필터링)
   const filterByType = (type) => {
     setSelectedType(type);
     // 필터링 시 선택 상태 초기화
     setSelectedBoards(new Set());
     setIsAllSelected(false);
 
-    if (type === "전체") {
-      setFilteredList(myBoards);
-    } else {
-      const typeNo = getBoardTypeNo(type);
-      const filtered = myBoards.filter((board) => board.boardTypeNo === typeNo);
-      setFilteredList(filtered);
-    }
+    // 백엔드에서 필터링하여 데이터 가져오기
+    fetchMyBoards(0, type); // 첫 번째 페이지로 리셋하여 가져오기
   };
 
   // 게시글 상세보기
@@ -228,16 +380,19 @@ const MyBoard = () => {
 
   useEffect(() => {
     const initializeData = async () => {
-      await loadMyBoards();
+      // 2025-07-17 수정됨 - 페이징 지원 함수로 변경
+      await fetchMyBoards(0, "전체"); // 초기에는 전체 타입으로 로드
     };
 
-    initializeData();
-  }, []);
+    if (isLoggedIn) {
+      initializeData();
+    }
+  }, [isLoggedIn]);
 
-  // 데이터가 변경될 때마다 현재 선택된 타입으로 필터링
-  useEffect(() => {
-    filterByType(selectedType);
-  }, [myBoards, selectedType]);
+  // 2025-07-17 수정됨 - 더 이상 필요없음 (백엔드에서 필터링하므로)
+  // useEffect(() => {
+  //   filterByType(selectedType);
+  // }, [myBoards, selectedType]);
 
   // 리스트 뷰 렌더링 (체크박스와 썸네일 추가)
   const renderListView = () => (
@@ -442,8 +597,14 @@ const MyBoard = () => {
             <div className="board-header">
               <div className="board-header-content">
                 <h2 className="myboard-title-header">
-                  내 게시글 ({myBoards.length}개)
+                  내 게시글 ({pagination.totalElements}개)
                 </h2>
+                {/* 2025-07-17 수정됨 - 페이지 정보 표시 */}
+                {pagination.totalElements > 0 && (
+                  <p className="board-page-info">
+                    {pagination.currentPage + 1} / {pagination.totalPages} 페이지
+                  </p>
+                )}
               </div>
               <div className="view-toggle">
                 <button
@@ -495,11 +656,7 @@ const MyBoard = () => {
                     {type}
                     {selectedType === type && (
                       <span className="active-count">
-                        (
-                        {selectedType === "전체"
-                          ? myBoards.length
-                          : filteredList.length}
-                        )
+                        ({pagination.totalElements})
                       </span>
                     )}
                   </button>
@@ -542,6 +699,9 @@ const MyBoard = () => {
             {/* 뷰 모드에 따른 렌더링 */}
             <div className="board-content">
               {viewMode === "list" ? renderListView() : renderCardView()}
+              
+              {/* 2025-07-17 수정됨 - 페이지네이션 컴포넌트 추가 */}
+              <PaginationComponent />
             </div>
           </div>
         </div>

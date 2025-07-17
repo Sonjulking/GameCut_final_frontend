@@ -246,7 +246,9 @@ const UpdateMyPage = () => {
               </div>
 
               <div className="update-my-page-form-group update-my-page-file-group">
-                <label htmlFor="update-my-page-original-filename">프로필 이미지:</label>
+                <label htmlFor="update-my-page-original-filename">
+                  프로필 이미지:
+                </label>
                 <div className="update-my-page-file-controls">
                   <input
                     type="file"
@@ -344,7 +346,11 @@ const UpdateMyPage = () => {
             <button type="submit" id="update-my-page-btn-ok">
               수정 완료
             </button>
-            <button type="button" id="update-my-page-btn-reset" onClick={() => navigate(-1)}>
+            <button
+              type="button"
+              id="update-my-page-btn-reset"
+              onClick={() => navigate(-1)}
+            >
               취소
             </button>
           </div>

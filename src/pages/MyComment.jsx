@@ -13,6 +13,17 @@ const MyComments = () => {
   const [enrichedComments, setEnrichedComments] = useState([]); // 2025-07-15 수정됨 - 게시글 정보가 포함된 댓글 데이터
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // 2025-07-17 수정됨 - 페이징 상태 추가
+  const [pagination, setPagination] = useState({
+    currentPage: 0,
+    totalPages: 0,
+    totalElements: 0,
+    size: 10,
+    isFirst: true,
+    isLast: true,
+  });
+
   const navigate = useNavigate();
 
   // 2025-07-15 수정됨 - 사이드바 상태 관리 추가
@@ -84,38 +95,154 @@ const MyComments = () => {
     }
   };
 
+  // 2025-07-17 수정됨 - 댓글 조회 함수를 페이징 지원으로 변경
+  const fetchComments = async (page = 0) => {
+    try {
+      setLoading(true);
+
+      // 1단계: 댓글 목록 가져오기 (페이징 포함)
+      const res = await axiosInstance.get("/api/comment/my", {
+        params: {
+          page: page,
+          size: pagination.size,
+        },
+      });
+
+      const responseData = res.data;
+      console.log("페이징 데이터:", responseData);
+
+      // 페이징 정보 업데이트
+      setPagination({
+        currentPage: responseData.currentPage,
+        totalPages: responseData.totalPages,
+        totalElements: responseData.totalElements,
+        size: responseData.size,
+        isFirst: responseData.isFirst,
+        isLast: responseData.isLast,
+      });
+
+      const commentsData = responseData.content;
+      setComments(commentsData);
+
+      // 2단계: 게시글 정보와 합치기
+      const enriched = await enrichCommentsWithBoardInfo(commentsData);
+      setEnrichedComments(enriched);
+
+      setError(null);
+    } catch (err) {
+      console.error("❌ 댓글 목록 조회 실패", err);
+      if (err.response?.status === 401) {
+        alert("로그인이 필요합니다.");
+        navigate("/login");
+      } else {
+        setError("댓글 목록을 불러오는 데 실패했습니다.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!isLoggedIn) return;
 
-    const fetchComments = async () => {
-      try {
-        setLoading(true);
-
-        // 1단계: 댓글 목록 가져오기
-        const res = await axiosInstance.get("/api/comment/my");
-        const commentsData = res.data;
-        setComments(commentsData);
-
-        // 2단계: 게시글 정보와 합치기
-        const enriched = await enrichCommentsWithBoardInfo(commentsData);
-        setEnrichedComments(enriched);
-
-        setError(null);
-      } catch (err) {
-        console.error("❌ 댓글 목록 조회 실패", err);
-        if (err.response?.status === 401) {
-          alert("로그인이 필요합니다.");
-          navigate("/login");
-        } else {
-          setError("댓글 목록을 불러오는 데 실패했습니다.");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchComments();
+    // 2025-07-17 수정됨 - 초기 로드 시 첫 번째 페이지 가져오기
+    fetchComments(0);
   }, [isLoggedIn, navigate]);
+
+  // 2025-07-17 수정됨 - 페이지 변경 함수
+  const handlePageChange = (newPage) => {
+    if (newPage >= 0 && newPage < pagination.totalPages) {
+      fetchComments(newPage);
+    }
+  };
+
+  // 2025-07-17 수정됨 - 페이지네이션 컴포넌트
+  const PaginationComponent = () => {
+    if (pagination.totalPages <= 1) return null;
+
+    const maxVisiblePages = 5;
+    let startPage = Math.max(
+      0,
+      pagination.currentPage - Math.floor(maxVisiblePages / 2)
+    );
+    let endPage = Math.min(
+      pagination.totalPages - 1,
+      startPage + maxVisiblePages - 1
+    );
+
+    // 마지막 페이지에 과도하게 달라붙지 않도록 조정
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(0, endPage - maxVisiblePages + 1);
+    }
+
+    const pageNumbers = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    return (
+      <div className="comment-pagination">
+        {/* 이전 버튼 */}
+        <button
+          className="pagination-btn pagination-prev"
+          onClick={() => handlePageChange(pagination.currentPage - 1)}
+          disabled={pagination.isFirst}
+        >
+          ‹ 이전
+        </button>
+
+        {/* 첫 페이지 버튼 */}
+        {startPage > 0 && (
+          <>
+            <button
+              className="pagination-btn pagination-number"
+              onClick={() => handlePageChange(0)}
+            >
+              1
+            </button>
+            {startPage > 1 && <span className="pagination-ellipsis">...</span>}
+          </>
+        )}
+
+        {/* 페이지 번호 버튼 */}
+        {pageNumbers.map((pageNum) => (
+          <button
+            key={pageNum}
+            className={`pagination-btn pagination-number ${
+              pageNum === pagination.currentPage ? "active" : ""
+            }`}
+            onClick={() => handlePageChange(pageNum)}
+          >
+            {pageNum + 1}
+          </button>
+        ))}
+
+        {/* 마지막 페이지 버튼 */}
+        {endPage < pagination.totalPages - 1 && (
+          <>
+            {endPage < pagination.totalPages - 2 && (
+              <span className="pagination-ellipsis">...</span>
+            )}
+            <button
+              className="pagination-btn pagination-number"
+              onClick={() => handlePageChange(pagination.totalPages - 1)}
+            >
+              {pagination.totalPages}
+            </button>
+          </>
+        )}
+
+        {/* 다음 버튼 */}
+        <button
+          className="pagination-btn pagination-next"
+          onClick={() => handlePageChange(pagination.currentPage + 1)}
+          disabled={pagination.isLast}
+        >
+          다음 ›
+        </button>
+      </div>
+    );
+  };
 
   // 2025-07-15 수정됨 - 게시글로 이동하는 함수
   const navigateToBoard = (boardNo, commentNo) => {
@@ -194,8 +321,14 @@ const MyComments = () => {
           <div className="comment-container">
             <div className="comment-header">
               <h2 className="comment-title-header">
-                내 댓글 ({enrichedComments.length}개)
+                내 댓글 ({pagination.totalElements}개)
               </h2>
+              {/* 2025-07-17 수정됨 - 페이지 정보 표시 */}
+              {pagination.totalElements > 0 && (
+                <p className="comment-page-info">
+                  {pagination.currentPage + 1} / {pagination.totalPages} 페이지
+                </p>
+              )}
             </div>
 
             <div className="comment-content">
@@ -208,77 +341,86 @@ const MyComments = () => {
                   <p className="error-text">{error}</p>
                 </div>
               ) : enrichedComments.length > 0 ? (
-                <div className="comment-grid">
-                  {enrichedComments.map((comment) => (
-                    <div key={comment.commentNo} className="comment-card">
-                      {/* 2025-07-15 수정됨 - 게시글 정보 헤더 */}
-                      <div className="comment-card-header">
-                        {comment.boardInfo && (
-                          <>
-                            <span
-                              className={`board-type-badge type-${comment.boardInfo.boardTypeNo}`}
-                            >
-                              {getBoardTypeName(comment.boardInfo.boardTypeNo)}
+                <>
+                  <div className="comment-grid">
+                    {enrichedComments.map((comment) => (
+                      <div key={comment.commentNo} className="comment-card">
+                        {/* 2025-07-15 수정됨 - 게시글 정보 헤더 */}
+                        <div className="comment-card-header">
+                          {comment.boardInfo && (
+                            <>
+                              <span
+                                className={`board-type-badge type-${comment.boardInfo.boardTypeNo}`}
+                              >
+                                {getBoardTypeName(
+                                  comment.boardInfo.boardTypeNo
+                                )}
+                              </span>
+                              <h3
+                                className="board-title-link"
+                                onClick={() =>
+                                  navigateToBoard(
+                                    comment.boardNo,
+                                    comment.commentNo
+                                  )
+                                }
+                              >
+                                {comment.boardInfo.boardTitle}
+                              </h3>
+                            </>
+                          )}
+                          {!comment.boardInfo && (
+                            <div className="board-info-error">
+                              <span className="board-type-badge type-unknown">
+                                알 수 없음
+                              </span>
+                              <h3
+                                className="board-title-link"
+                                onClick={() =>
+                                  navigateToBoard(
+                                    comment.boardNo,
+                                    comment.commentNo
+                                  )
+                                }
+                              >
+                                게시글 정보를 불러올 수 없습니다
+                              </h3>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* 2025-07-15 수정됨 - 댓글 내용 */}
+                        <div className="comment-card-body">
+                          <p
+                            className="comment-content-text"
+                            onClick={() =>
+                              navigateToBoard(
+                                comment.boardNo,
+                                comment.commentNo
+                              )
+                            }
+                          >
+                            {comment.commentContent}
+                          </p>
+                        </div>
+
+                        {/* 2025-07-15 수정됨 - 댓글 메타 정보 */}
+                        <div className="comment-card-footer">
+                          <div className="comment-stats">
+                            <span className="comment-likes">
+                              👍 {comment.commentLike || 0}
                             </span>
-                            <h3
-                              className="board-title-link"
-                              onClick={() =>
-                                navigateToBoard(
-                                  comment.boardNo,
-                                  comment.commentNo
-                                )
-                              }
-                            >
-                              {comment.boardInfo.boardTitle}
-                            </h3>
-                          </>
-                        )}
-                        {!comment.boardInfo && (
-                          <div className="board-info-error">
-                            <span className="board-type-badge type-unknown">
-                              알 수 없음
-                            </span>
-                            <h3
-                              className="board-title-link"
-                              onClick={() =>
-                                navigateToBoard(
-                                  comment.boardNo,
-                                  comment.commentNo
-                                )
-                              }
-                            >
-                              게시글 정보를 불러올 수 없습니다
-                            </h3>
                           </div>
-                        )}
-                      </div>
-
-                      {/* 2025-07-15 수정됨 - 댓글 내용 */}
-                      <div className="comment-card-body">
-                        <p
-                          className="comment-content-text"
-                          onClick={() =>
-                            navigateToBoard(comment.boardNo, comment.commentNo)
-                          }
-                        >
-                          {comment.commentContent}
-                        </p>
-                      </div>
-
-                      {/* 2025-07-15 수정됨 - 댓글 메타 정보 */}
-                      <div className="comment-card-footer">
-                        <div className="comment-stats">
-                          <span className="comment-likes">
-                            👍 {comment.commentLike || 0}
+                          <span className="comment-date">
+                            {formatDate(comment.commentCreateDate)}
                           </span>
                         </div>
-                        <span className="comment-date">
-                          {formatDate(comment.commentCreateDate)}
-                        </span>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+
+                  <PaginationComponent />
+                </>
               ) : (
                 <div className="empty-state">
                   <div className="empty-icon">💭</div>

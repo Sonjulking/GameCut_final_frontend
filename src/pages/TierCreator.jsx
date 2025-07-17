@@ -1,8 +1,10 @@
 // src/pages/TierCreator.jsx
 // 2025년 7월 8일 수정됨 - 게임 종류 선택 기능 추가, CSS 클래스 적용
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axiosInstance from "../lib/axiosInstance";
 import "../styles/webgame.css"; // 2025-07-08 수정됨 - CSS 파일 임포트
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 // 게임별 티어 시스템 정의
 const GAME_TIER_SYSTEMS = {
@@ -55,7 +57,14 @@ export function TierCreator({ onDone }) {
   const [files, setFiles] = useState([]);
   const [selectedGameType, setSelectedGameType] = useState("");
   const [tierMap, setTierMap] = useState({});
-
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!isLoggedIn) {
+      alert("로그인이 필요한 페이지입니다.");
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
   // 게임 종류 변경 시 티어 매핑 초기화
   const handleGameTypeChange = (gameType) => {
     setSelectedGameType(gameType);
@@ -130,9 +139,7 @@ export function TierCreator({ onDone }) {
 
       {/* 파일 업로드 - 게임 선택 후에만 활성화 */}
       <div className="tier-creator-form-group">
-        <label className="tier-creator-label">
-          동영상 파일 선택
-        </label>
+        <label className="tier-creator-label">동영상 파일 선택</label>
         <input
           type="file"
           multiple
@@ -158,10 +165,7 @@ export function TierCreator({ onDone }) {
             각 영상의 티어를 선택하세요 ({selectedGameType})
           </h4>
           {files.map((file, idx) => (
-            <div
-              key={idx}
-              className="tier-creator-file-item"
-            >
+            <div key={idx} className="tier-creator-file-item">
               <span className="tier-creator-file-name">{file.name}</span>
               <select
                 value={tierMap[idx] || ""}

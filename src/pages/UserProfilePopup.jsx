@@ -189,7 +189,15 @@ const UserProfilePopup = ({ open, onClose, user }) => {
             variant="outlined"
             value={messageContent}
             onChange={(e) => setMessageContent(e.target.value)}
-            sx={{ mt: 2, backgroundColor: "#2e2e2e", input: { color: "#fff" } }}
+            sx={{
+              mt: 2,
+              backgroundColor: "#2e2e2e",
+              "& .MuiOutlinedInput-root": {
+                "& textarea": {
+                  color: "white", // 텍스트 색상
+                },
+              },
+            }}
             InputLabelProps={{ style: { color: "#aaa" } }}
           />
 

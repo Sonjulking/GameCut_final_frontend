@@ -1,4 +1,5 @@
 // 2025-07-03 16:15 생성됨
+// 2025-07-17 수정됨 - 유저 정보 팝업 기능 및 CSS 스타일 개선
 // src/components/CommentSection.jsx
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
@@ -14,6 +15,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import { formatRelativeTimeKo } from "../../util/timeFormatUtil.js";
 import { useSelector } from "react-redux";
 import axiosInstance from "../../lib/axiosInstance.js";
+// 2025-07-17 수정됨 - 유저 정보 팝업 컴포넌트 추가
+import UserProfilePopup from "../../pages/UserProfilePopup";
+// 2025-07-17 수정됨 - 기본 프로필 아이콘 import 추가
+import profileIconImg from "../../assets/img/main/icons/profile_icon.png";
 
 const CommentSection = ({
   boardNo,
@@ -28,6 +33,7 @@ const CommentSection = ({
   totalCount,
 }) => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const user = useSelector((state) => state.auth.user); // 2025-07-17 수정됨 - user 정보 추가
 
   const [inputComment, setInputComment] = useState({
     boardNo: boardNo,
@@ -37,6 +43,10 @@ const CommentSection = ({
   const [isNewCommentAdded, setIsNewCommentAdded] = useState(false); // 새 댓글 작성 여부
   const [likedComments, setLikedComments] = useState(new Set()); // 좋아요한 댓글들
   const [commentLikes, setCommentLikes] = useState({}); // 댓글별 좋아요 수
+
+  // 2025-07-17 수정됨 - 유저 정보 팝업 관련 상태 추가
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   // 대댓글 관련 상태 추가
   const [showReplies, setShowReplies] = useState({});
@@ -112,6 +122,23 @@ const CommentSection = ({
     };
   }, [isOpen, hasMoreComments, isLoadingComments, onLoadMore]);
 
+  // 2025-07-17 수정됨 - 닉네임 클릭 핸들러 추가
+  const handleProfileClick = async (userNo) => {
+    if (!isLoggedIn) {
+      alert("로그인 후 프로필을 확인할 수 있습니다.");
+      return;
+    }
+
+    try {
+      const res = await axiosInstance.get(`/api/user/${userNo}`);
+      setSelectedUser(res.data);
+      setProfileOpen(true);
+    } catch (err) {
+      console.error("유저 정보 불러오기 실패", err);
+      alert("유저 정보를 불러올 수 없습니다.");
+    }
+  };
+
   // 대댓글 보기/숨기기 토글
   const toggleReplies = (commentNo) => {
     setShowReplies((prev) => ({
@@ -158,7 +185,6 @@ const CommentSection = ({
       const targetComment = comments.find(
         (comment) => comment.commentNo === commentNo
       );
-      const user = useSelector((state) => state.auth.user); // 올바른 useSelector 사용
 
       // detail.jsx와 동일한 방식으로 API 호출
       if (isCurrentlyLiked) {
@@ -359,28 +385,42 @@ const CommentSection = ({
               .filter((comment) => !comment.parentComment)
               .map((c, idx) => (
                 <div className="comment" key={c.commentNo || idx}>
-                  <div className="comment-header">
-                    <img
-                      src={
-                        // 2025-07-14 수정됨 - 삭제된 댓글 처리 추가
-                        !c.commentDeleteDate &&
-                        c.user.photo &&
-                        c.user.photo.attachFile
-                          ? import.meta.env.VITE_API_URL +
-                            c.user.photo.attachFile.fileUrl
-                          : "/common/empty.png"
-                      }
-                      alt="profile"
-                      className="comment-profile-img"
-                    />
-                    <div className="comment-info">
-                      <span className="nickname">
-                        {/* 2025-07-14 수정됨 - 삭제된 댓글 닉네임 처리 */}
-                        {c.commentDeleteDate ? "" : c.user.userNickname}
-                        <span className="comment_write_date">
+                  <div className="bd-comment-user-info">
+                    <div className="bd-user-left">
+                      <img
+                        src={
+                          // 2025-07-17 수정됨 - 기본 프로필 아이콘 사용
+                          !c.commentDeleteDate &&
+                          c.user.photo &&
+                          c.user.photo.attachFile
+                            ? import.meta.env.VITE_API_URL +
+                              c.user.photo.attachFile.fileUrl
+                            : profileIconImg
+                        }
+                        alt="profile"
+                        className="bd-comment-profile-img"
+                      />
+                      <div className="bd-comment-info">
+                        <span
+                          className="bd-comment-nickname"
+                          onClick={() => {
+                            // 2025-07-17 수정됨 - 닉네임 클릭 이벤트 추가
+                            if (!c.commentDeleteDate) {
+                              handleProfileClick(c.user.userNo);
+                            }
+                          }}
+                          style={{
+                            cursor: c.commentDeleteDate ? "default" : "pointer",
+                            textDecoration: c.commentDeleteDate ? "none" : "underline",
+                          }}
+                        >
+                          {/* 2025-07-14 수정됨 - 삭제된 댓글 닉네임 처리 */}
+                          {c.commentDeleteDate ? "" : c.user.userNickname}
+                        </span>
+                        <span className="bd-comment-date">
                           {formatRelativeTimeKo(c.commentCreateDate)}
                         </span>
-                      </span>
+                      </div>
                     </div>
                   </div>
                   <p className="comment-content">
@@ -393,107 +433,68 @@ const CommentSection = ({
                       c.commentContent
                     )}
                   </p>
-                  {/* 2025-07-14 수정됨 - 삭제된 댓글에는 액션 버튼 숨김 */}
+                  {/* 2025-07-17 수정됨 - pages와 동일한 스타일로 액션 버튼 변경 */}
                   {!c.commentDeleteDate && (
-                    <div className="comment-actions">
-                      <Button
-                        variant="text"
-                        onClick={() => handleCommentLike(c.commentNo)}
-                        sx={{
-                          color: likedComments.has(c.commentNo)
-                            ? "#90caf9"
-                            : "rgba(255, 255, 255, 0.6)",
-                          minWidth: 0,
-                          padding: "4px 8px",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "4px",
-                          "&:hover": {
-                            color: "#90caf9",
-                            backgroundColor: "rgba(144, 202, 249, 0.1)",
-                          },
-                        }}
-                      >
-                        {likedComments.has(c.commentNo) ? (
-                          <ThumbUpIcon fontSize="small" />
-                        ) : (
-                          <ThumbUpAltOutlinedIcon fontSize="small" />
-                        )}
-                        <span style={{ fontSize: "0.8rem", marginLeft: "2px" }}>
-                          {commentLikes[c.commentNo] || 0}
-                        </span>
-                      </Button>
+                    <>
+                      <div className="bd-comment-actions">
+                        <button
+                          className={`bd-like-button ${
+                            likedComments.has(c.commentNo) ? "liked" : ""
+                          }`}
+                          onClick={() => handleCommentLike(c.commentNo)}
+                          disabled={likedComments.has(c.commentNo)}
+                        >
+                          <svg
+                            className="bd-like-icon"
+                            viewBox="0 0 24 24"
+                            fill={
+                              likedComments.has(c.commentNo)
+                                ? "currentColor"
+                                : "none"
+                            }
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                          </svg>
+                          <span className="bd-like-count">
+                            {commentLikes[c.commentNo] || 0}
+                          </span>
+                        </button>
+                      </div>
 
-                      {/* 답글달기 버튼 */}
-                      <Button
-                        variant="text"
-                        size="small"
-                        onClick={() => toggleReplyInput(c.commentNo)}
-                        sx={{
-                          minWidth: "auto",
-                          padding: "2px 6px",
-                          lineHeight: 1.2,
-                        }}
-                      >
-                        <Typography fontSize="1rem">
+                      <div className="bd-actions-right">
+                        <div
+                          className="bd-reply-insert-button"
+                          onClick={() => toggleReplyInput(c.commentNo)}
+                        >
                           {showReplyInput[c.commentNo] ? "취소" : "답글달기"}
-                        </Typography>
-                      </Button>
-                    </div>
+                        </div>
+                      </div>
+                    </>
                   )}
 
-                  {/* 대댓글 입력창 */}
-                  {/* 2025-07-14 수정됨 - 삭제된 댓글에는 대댓글 입력창 숨김 */}
+                  {/* 2025-07-17 수정됨 - pages와 동일한 스타일로 대댓글 입력창 변경 */}
                   {!c.commentDeleteDate && showReplyInput[c.commentNo] && (
-                    <div
-                      className="reply-input"
-                      style={{
-                        marginTop: "12px",
-                        marginLeft: "8px",
-                        display: "flex",
-                        gap: "8px",
-                        alignItems: "center",
-                      }}
-                    >
-                      <input
-                        type="text"
-                        placeholder="대댓글을 입력하세요..."
-                        value={replyInputs[c.commentNo] || ""}
-                        onChange={(e) =>
-                          handleReplyInputChange(c.commentNo, e.target.value)
-                        }
-                        onKeyPress={(e) => handleReplyKeyPress(e, c.commentNo)}
-                        style={{
-                          flex: 1,
-                          padding: "6px 10px", // padding 살짝 줄임
-                          borderRadius: "6px", // 네모 느낌 (원형X)
-                          border: "1px solid #444",
-                          backgroundColor: "#2a2a2a",
-                          color: "white",
-                          fontSize: "0.85rem",
-                        }}
-                      />
-                      <Button
-                        variant="outlined"
-                        onClick={() => handleAddCoComment(c.commentNo)}
-                        disabled={!replyInputs[c.commentNo]?.trim()}
-                        sx={{
-                          minWidth: "40px",
-                          height: "32px", //  위아래 크기 키움
-                          padding: 0,
-                          color: "#90caf9",
-                          borderColor: "#90caf9",
-                          "& .MuiSvgIcon-root": {
-                            fontSize: "1rem", // 아이콘도 살짝 키우기
-                          },
-                          "&.Mui-disabled": {
-                            color: "#666",
-                            borderColor: "#666",
-                          },
-                        }}
-                      >
-                        <ArrowUpwardIcon fontSize="inherit" />
-                      </Button>
+                    <div className="bd-reply-input-area">
+                      <div className="bd-reply-input-wrapper">
+                        <input
+                          type="text"
+                          placeholder="대댓글을 입력하세요..."
+                          value={replyInputs[c.commentNo] || ""}
+                          onChange={(e) =>
+                            handleReplyInputChange(c.commentNo, e.target.value)
+                          }
+                          onKeyPress={(e) => handleReplyKeyPress(e, c.commentNo)}
+                          className="bd-reply-input-field"
+                        />
+                        <button
+                          onClick={() => handleAddCoComment(c.commentNo)}
+                          className="bd-reply-submit-btn"
+                        >
+                          답글 작성
+                        </button>
+                      </div>
                     </div>
                   )}
 
@@ -509,27 +510,17 @@ const CommentSection = ({
 
                     return (
                       <div style={{ marginTop: "12px" }}>
-                        <Button
-                          variant="text"
+                        <div
+                          className="bd-reply-toggle-btn"
                           onClick={() => toggleReplies(c.commentNo)}
-                          sx={{
-                            color: "#90caf9",
-                            fontSize: "0.8rem",
-                            minWidth: 0,
-                            padding: "4px 8px",
-                            textTransform: "none",
-                            "&:hover": {
-                              backgroundColor: "rgba(144, 202, 249, 0.1)",
-                            },
-                          }}
                         >
                           {showReplies[c.commentNo]
-                            ? "답글 숨기기"
-                            : `답글 ${replyCount}개 보기`}
-                        </Button>
+                            ? "답글 닫기"
+                            : `답글 ${replyCount}개`}
+                        </div>
 
                         {showReplies[c.commentNo] && (
-                          <div style={{ marginLeft: "20px", marginTop: "8px" }}>
+                          <div className="bd-replies-container">
                             {comments
                               .filter(
                                 (reply) =>
@@ -539,106 +530,99 @@ const CommentSection = ({
                               .map((reply, replyIndex) => (
                                 <div
                                   key={reply.commentNo || replyIndex}
-                                  className="comment reply-comment"
-                                  style={{
-                                    borderLeft: "2px solid #444",
-                                    paddingLeft: "12px",
-                                    marginBottom: "12px",
-                                  }}
+                                  className="bd-reply-item"
                                 >
-                                  <div className="comment-header">
-                                    <img
-                                      src={
-                                        // 2025-07-14 수정됨 - 대댓글 삭제된 댓글 처리 추가
-                                        !reply.commentDeleteDate &&
-                                        reply.user.photo &&
-                                        reply.user.photo.attachFile
-                                          ? import.meta.env.VITE_API_URL +
-                                            reply.user.photo.attachFile.fileUrl
-                                          : "/common/empty.png"
-                                      }
-                                      alt="profile"
-                                      className="comment-profile-img"
-                                      style={{ width: "24px", height: "24px" }}
-                                    />
-                                    <div className="comment-info">
-                                      <span
-                                        className="nickname"
-                                        style={{ fontSize: "0.9rem" }}
-                                      >
-                                        {/* 2025-07-14 수정됨 - 대댓글 삭제된 댓글 닉네임 처리 */}
-                                        {reply.commentDeleteDate
-                                          ? ""
-                                          : reply.user.userNickname}
-                                        <span className="comment_write_date">
-                                          {formatRelativeTimeKo(
-                                            reply.commentCreateDate
-                                          )}
-                                        </span>
-                                      </span>
+                                  <div className="bd-reply-content">
+                                    <div className="bd-comment-user-info">
+                                      <div className="bd-user-left">
+                                        <span className="bd-reply-arrow">↓</span>
+                                        <img
+                                          src={
+                                            // 2025-07-17 수정됨 - 대댓글 기본 프로필 아이콘 사용
+                                            !reply.commentDeleteDate &&
+                                            reply.user.photo &&
+                                            reply.user.photo.attachFile
+                                              ? import.meta.env.VITE_API_URL +
+                                                reply.user.photo.attachFile.fileUrl
+                                              : profileIconImg
+                                          }
+                                          alt="profile"
+                                          className="bd-comment-profile-img"
+                                        />
+                                        <div className="bd-comment-info">
+                                          <span
+                                            className="bd-comment-nickname"
+                                            onClick={() => {
+                                              // 2025-07-17 수정됨 - 대댓글 닉네임 클릭 이벤트 추가
+                                              if (!reply.commentDeleteDate) {
+                                                handleProfileClick(reply.user.userNo);
+                                              }
+                                            }}
+                                            style={{
+                                              cursor: reply.commentDeleteDate ? "default" : "pointer",
+                                              textDecoration: reply.commentDeleteDate ? "none" : "underline",
+                                            }}
+                                          >
+                                            {/* 2025-07-14 수정됨 - 대댓글 삭제된 댓글 닉네임 처리 */}
+                                            {reply.commentDeleteDate
+                                              ? ""
+                                              : reply.user.userNickname}
+                                          </span>
+                                          <span className="bd-comment-date">
+                                            {formatRelativeTimeKo(
+                                              reply.commentCreateDate
+                                            )}
+                                          </span>
+                                        </div>
+                                      </div>
                                     </div>
-                                  </div>
-                                  <p
-                                    className="comment-content"
-                                    style={{
-                                      fontSize: "0.9rem",
-                                      marginLeft: "32px",
-                                    }}
-                                  >
-                                    {/* 2025-07-14 수정됨 - 대댓글 삭제된 댓글 내용 처리 */}
-                                    {reply.commentDeleteDate ? (
-                                      <span className="deleted-comment">
-                                        삭제된 댓글입니다.
-                                      </span>
-                                    ) : (
-                                      reply.commentContent
-                                    )}
-                                  </p>
-                                  {/* 2025-07-14 수정됨 - 삭제된 대댓글에는 액션 버튼 숨김 */}
-                                  {!reply.commentDeleteDate && (
-                                    <div
-                                      className="comment-actions"
-                                      style={{ marginLeft: "32px" }}
-                                    >
-                                      <Button
-                                        variant="text"
-                                        onClick={() =>
-                                          handleCommentLike(reply.commentNo)
-                                        }
-                                        sx={{
-                                          color: likedComments.has(
-                                            reply.commentNo
-                                          )
-                                            ? "#90caf9"
-                                            : "rgba(255, 255, 255, 0.6)",
-                                          minWidth: 0,
-                                          padding: "4px 8px",
-                                          display: "flex",
-                                          alignItems: "center",
-                                          gap: "4px",
-                                          "&:hover": {
-                                            color: "#90caf9",
-                                            backgroundColor:
-                                              "rgba(144, 202, 249, 0.1)",
-                                          },
-                                        }}
-                                      >
-                                        {likedComments.has(reply.commentNo) ? (
-                                          <ThumbUpIcon fontSize="small" />
-                                        ) : (
-                                          <ThumbUpAltOutlinedIcon fontSize="small" />
-                                        )}
-                                        <span
-                                          style={{
-                                            fontSize: "0.8rem",
-                                            marginLeft: "2px",
-                                          }}
+
+                                    {/* 대댓글 내용 */}
+                                    <p className="bd-comment-content bd-reply-content-text">
+                                      {/* 2025-07-14 수정됨 - 대댓글 삭제된 댓글 내용 처리 */}
+                                      {reply.commentDeleteDate ? (
+                                        <span className="deleted-comment">
+                                          삭제된 댓글입니다.
+                                        </span>
+                                      ) : (
+                                        reply.commentContent
+                                      )}
+                                    </p>
+
+                                    {/* 2025-07-17 수정됨 - 대댓글 좋아요 버튼 pages 스타일로 변경 */}
+                                    {!reply.commentDeleteDate && (
+                                      <div className="bd-reply-actions">
+                                        <button
+                                          className={`bd-like-button ${
+                                            likedComments.has(reply.commentNo)
+                                              ? "liked"
+                                              : ""
+                                          }`}
+                                          onClick={() =>
+                                            handleCommentLike(reply.commentNo)
+                                          }
+                                          disabled={likedComments.has(reply.commentNo)}
                                         >
-                                          {commentLikes[reply.commentNo] || 0}
-                                        </span>
-                                      </Button>
-                                    </div>
-                                  )}
+                                          <svg
+                                            className="bd-like-icon"
+                                            viewBox="0 0 24 24"
+                                            fill={
+                                              likedComments.has(reply.commentNo)
+                                                ? "currentColor"
+                                                : "none"
+                                            }
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                          >
+                                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                                          </svg>
+                                          <span className="bd-like-count">
+                                            {commentLikes[reply.commentNo] || 0}
+                                          </span>
+                                        </button>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                               ))}
                           </div>
@@ -745,6 +729,13 @@ const CommentSection = ({
           <ArrowUpwardIcon fontSize="medium" />
         </Button>
       </div>
+
+      {/* 2025-07-17 수정됨 - 유저 정보 팝업 추가 */}
+      <UserProfilePopup
+        open={profileOpen}
+        onClose={() => setProfileOpen(false)}
+        user={selectedUser}
+      />
     </div>
   );
 };
