@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../lib/axiosInstance"; // 인증 포함된 인스턴스
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
-import "../styles/myGtrHistory.css";
+import "../styles/myGTRHistory.css";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -120,22 +120,21 @@ const MyGTRHistory = () => {
       <div className="gtr-content">
         <div className="gtr-wrapper">
           <div className="gtr-section">
+            <button
+              className="mypage-mobile-menu-toggle"
+              onClick={toggleSidebar}
+              aria-label="마이페이지 메뉴 토글"
+            >
+              <img src={hamburgerIcon} alt="마이페이지 메뉴" />
+            </button>
+            <div className="gtr-header">
+              <h2 className="gtr-section-title">내 게스더랭크 기록</h2>
+            </div>
+            <br />
+            <br />
             <div className="gtr-board-container">
-              <div className="gtr-board-header">
-                <h2 className="gtr-board-title-header">
-                  내 게스더랭크 기록 ({history.length}건)
-                </h2>
-              </div>
-
               {/* 2025-07-09 수정됨 - 통계 섹션 */}
               <div className="gtr-stats-section">
-                <button
-                  className="mypage-mobile-menu-toggle"
-                  onClick={toggleSidebar}
-                  aria-label="마이페이지 메뉴 토글"
-                >
-                  <img src={hamburgerIcon} alt="마이페이지 메뉴" />
-                </button>
                 <h3 className="gtr-stats-title">📊 나의 게임 통계</h3>
 
                 <div className="gtr-stats-grid">

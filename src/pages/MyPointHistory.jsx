@@ -58,11 +58,8 @@ const MyPointHistory = () => {
               <div className="point-header">
                 <div className="point-header-content">
                   <h2 className="point-title-header">
-                    💰 내 포인트 내역 ({history.length}건)
+                    내 포인트 내역 ({history.length}건)
                   </h2>
-                  <p className="point-subtitle">
-                    포인트 적립 및 사용 내역을 확인할 수 있습니다
-                  </p>
                 </div>
               </div>
 

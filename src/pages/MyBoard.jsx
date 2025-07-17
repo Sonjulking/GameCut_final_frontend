@@ -425,108 +425,91 @@ const MyBoard = () => {
 
   return (
     <div className="mypage-container">
-      <div className="mypage-content">
-        <div className="content-wrapper">
-          {/* 메인 내용 영역 */}
-          <div className="mypage-user-section">
-            {/* 2025-07-15 수정됨 - 사용자 섹션 내부에 햄버거 버튼 추가 */}
-            <button
-              className="mypage-mobile-menu-toggle"
-              onClick={toggleSidebar}
-              aria-label="마이페이지 메뉴 토글"
-            >
-              <img src={hamburgerIcon} alt="마이페이지 메뉴" />
-            </button>
+      <div className="content-wrapper">
+        {/* 메인 내용 영역 */}
+        <div className="mypage-user-section">
+          {/* 2025-07-15 수정됨 - 사용자 섹션 내부에 햄버거 버튼 추가 */}
+          <button
+            className="mypage-mobile-menu-toggle"
+            onClick={toggleSidebar}
+            aria-label="마이페이지 메뉴 토글"
+          >
+            <img src={hamburgerIcon} alt="마이페이지 메뉴" />
+          </button>
 
-            <div className="board-container">
-              {/* 2025-07-15 수정됨 - 헤더 스타일 통일 */}
-              <div className="board-header">
-                <div className="board-header-content">
-                  <h2 className="myboard-title-header">
-                    📝 내 게시글 ({myBoards.length}개)
-                  </h2>
-                </div>
-                <div className="view-toggle">
-                  <button
-                    className={`toggle-btn ${
-                      viewMode === "list" ? "active" : ""
-                    }`}
-                    onClick={() => setViewMode("list")}
-                    title="리스트 보기"
-                  >
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" />
-                    </svg>
-                  </button>
-                  <button
-                    className={`toggle-btn ${
-                      viewMode === "card" ? "active" : ""
-                    }`}
-                    onClick={() => setViewMode("card")}
-                    title="카드 보기"
-                  >
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path d="M4 11h5V5H4v6zm0 7h5v-6H4v6zm6 0h5v-6h-5v6zm6 0h5v-6h-5v6zm-6-7h5V5h-5v6zm6-6v6h5V5h-5z" />
-                    </svg>
-                  </button>
-                </div>
+          <div className="board-container">
+            {/* 2025-07-15 수정됨 - 헤더 스타일 통일 */}
+            <div className="board-header">
+              <div className="board-header-content">
+                <h2 className="myboard-title-header">
+                  내 게시글 ({myBoards.length}개)
+                </h2>
               </div>
-
-              {/* 타입 필터 버튼들과 글작성 버튼 */}
-              <div className="filter-and-write-container">
-                <div className="type-filter-container">
-                  {boardTypes.map((type) => (
-                    <button
-                      key={type}
-                      className={`type-filter-btn ${
-                        selectedType === type ? "active" : ""
-                      }`}
-                      onClick={() => filterByType(type)}
-                    >
-                      {type}
-                      {selectedType === type && (
-                        <span className="active-count">
-                          (
-                          {selectedType === "전체"
-                            ? myBoards.length
-                            : filteredList.length}
-                          )
-                        </span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-                {selectedBoards.size > 0 && (
-                  <button
-                    className="bulk-delete-btn"
-                    onClick={handleBulkDelete}
-                    title={`선택된 ${selectedBoards.size}개 항목 삭제`}
-                  >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                    </svg>
-                    선택삭제 ({selectedBoards.size})
-                  </button>
-                )}
+              <div className="view-toggle">
                 <button
-                  className="write-btn"
-                  onClick={() => navigate("/board/write")}
-                  title="새 글 작성"
+                  className={`toggle-btn ${
+                    viewMode === "list" ? "active" : ""
+                  }`}
+                  onClick={() => setViewMode("list")}
+                  title="리스트 보기"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" />
+                  </svg>
+                </button>
+                <button
+                  className={`toggle-btn ${
+                    viewMode === "card" ? "active" : ""
+                  }`}
+                  onClick={() => setViewMode("card")}
+                  title="카드 보기"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M4 11h5V5H4v6zm0 7h5v-6H4v6zm6 0h5v-6h-5v6zm6 0h5v-6h-5v6zm-6-7h5V5h-5v6zm6-6v6h5V5h-5z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* 타입 필터 버튼들과 글작성 버튼 */}
+            <div className="filter-and-write-container">
+              <div className="type-filter-container">
+                {boardTypes.map((type) => (
+                  <button
+                    key={type}
+                    className={`type-filter-btn ${
+                      selectedType === type ? "active" : ""
+                    }`}
+                    onClick={() => filterByType(type)}
+                  >
+                    {type}
+                    {selectedType === type && (
+                      <span className="active-count">
+                        (
+                        {selectedType === "전체"
+                          ? myBoards.length
+                          : filteredList.length}
+                        )
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+              {selectedBoards.size > 0 && (
+                <button
+                  className="bulk-delete-btn"
+                  onClick={handleBulkDelete}
+                  title={`선택된 ${selectedBoards.size}개 항목 삭제`}
                 >
                   <svg
                     width="16"
@@ -534,30 +517,45 @@ const MyBoard = () => {
                     viewBox="0 0 24 24"
                     fill="currentColor"
                   >
-                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
                   </svg>
-                  글쓰기
+                  선택삭제 ({selectedBoards.size})
                 </button>
-              </div>
+              )}
+              <button
+                className="write-btn"
+                onClick={() => navigate("/board/write")}
+                title="새 글 작성"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                </svg>
+                글쓰기
+              </button>
+            </div>
 
-              {/* 뷰 모드에 따른 렌더링 */}
-              <div className="board-content">
-                {viewMode === "list" ? renderListView() : renderCardView()}
-              </div>
+            {/* 뷰 모드에 따른 렌더링 */}
+            <div className="board-content">
+              {viewMode === "list" ? renderListView() : renderCardView()}
             </div>
           </div>
-
-          {/* 2025-07-15 수정됨 - 모바일 오버레이 추가 */}
-          {isSidebarOpen && (
-            <div
-              className="mobile-sidebar-overlay"
-              onClick={handleOverlayClick}
-            />
-          )}
-
-          {/* 2025-07-15 수정됨 - 사이드바에 상태 props 전달 */}
-          <MyPageSidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
         </div>
+
+        {/* 2025-07-15 수정됨 - 모바일 오버레이 추가 */}
+        {isSidebarOpen && (
+          <div
+            className="mobile-sidebar-overlay"
+            onClick={handleOverlayClick}
+          />
+        )}
+
+        {/* 2025-07-15 수정됨 - 사이드바에 상태 props 전달 */}
+        <MyPageSidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
       </div>
     </div>
   );

@@ -29,6 +29,61 @@
   position: relative;
 }
 
+/* 2025-07-16 수정됨 - 햄버거 메뉴 버튼 (다른 마이페이지와 통일) */
+.mypage-mobile-menu-toggle {
+  display: none; /* 데스크톱에서는 숨김 */
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+  z-index: 10;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.mypage-mobile-menu-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
+}
+
+.mypage-mobile-menu-toggle img {
+  width: 100%;
+  height: 100%;
+}
+
+/* 2025-07-16 수정됨 - 헤더 스타일 (다른 마이페이지와 통일) */
+.gtr-header {
+  margin-bottom: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.gtr-section-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f0f6fc;
+  background: linear-gradient(135deg, #58a6ff, #79c0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gtr-subtitle {
+  margin: 0;
+  font-size: 1rem;
+  color: #8b949e;
+  font-weight: 400;
+}
+
 /* =============================== */
 /* 📊 통계 영역 */
 /* =============================== */
@@ -200,18 +255,79 @@
   font-size: 0.875rem;
 }
 
+/* =========================== */
+/* 모바일 오버레이 */
+/* =========================== */
+.mobile-sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+  display: none;
+  backdrop-filter: blur(2px);
+}
+
 /* =============================== */
 /* 반응형 대응 */
 /* =============================== */
+
+/* 큰 태블릿 */
+@media (max-width: 87.5rem) {
+  .gtr-content {
+    max-width: 75rem;
+  }
+}
+
+/* 작은 태블릿 / 큰 모바일 */
 @media (max-width: 64rem) {
   .gtr-wrapper {
     flex-direction: column;
   }
+  
+  .mypage-mobile-menu-toggle {
+    display: block; /* 태블릿/모바일에서만 표시 */
+  }
+  
+  .gtr-header {
+    margin-bottom: 1.5rem;
+    padding-top: 0.5rem; /* 2025-07-16 수정됨 - 햄버거 버튼과 같은 높이로 조정 */
+    display: flex;
+    align-items: center;
+    min-height: 2.5rem; /* 햄버거 버튼 높이와 맞춤 */
+  }
+  
+  .gtr-section-title {
+    font-size: 1.75rem;
+  }
+
+  .mobile-sidebar-overlay {
+    display: block;
+  }
 }
 
+/* 모바일 */
 @media (max-width: 48rem) {
   .gtr-container {
     padding: 1rem;
+  }
+
+  .gtr-section {
+    padding: 1rem;
+  }
+  
+  .gtr-header {
+    padding-top: 0.25rem; /* 2025-07-16 수정됨 - 모바일에서 더 작은 패딩 */
+  }
+
+  .gtr-section-title {
+    font-size: 1.5rem;
+  }
+
+  .gtr-subtitle {
+    font-size: 0.875rem;
   }
 
   .gtr-table th,
@@ -225,9 +341,49 @@
   }
 }
 
+/* 작은 모바일 */
 @media (max-width: 30rem) {
+  .gtr-container {
+    padding: 0.75rem;
+  }
+
+  .gtr-section {
+    padding: 0.75rem;
+  }
+
+  .gtr-section-title {
+    font-size: 1.25rem;
+  }
+
+  .gtr-subtitle {
+    font-size: 0.8125rem;
+  }
+
   .gtr-table th:nth-child(3),
   .gtr-table td:nth-child(3) {
     display: none;
+  }
+}
+
+/* 매우 작은 모바일 */
+@media (max-width: 25rem) {
+  .gtr-container {
+    padding: 0.5rem;
+  }
+
+  .gtr-section {
+    padding: 0.5rem;
+  }
+
+  .gtr-header {
+    margin-bottom: 1rem;
+  }
+
+  .gtr-section-title {
+    font-size: 1.125rem;
+  }
+
+  .gtr-subtitle {
+    font-size: 0.75rem;
   }
 }

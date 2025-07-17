@@ -1,11 +1,6 @@
 // 2025-07-16 수정됨 - 내 아이템 목록 페이지 스타일 개선 (다른 마이페이지와 통일)
 import React, { useEffect, useState } from "react";
-import {
-  Grid,
-  CircularProgress,
-  Snackbar,
-  Alert,
-} from "@mui/material";
+import { Grid, CircularProgress, Snackbar, Alert } from "@mui/material";
 import MyPageSidebar from "../components/MyPage/MyPageSidebar";
 import "../styles/myItemList.css"; // ⚠️ 새 CSS 파일
 import { useNavigate } from "react-router-dom";
@@ -78,7 +73,7 @@ const MyItemList = () => {
           <div className="item-wrapper">
             <div className="item-section">
               <div className="loading-container">
-                <CircularProgress sx={{ color: '#58a6ff', mb: 2 }} />
+                <CircularProgress sx={{ color: "#58a6ff", mb: 2 }} />
                 <p className="loading-text">아이템 목록을 불러오는 중...</p>
               </div>
             </div>
@@ -102,18 +97,16 @@ const MyItemList = () => {
             </button>
             <div className="item-header">
               <h2 className="item-section-title">내 아이템 목록</h2>
-              <p className="item-subtitle">구매한 아이템들을 확인하고 관리하세요</p>
             </div>
+            <br />
+            <br />
             {myItems.length === 0 ? (
               <div className="empty-state">
                 <div className="empty-icon">💺</div>
                 <h3 className="empty-title">아직 구매한 아이템이 없습니다</h3>
-                <p className="empty-description">
-                  아이템 샵에서 다양한 아이템들을 구매해보세요!
-                </p>
-                <button 
+                <button
                   className="go-to-shop-btn"
-                  onClick={() => navigate('/itemshop')}
+                  onClick={() => navigate("/itemshop")}
                 >
                   아이템 샵 바로가기
                 </button>
@@ -129,7 +122,7 @@ const MyItemList = () => {
                         }`}
                         alt={item.itemName}
                         height="160"
-                        style={{ objectFit: 'cover' }}
+                        style={{ objectFit: "cover" }}
                       />
                       <div className="item-card-content">
                         <h3 className="item-name">{item.itemName}</h3>

@@ -180,141 +180,134 @@ const MyComments = () => {
 
   return (
     <div className="mypage-container">
-      <div className="mypage-content">
-        <div className="content-wrapper">
-          <div className="mypage-user-section">
-            {/* 2025-07-15 수정됨 - 사용자 섹션 내부에 햄버거 버튼 추가 */}
-            <button
-              className="mypage-mobile-menu-toggle"
-              onClick={toggleSidebar}
-              aria-label="마이페이지 메뉴 토글"
-            >
-              <img src={hamburgerIcon} alt="마이페이지 메뉴" />
-            </button>
+      <div className="content-wrapper">
+        <div className="mypage-user-section">
+          {/* 2025-07-15 수정됨 - 사용자 섹션 내부에 햄버거 버튼 추가 */}
+          <button
+            className="mypage-mobile-menu-toggle"
+            onClick={toggleSidebar}
+            aria-label="마이페이지 메뉴 토글"
+          >
+            <img src={hamburgerIcon} alt="마이페이지 메뉴" />
+          </button>
 
-            <div className="comment-container">
-              <div className="comment-header">
-                <h2 className="comment-title-header">
-                  💬 내 댓글 ({enrichedComments.length}개)
-                </h2>
-              </div>
+          <div className="comment-container">
+            <div className="comment-header">
+              <h2 className="comment-title-header">
+                내 댓글 ({enrichedComments.length}개)
+              </h2>
+            </div>
 
-              <div className="comment-content">
-                {loading ? (
-                  <div className="loading-container">
-                    <p className="loading-text">댓글을 불러오는 중...</p>
-                  </div>
-                ) : error ? (
-                  <div className="error-container">
-                    <p className="error-text">{error}</p>
-                  </div>
-                ) : enrichedComments.length > 0 ? (
-                  <div className="comment-grid">
-                    {enrichedComments.map((comment) => (
-                      <div key={comment.commentNo} className="comment-card">
-                        {/* 2025-07-15 수정됨 - 게시글 정보 헤더 */}
-                        <div className="comment-card-header">
-                          {comment.boardInfo && (
-                            <>
-                              <span
-                                className={`board-type-badge type-${comment.boardInfo.boardTypeNo}`}
-                              >
-                                {getBoardTypeName(
-                                  comment.boardInfo.boardTypeNo
-                                )}
-                              </span>
-                              <h3
-                                className="board-title-link"
-                                onClick={() =>
-                                  navigateToBoard(
-                                    comment.boardNo,
-                                    comment.commentNo
-                                  )
-                                }
-                              >
-                                {comment.boardInfo.boardTitle}
-                              </h3>
-                            </>
-                          )}
-                          {!comment.boardInfo && (
-                            <div className="board-info-error">
-                              <span className="board-type-badge type-unknown">
-                                알 수 없음
-                              </span>
-                              <h3
-                                className="board-title-link"
-                                onClick={() =>
-                                  navigateToBoard(
-                                    comment.boardNo,
-                                    comment.commentNo
-                                  )
-                                }
-                              >
-                                게시글 정보를 불러올 수 없습니다
-                              </h3>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* 2025-07-15 수정됨 - 댓글 내용 */}
-                        <div className="comment-card-body">
-                          <p
-                            className="comment-content-text"
-                            onClick={() =>
-                              navigateToBoard(
-                                comment.boardNo,
-                                comment.commentNo
-                              )
-                            }
-                          >
-                            {comment.commentContent}
-                          </p>
-                        </div>
-
-                        {/* 2025-07-15 수정됨 - 댓글 메타 정보 */}
-                        <div className="comment-card-footer">
-                          <div className="comment-stats">
-                            <span className="comment-likes">
-                              👍 {comment.commentLike || 0}
+            <div className="comment-content">
+              {loading ? (
+                <div className="loading-container">
+                  <p className="loading-text">댓글을 불러오는 중...</p>
+                </div>
+              ) : error ? (
+                <div className="error-container">
+                  <p className="error-text">{error}</p>
+                </div>
+              ) : enrichedComments.length > 0 ? (
+                <div className="comment-grid">
+                  {enrichedComments.map((comment) => (
+                    <div key={comment.commentNo} className="comment-card">
+                      {/* 2025-07-15 수정됨 - 게시글 정보 헤더 */}
+                      <div className="comment-card-header">
+                        {comment.boardInfo && (
+                          <>
+                            <span
+                              className={`board-type-badge type-${comment.boardInfo.boardTypeNo}`}
+                            >
+                              {getBoardTypeName(comment.boardInfo.boardTypeNo)}
                             </span>
+                            <h3
+                              className="board-title-link"
+                              onClick={() =>
+                                navigateToBoard(
+                                  comment.boardNo,
+                                  comment.commentNo
+                                )
+                              }
+                            >
+                              {comment.boardInfo.boardTitle}
+                            </h3>
+                          </>
+                        )}
+                        {!comment.boardInfo && (
+                          <div className="board-info-error">
+                            <span className="board-type-badge type-unknown">
+                              알 수 없음
+                            </span>
+                            <h3
+                              className="board-title-link"
+                              onClick={() =>
+                                navigateToBoard(
+                                  comment.boardNo,
+                                  comment.commentNo
+                                )
+                              }
+                            >
+                              게시글 정보를 불러올 수 없습니다
+                            </h3>
                           </div>
-                          <span className="comment-date">
-                            {formatDate(comment.commentCreateDate)}
+                        )}
+                      </div>
+
+                      {/* 2025-07-15 수정됨 - 댓글 내용 */}
+                      <div className="comment-card-body">
+                        <p
+                          className="comment-content-text"
+                          onClick={() =>
+                            navigateToBoard(comment.boardNo, comment.commentNo)
+                          }
+                        >
+                          {comment.commentContent}
+                        </p>
+                      </div>
+
+                      {/* 2025-07-15 수정됨 - 댓글 메타 정보 */}
+                      <div className="comment-card-footer">
+                        <div className="comment-stats">
+                          <span className="comment-likes">
+                            👍 {comment.commentLike || 0}
                           </span>
                         </div>
+                        <span className="comment-date">
+                          {formatDate(comment.commentCreateDate)}
+                        </span>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="empty-state">
-                    <div className="empty-icon">💭</div>
-                    <h3 className="empty-title">아직 작성한 댓글이 없어요</h3>
-                    <p className="empty-description">
-                      관심있는 게시글에 댓글을 남겨보세요!
-                    </p>
-                    <button
-                      className="go-to-board-btn"
-                      onClick={() => navigate("/board")}
-                    >
-                      게시판 둘러보기
-                    </button>
-                  </div>
-                )}
-              </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-state">
+                  <div className="empty-icon">💭</div>
+                  <h3 className="empty-title">아직 작성한 댓글이 없어요</h3>
+                  <p className="empty-description">
+                    관심있는 게시글에 댓글을 남겨보세요!
+                  </p>
+                  <button
+                    className="go-to-board-btn"
+                    onClick={() => navigate("/board")}
+                  >
+                    게시판 둘러보기
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-
-          {/* 2025-07-15 수정됨 - 모바일 오버레이 추가 */}
-          {isSidebarOpen && (
-            <div
-              className="mobile-sidebar-overlay"
-              onClick={handleOverlayClick}
-            />
-          )}
-
-          {/* 2025-07-15 수정됨 - 사이드바에 상태 props 전달 */}
-          <MyPageSidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
         </div>
+
+        {/* 2025-07-15 수정됨 - 모바일 오버레이 추가 */}
+        {isSidebarOpen && (
+          <div
+            className="mobile-sidebar-overlay"
+            onClick={handleOverlayClick}
+          />
+        )}
+
+        {/* 2025-07-15 수정됨 - 사이드바에 상태 props 전달 */}
+        <MyPageSidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
       </div>
     </div>
   );
